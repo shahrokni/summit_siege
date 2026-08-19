@@ -8,14 +8,16 @@ import { createEntities, type TMeshCollection } from "./entities";
 import type { ILevel } from "../level";
 
 export class LevelOne implements ILevel {
-  constructor(scene: Scene) {
+  constructor(scene: Scene, onFinish: () => void) {
     this.scene = scene;
+    this.onFinish = onFinish;
   }
 
   private scene: Scene;
   private camera: ArcRotateCamera | undefined;
   private light: HemisphericLight | undefined;
   private meshCollection: TMeshCollection | undefined;
+  private onFinish: () => void;
 
   private setupCameras(scene: Scene): ArcRotateCamera {
     const camera = new ArcRotateCamera(
