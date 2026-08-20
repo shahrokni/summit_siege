@@ -7,9 +7,10 @@ import {
 } from "@babylonjs/core";
 
 export const createGround = (scene: Scene): GroundMesh => {
+  const LENGTH = 40;
   const ground = MeshBuilder.CreateGround(
     "ground",
-    { width: 30, height: 30 },
+    { width: LENGTH, height: LENGTH },
     scene,
   );
   const material = new StandardMaterial("groundMaterial", scene);

@@ -33,7 +33,11 @@ export class LevelOne implements ILevel {
   }
 
   private setupLights(scene: Scene): HemisphericLight {
-    const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+    const light = new HemisphericLight(
+      "mainLight",
+      new Vector3(0, 1, 0),
+      scene,
+    );
     light.intensity = 0.8;
     return light;
   }
@@ -41,6 +45,8 @@ export class LevelOne implements ILevel {
   private addEntities(scene: Scene) {
     return createEntities(scene);
   }
+
+  private run_loop(): void {}
 
   run() {
     this.camera = this.setupCameras(this.scene);

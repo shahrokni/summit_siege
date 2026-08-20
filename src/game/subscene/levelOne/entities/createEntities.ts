@@ -16,7 +16,7 @@ export const createEntities = (scene: Scene): TMeshCollection => {
   const ground = createGround(scene);
   meshCollection.ground = ground;
 
-  const pyramid = createPyramid(scene);
+  const pyramid = createPyramid(scene, ground);
   meshCollection.pyramid = pyramid;
 
   return meshCollection;
