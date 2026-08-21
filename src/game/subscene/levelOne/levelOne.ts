@@ -4,8 +4,9 @@ import {
   Vector3,
   type Scene,
 } from "@babylonjs/core";
-import { createEntities, type TMeshCollection } from "./entities";
+
 import type { ILevel } from "../level";
+import { EntityManager } from "./entities";
 
 export class LevelOne implements ILevel {
   constructor(scene: Scene, onFinish: () => void) {
@@ -16,7 +17,7 @@ export class LevelOne implements ILevel {
   private scene: Scene;
   private camera: ArcRotateCamera | undefined;
   private light: HemisphericLight | undefined;
-  private meshCollection: TMeshCollection | undefined;
+  private entityManager: EntityManager | undefined;
 
   private setupCameras(scene: Scene): ArcRotateCamera {
     const camera = new ArcRotateCamera(
@@ -41,10 +42,6 @@ export class LevelOne implements ILevel {
     return light;
   }
 
-  private addEntities(scene: Scene) {
-    return createEntities(scene);
-  }
-
   private run_loop(): void {}
 
   public dispose(): void {
@@ -57,6 +54,6 @@ export class LevelOne implements ILevel {
   public run() {
     this.camera = this.setupCameras(this.scene);
     this.light = this.setupLights(this.scene);
-    this.meshCollection = this.addEntities(this.scene);
+    this.entityManager = new EntityManager(this.scene);
   }
 }

@@ -1,1 +1,1 @@
-export * from "./createEntities";
+export * from "./entityManager";
