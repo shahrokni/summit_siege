@@ -2,18 +2,10 @@ import type { GroundMesh, Mesh, Scene } from "@babylonjs/core";
 
 import { PyramidEntity } from "./pyramid";
 import { TrenchEntity } from "./trench";
-import type { Position } from "../../../scene";
+import type { IEntity } from "../../../scene";
 import { GroundEntity } from "./ground";
 
 export type Entity = "ground" | "pyramid" | "trenches";
-
-export interface IEntity<T extends GroundMesh | Array<Mesh>> {
-  getId: () => string;
-  getPosition: () => Position;
-  getCubeLength: () => number;
-  getMesh: () => T;
-  dispose: () => void;
-}
 
 export type TMeshCollection = Partial<{
   ground: IEntity<GroundMesh>;

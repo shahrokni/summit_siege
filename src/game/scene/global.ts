@@ -1,1 +1,1 @@
-export type Position = { x: number; y: number; z: number };
+export type TPosition = { x: number; y: number; z: number };

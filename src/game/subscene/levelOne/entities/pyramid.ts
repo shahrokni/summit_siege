@@ -5,8 +5,13 @@ import {
   Scene,
   StandardMaterial,
 } from "@babylonjs/core";
-import type { IEntity } from "./entityManager";
-import type { Position } from "../../../scene";
+import type {
+  IEntity,
+  TEntityCubeLength,
+  TEntityId,
+  TEntityPosition,
+  TPosition,
+} from "../../../scene";
 
 type Options = {
   size: number;
@@ -14,13 +19,12 @@ type Options = {
 
 export class PyramidEntity implements IEntity<Array<Mesh>> {
   constructor(scene: Scene, id: string, groundLength: number) {
-    this.id = id;
-    // bugfix
-    this.position = { x: 0, y: 0, z: 0 };
+    this.rootId = id;
     const FACTOR = 2;
     const CUBE_SIZE = 1;
     const GAP = 0.01;
     const PYRAMID_BASE = groundLength / FACTOR;
+    this.pyramidBase = PYRAMID_BASE;
     let currentPyramidBase = PYRAMID_BASE;
     const SPACING = CUBE_SIZE + GAP;
 
@@ -33,17 +37,23 @@ export class PyramidEntity implements IEntity<Array<Mesh>> {
           const boxOptions: Options = {
             size: CUBE_SIZE,
           };
-          const box = MeshBuilder.CreateBox(
-            `${id}-${i}.${j}`,
-            boxOptions,
-            scene,
-          );
+          const subId = `${this.rootId}-${i}.${j}`;
+          const box = MeshBuilder.CreateBox(subId, boxOptions, scene);
+          this.subIds.push(subId);
           const shift = PYRAMID_BASE - currentPyramidBase / FACTOR;
-          box.position.x = -1 * i * SPACING + groundLength / FACTOR - shift;
-          box.position.y =
+
+          const x = -1 * i * SPACING + groundLength / FACTOR - shift;
+          const y =
             (CUBE_SIZE / 2) * (PYRAMID_BASE - currentPyramidBase) +
             CUBE_SIZE / 2;
-          box.position.z = j * SPACING - groundLength / FACTOR + shift;
+          const z = j * SPACING - groundLength / FACTOR + shift;
+
+          box.position.x = x;
+          box.position.y = y;
+          box.position.z = z;
+
+          this.positions.set(subId, { x, y, z });
+
           box.material = clayMat;
           this.pyramid.push(box);
         }
@@ -52,21 +62,32 @@ export class PyramidEntity implements IEntity<Array<Mesh>> {
     }
   }
 
-  private id: string;
-  private position: Position;
+  isComplex(): boolean {
+    return Array.isArray(this.pyramid);
+  }
+
+  private rootId: string;
+  private subIds: string[] = [];
+  private positions: Map<string, TPosition> = new Map();
   private pyramid: Mesh[] = [];
+  private pyramidBase: number | undefined;
 
-  public getId(): string {
-    return this.id;
+  public getId(): TEntityId {
+    return { rootId: this.rootId, subIds: this.subIds };
   }
 
-  public getPosition(): Position {
-    return this.position;
+  public getPosition(): TEntityPosition {
+    return this.positions;
   }
 
-  public getCubeLength(): number {
-    // bugfix
-    return 1;
+  public getCubeLength(): TEntityCubeLength {
+    const base = this.pyramidBase as number;
+    // bugfix, either depth or hight should be calculated manually
+    return {
+      width: base,
+      height: base,
+      depth: base,
+    };
   }
 
   public getMesh(): Mesh[] {

@@ -5,8 +5,8 @@ import {
   StandardMaterial,
   type Scene,
 } from "@babylonjs/core";
-import type { IEntity } from "./entityManager";
-import type { Position } from "../../../scene";
+
+import type { IEntity, TPosition } from "../../../scene";
 
 export class GroundEntity implements IEntity<GroundMesh> {
   constructor(scene: Scene, id: string) {
@@ -25,12 +25,16 @@ export class GroundEntity implements IEntity<GroundMesh> {
     this.mesh = ground;
   }
 
+  isComplex(): boolean {
+    return Array.isArray(this.mesh);
+  }
+
   private id: string;
   private length: number;
   private mesh: GroundMesh;
-  private position: Position;
+  private position: TPosition;
 
-  getPosition(): Position {
+  getPosition(): TPosition {
     return this.position;
   }
 
