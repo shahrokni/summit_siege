@@ -1,1 +1,1 @@
-export * from "./createScene";
+export * from "./manager";

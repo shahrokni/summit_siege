@@ -1,10 +1,11 @@
 import { Engine, Scene } from "@babylonjs/core";
-import { createScene } from "./scene";
+import { Manager } from "./scene";
 
 export class Game {
   constructor(canvas: HTMLCanvasElement) {
     this.engine = new Engine(canvas, true);
-    this.scene = createScene(this.engine);
+    this.manager = new Manager(this.engine);
+    this.scene = this.manager.run();
 
     this.engine.runRenderLoop(() => {
       this.scene.render();
@@ -16,6 +17,7 @@ export class Game {
   /* private */
   private engine: Engine;
   private scene: Scene;
+  private manager: Manager;
 
   private handleResize = () => {
     this.engine.resize();

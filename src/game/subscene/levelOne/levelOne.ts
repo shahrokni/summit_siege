@@ -17,7 +17,6 @@ export class LevelOne implements ILevel {
   private camera: ArcRotateCamera | undefined;
   private light: HemisphericLight | undefined;
   private meshCollection: TMeshCollection | undefined;
-  private onFinish: () => void;
 
   private setupCameras(scene: Scene): ArcRotateCamera {
     const camera = new ArcRotateCamera(
@@ -48,7 +47,14 @@ export class LevelOne implements ILevel {
 
   private run_loop(): void {}
 
-  run() {
+  public dispose(): void {
+    this.camera?.dispose();
+    this.light?.dispose();
+  }
+
+  public onFinish(): void {}
+
+  public run() {
     this.camera = this.setupCameras(this.scene);
     this.light = this.setupLights(this.scene);
     this.meshCollection = this.addEntities(this.scene);
