@@ -47,11 +47,13 @@ export class LevelOne implements ILevel {
   public dispose(): void {
     this.camera?.dispose();
     this.light?.dispose();
+    this.entityManager?.dispose();
   }
 
   public onFinish(): void {}
 
   public run() {
+    this.dispose();
     this.camera = this.setupCameras(this.scene);
     this.light = this.setupLights(this.scene);
     this.entityManager = new EntityManager(this.scene);

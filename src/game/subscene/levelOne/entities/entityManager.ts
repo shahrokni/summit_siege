@@ -2,7 +2,7 @@ import type { GroundMesh, Mesh, Scene } from "@babylonjs/core";
 
 import { PyramidEntity } from "./pyramid";
 import { TrenchEntity } from "./trench";
-import type { IEntity } from "../../../scene";
+import type { IEntity, IEntityManager } from "../../../scene";
 import { GroundEntity } from "./ground";
 
 export type Entity = "ground" | "pyramid" | "trenches";
@@ -13,7 +13,7 @@ export type TMeshCollection = Partial<{
   trenches: IEntity<Array<Mesh>>;
 }>;
 
-export class EntityManager {
+export class EntityManager implements IEntityManager {
   constructor(scene: Scene) {
     this.meshCollection = {
       ground: undefined,
@@ -26,9 +26,15 @@ export class EntityManager {
     const pyramid = new PyramidEntity(scene, "pyramid", ground.getCubeLength());
     this.meshCollection.pyramid = pyramid;
 
-    const cylinders = new TrenchEntity(scene, "trench", ground.getCubeLength());
-    this.meshCollection.trenches = cylinders;
+    const trenches = new TrenchEntity(scene, "trench", ground.getCubeLength());
+    this.meshCollection.trenches = trenches;
   }
 
   private meshCollection: TMeshCollection;
+
+  public dispose(): void {
+    Object.keys(this.meshCollection).forEach((k) => {
+      this.meshCollection[k as keyof TMeshCollection]?.dispose();
+    });
+  }
 }

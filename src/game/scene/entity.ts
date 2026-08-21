@@ -8,6 +8,10 @@ export type TEntityCubeLength =
 export type TEntityPosition = TPosition | Map<string, TPosition>;
 export type TEntityId = string | { rootId: string; subIds: string[] };
 
+export interface IEntityManager {
+  dispose: () => void;
+}
+
 export interface IEntity<T extends TMesh> {
   getId: () => TEntityId;
   getPosition: () => TEntityPosition;
