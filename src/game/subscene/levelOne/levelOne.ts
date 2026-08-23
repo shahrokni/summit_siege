@@ -7,17 +7,22 @@ import {
 
 import type { ILevel } from "../level";
 import { EntityManager } from "./entities";
+import { InputManager, type TEvent } from "./input";
+import type { ISubscriber } from "../../scene";
 
-export class LevelOne implements ILevel {
+export class LevelOne implements ILevel, ISubscriber<TEvent> {
   constructor(scene: Scene, onFinish: () => void) {
+    this.id = "levelOne";
     this.scene = scene;
     this.onFinish = onFinish;
   }
+  id: string;
 
   private scene: Scene;
   private camera: ArcRotateCamera | undefined;
   private light: HemisphericLight | undefined;
   private entityManager: EntityManager | undefined;
+  private inputManager: InputManager | undefined;
 
   private setupCameras(scene: Scene): ArcRotateCamera {
     const camera = new ArcRotateCamera(
@@ -44,6 +49,10 @@ export class LevelOne implements ILevel {
 
   private run_loop(): void {}
 
+  public notify(context: TEvent): void {
+    console.log(context);
+  }
+
   public dispose(): void {
     this.camera?.dispose();
     this.light?.dispose();
@@ -57,5 +66,7 @@ export class LevelOne implements ILevel {
     this.camera = this.setupCameras(this.scene);
     this.light = this.setupLights(this.scene);
     this.entityManager = new EntityManager(this.scene);
+    this.inputManager = new InputManager();
+    this.inputManager.subscribe(this);
   }
 }
