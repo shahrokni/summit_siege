@@ -9,11 +9,13 @@ import type { ILevel } from "../level";
 import { EntityManager } from "./entities";
 import { InputManager, type TEvent } from "./input";
 import type { ISubscriber } from "../../scene";
+import { StateManager } from "./state";
 
 export class LevelOne implements ILevel, ISubscriber<TEvent> {
   constructor(scene: Scene, onFinish: () => void) {
     this.id = "levelOne";
     this.scene = scene;
+    this.stateManager = new StateManager();
     this.onFinish = onFinish;
   }
   id: string;
@@ -23,6 +25,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private light: HemisphericLight | undefined;
   private entityManager: EntityManager | undefined;
   private inputManager: InputManager | undefined;
+  private stateManager: StateManager | undefined;
 
   private setupCameras(scene: Scene): ArcRotateCamera {
     const camera = new ArcRotateCamera(
