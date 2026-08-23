@@ -24,6 +24,10 @@ export class StateManager {
     this.state.view = view;
   }
 
+  public get<K extends keyof IState>(key: K): IState[K] {
+    return this.state[key];
+  }
+
   public getState(): IState {
     return { ...this.state };
   }

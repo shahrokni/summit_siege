@@ -50,16 +50,45 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     return light;
   }
 
+  private handleScope(): void {
+    const view = this.stateManager?.get("view");
+    if (!view) return;
+
+    if (view === "normal") {
+      /* TODO */
+      this.stateManager?.setView("scope1");
+    } else if (view === "scope1") {
+      /* TODO */
+      this.stateManager?.setView("scope2");
+    } else {
+      /* TODO */
+      this.stateManager?.setView("normal");
+    }
+  }
+
+  private handleFire(): void {}
+
+  private handleDirection(dir: Extract<TEvent, "left" | "right">): void {
+    console.log(dir);
+  }
+
   private run_loop(): void {}
 
   public notify(context: TEvent): void {
-    console.log(context);
+    switch (context) {
+      case "scope":
+        this.handleScope();
+        break;
+      default:
+        break;
+    }
   }
 
   public dispose(): void {
     this.camera?.dispose();
     this.light?.dispose();
     this.entityManager?.dispose();
+    this.inputManager?.dispose();
   }
 
   public onFinish(): void {}
