@@ -8,6 +8,7 @@ export class Manager implements ISubscriber<IState> {
   constructor(engine: Engine) {
     this.id = "manager";
     this.scene = new Scene(engine);
+    this.scene.defaultCursor = "crosshair";
     this.state = new State("easy");
     // should be enabled when testing and debugging
     // createAxes(scene);

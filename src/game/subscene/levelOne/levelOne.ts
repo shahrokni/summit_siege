@@ -30,13 +30,12 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private setupCameras(scene: Scene): ArcRotateCamera {
     const camera = new ArcRotateCamera(
       "camera",
-      Math.PI / 2, // horizontal rotation
-      Math.PI / 3, // vertical rotation
-      10, // distance from target
-      Vector3.Zero(), // target
+      Math.PI / 4,
+      Math.PI / 3,
+      60,
+      Vector3.Zero(),
       scene,
     );
-    camera.attachControl();
     return camera;
   }
 
@@ -69,7 +68,14 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private handleFire(): void {}
 
   private handleDirection(dir: Extract<TEvent, "left" | "right">): void {
-    console.log(dir);
+    if (!this.camera) return;
+
+    const rotationSpeed = 0.01;
+    if (dir === "right") {
+      this.camera.alpha += rotationSpeed;
+    } else {
+      this.camera.alpha -= rotationSpeed;
+    }
   }
 
   private run_loop(): void {}
@@ -78,6 +84,10 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     switch (context) {
       case "scope":
         this.handleScope();
+        break;
+      case "left":
+      case "right":
+        this.handleDirection(context);
         break;
       default:
         break;

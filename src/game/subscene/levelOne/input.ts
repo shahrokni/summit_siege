@@ -4,42 +4,46 @@ export type TEvent = "scope" | "fire" | "left" | "right";
 
 export class InputManager implements IInputManager, IPublisher<TEvent> {
   constructor() {
-    window.addEventListener("keydown", this.handleKeyPress);
-    window.addEventListener("click", this.handleClick);
-    window.addEventListener("contextmenu", this.handleRightClick);
+    window.addEventListener("keydown", this.handleKeyPress.bind(this));
+    window.addEventListener("click", this.handleClick.bind(this));
+    window.addEventListener("contextmenu", this.handleRightClick.bind(this));
+    this.subscribers = [];
   }
 
-  private subscribers: Array<ISubscriber<TEvent>> = [];
+  private subscribers: Array<ISubscriber<TEvent>> | undefined;
 
   private handleKeyPress(event: KeyboardEvent): void {
     const { key } = event;
     switch (key.toLowerCase()) {
       case "a":
-        this.subscribers.forEach((s) => s.notify("left"));
+        this.subscribers?.forEach((s) => s.notify("left"));
         break;
       case "d":
-        this.subscribers.forEach((s) => s.notify("right"));
+        this.subscribers?.forEach((s) => s.notify("right"));
+        break;
+      default:
+        break;
     }
   }
 
   private handleClick(): void {
-    this.subscribers.forEach((s) => s.notify("fire"));
+    this.subscribers?.forEach((s) => s.notify("fire"));
   }
 
   private handleRightClick(): void {
-    this.subscribers.forEach((s) => s.notify("scope"));
+    this.subscribers?.forEach((s) => s.notify("scope"));
   }
 
   public subscribe(subscriber: ISubscriber<TEvent>): void {
-    const idx = this.subscribers.findIndex((s) => s.id === subscriber.id);
+    const idx = this.subscribers?.findIndex((s) => s.id === subscriber.id);
     if (idx !== -1) return;
-    this.subscribers.push(subscriber);
+    this.subscribers?.push(subscriber);
   }
 
   public unsubscribe(id: string): void {
-    const idx = this.subscribers.findIndex((s) => s.id === id);
-    if (idx === -1) return;
-    this.subscribers.splice(idx, 1);
+    const idx = this.subscribers?.findIndex((s) => s.id === id);
+    if (idx === -1 || idx === undefined) return;
+    this.subscribers?.splice(idx, 1);
   }
 
   public dispose(): void {

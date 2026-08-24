@@ -18,7 +18,11 @@ export const GameCanvas = (): ReactElement => {
 
   return (
     <canvas
-      style={{ width: "100%", height: "100%", display: "block" }}
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "block",
+      }}
       ref={canvasRef}
     />
   );

@@ -31,7 +31,7 @@ export class TrenchEntity implements IEntity<Array<Mesh>> {
 
       const _x = x + ax;
       const _z = z + az;
-      const _y = 1;
+      const _y = 0.5;
 
       trench.position.x = _x;
       trench.position.z = _z;
