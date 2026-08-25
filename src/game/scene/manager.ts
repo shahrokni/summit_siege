@@ -32,7 +32,7 @@ export class Manager implements ISubscriber<IState> {
   /* public */
   public id: string;
 
-  public run(): Scene {
+  public async run(): Promise<Scene> {
     if (this.levelInstance) {
       this.levelInstance.dispose();
       this.levelInstance = undefined;
@@ -53,7 +53,7 @@ export class Manager implements ISubscriber<IState> {
         );
     }
 
-    this.levelInstance.run();
-    return this.scene;
+    await this.levelInstance.run();
+    return new Promise((resolve) => resolve(this.scene));
   }
 }

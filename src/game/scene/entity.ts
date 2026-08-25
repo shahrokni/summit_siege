@@ -9,6 +9,7 @@ export type TEntityPosition = TPosition | Map<string, TPosition>;
 export type TEntityId = string | { rootId: string; subIds: string[] };
 
 export interface IEntityManager {
+  init: () => Promise<void>;
   dispose: () => void;
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactElement } from "react";
-import { Game } from "../game/game";
+import { game } from "../game/game";
 
 export const GameCanvas = (): ReactElement => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -9,10 +9,16 @@ export const GameCanvas = (): ReactElement => {
       return;
     }
 
-    const game = new Game(canvasRef.current);
+    let dispose: (() => void) | undefined;
+
+    const init = async () => {
+      dispose = await game(canvasRef.current!);
+    };
+
+    void init();
 
     return () => {
-      game.dispose();
+      dispose?.();
     };
   }, []);
 

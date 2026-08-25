@@ -1,5 +1,5 @@
 export interface ILevel {
   onFinish: () => void;
-  run: () => void;
+  run: () => Promise<void>;
   dispose: () => void;
 }

@@ -36,6 +36,8 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
       Vector3.Zero(),
       scene,
     );
+    // Just for debug
+    //camera.attachControl();
     return camera;
   }
 
@@ -103,11 +105,12 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
 
   public onFinish(): void {}
 
-  public run() {
+  public async run() {
     this.dispose();
     this.camera = this.setupCameras(this.scene);
     this.light = this.setupLights(this.scene);
     this.entityManager = new EntityManager(this.scene);
+    await this.entityManager.init();
     this.inputManager = new InputManager();
     this.inputManager.subscribe(this);
   }
