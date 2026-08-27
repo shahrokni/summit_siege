@@ -21,3 +21,10 @@ export interface IEntity<T extends TMesh> {
   getMesh: () => T;
   dispose: () => void;
 }
+
+export interface IEntityCollection {
+  add: (param: { position: TPosition; scale: number }) => void;
+  init: () => Promise<void>;
+  dispose: () => void;
+  disposeById: (entityId: string) => void;
+}
