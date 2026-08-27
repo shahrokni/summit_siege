@@ -37,7 +37,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
       scene,
     );
     // Just for debug
-    //camera.attachControl();
+    // camera.attachControl();
     return camera;
   }
 

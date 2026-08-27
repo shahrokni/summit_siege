@@ -1,7 +1,9 @@
 import {
   AssetContainer,
+  Color3,
   LoadAssetContainerAsync,
   Mesh,
+  StandardMaterial,
   type Scene,
 } from "@babylonjs/core";
 import type {
@@ -54,6 +56,8 @@ export class DecoyEntityCollection implements IEntityCollection {
     const rootId = this.getNextId();
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
+    const material = new StandardMaterial(`red-${rootId}`, this.scene);
+    material.diffuseColor = new Color3(1, 0, 0);
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
         m.position.set(param.position.x, param.position.y, param.position.z);
@@ -63,6 +67,7 @@ export class DecoyEntityCollection implements IEntityCollection {
           m.rotation.y = param.rotation.y;
           m.rotation.z = param.rotation.z;
         }
+        m.material = material;
         meshes.push(m);
       }
     }

@@ -1,5 +1,5 @@
 import type { GroundMesh, Mesh } from "@babylonjs/core";
-import type { TPosition } from "./global";
+import type { TPosition, TRotation } from "./global";
 
 export type TMesh = GroundMesh | Array<Mesh>;
 export type TEntityCubeLength =
@@ -23,7 +23,11 @@ export interface IEntity<T extends TMesh> {
 }
 
 export interface IEntityCollection {
-  add: (param: { position: TPosition; scale: number }) => void;
+  add: (param: {
+    position: TPosition;
+    scale: number;
+    rotation?: TRotation;
+  }) => void;
   init: () => Promise<void>;
   dispose: () => void;
   disposeById: (entityId: string) => void;
