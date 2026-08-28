@@ -1,43 +1,32 @@
 import {
-  AssetContainer,
   Color3,
   LoadAssetContainerAsync,
   Mesh,
   StandardMaterial,
   type Scene,
 } from "@babylonjs/core";
-import type {
-  IEntity,
-  IEntityCollection,
-  TPosition,
-  TRotation,
-} from "../../scene";
+import {
+  EntityCollection,
+  type IEntity,
+  type IEntityCollection,
+} from "../../scene/entity";
 import { DecoyEntity } from "./decoy";
+import type { TPosition, TRotation } from "../../scene/global";
 
-export class DecoyEntityCollection implements IEntityCollection {
+export class DecoyEntityCollection
+  extends EntityCollection<IEntity<Array<Mesh>>>
+  implements IEntityCollection
+{
   constructor(scene: Scene) {
-    this.scene = scene;
+    super(scene);
     this.nextId = -1;
   }
 
-  private collection: Array<IEntity<Array<Mesh>>> = [];
-  private container: AssetContainer | undefined;
-  private scene: Scene;
   private nextId: number;
 
   private getNextId(): number {
     this.nextId += 1;
     return this.nextId;
-  }
-
-  private findBydId(
-    entityId: string,
-  ): { entity: IEntity<Array<Mesh>>; idx: number } | undefined {
-    const entityIndex = this.collection.findIndex(
-      (e) => e.getId() === entityId,
-    );
-    if (entityIndex == -1) return undefined;
-    return { entity: this.collection[entityIndex], idx: entityIndex };
   }
 
   public async init(): Promise<void> {
@@ -73,21 +62,5 @@ export class DecoyEntityCollection implements IEntityCollection {
     }
     const decoy = new DecoyEntity(`${rootId}`, meshes, param.position);
     this.collection.push(decoy);
-  }
-
-  public disposeById(entityId: string): void {
-    const response = this.findBydId(entityId);
-    if (!response) {
-      console.warn("No object found to dispose!");
-      return;
-    }
-    const { entity, idx } = response;
-    entity.dispose();
-    this.collection.splice(idx, 1);
-  }
-
-  public dispose(): void {
-    this.collection.forEach((e) => e.dispose());
-    this.collection.splice(0, this.collection.length);
   }
 }

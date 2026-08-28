@@ -1,33 +1,22 @@
-import {
-  LoadAssetContainerAsync,
-  Mesh,
-  type AssetContainer,
-  type Scene,
-} from "@babylonjs/core";
+import { LoadAssetContainerAsync, Mesh, type Scene } from "@babylonjs/core";
 import type { TPosition, TRotation } from "../../scene";
-import type { IEntity, IEntityCollection } from "../../scene/entity";
+import {
+  EntityCollection,
+  type IEntity,
+  type IEntityCollection,
+} from "../../scene/entity";
 import { PlatformEntity } from "./platform";
 
-export class PlatformEntityCollection implements IEntityCollection {
+export class PlatformEntityCollection
+  extends EntityCollection<IEntity<Array<Mesh>>>
+  implements IEntityCollection
+{
   constructor(scene: Scene, groundLength: number) {
-    this.scene = scene;
+    super(scene);
     this.groundLength = groundLength;
   }
 
-  private scene: Scene;
-  private collection: Array<IEntity<Array<Mesh>>> = [];
-  private container: AssetContainer | undefined;
   private groundLength: number;
-
-  private findBydId(
-    entityId: string,
-  ): { entity: IEntity<Array<Mesh>>; idx: number } | undefined {
-    const entityIndex = this.collection.findIndex(
-      (e) => e.getId() === entityId,
-    );
-    if (entityIndex == -1) return undefined;
-    return { entity: this.collection[entityIndex], idx: entityIndex };
-  }
 
   public add(param: {
     position: TPosition;
@@ -80,21 +69,5 @@ export class PlatformEntityCollection implements IEntityCollection {
       });
       this.collection.push(platform);
     });
-  }
-
-  public dispose(): void {
-    this.collection.forEach((e) => e.dispose());
-    this.collection.splice(0, this.collection.length);
-  }
-
-  public disposeById(entityId: string): void {
-    const response = this.findBydId(entityId);
-    if (!response) {
-      console.warn("No object found to dispose!");
-      return;
-    }
-    const { entity, idx } = response;
-    entity.dispose();
-    this.collection.splice(idx, 1);
   }
 }
