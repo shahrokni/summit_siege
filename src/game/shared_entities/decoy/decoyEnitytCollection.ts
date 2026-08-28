@@ -46,9 +46,9 @@ export class DecoyEntityCollection
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("fabric050", this.scene);
+    const material = new StandardMaterial("fabric", this.scene);
     const texture = new Texture(
-      "textures/fabric077_1K/Fabric077_1K-PNG_Color.png",
+      "public/textures/fabric033_1K/Fabric033_1K-JPG_Color.jpg",
       this.scene,
     );
     material.diffuseTexture = texture;

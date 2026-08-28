@@ -1,6 +1,7 @@
 import {
   ArcRotateCamera,
   HemisphericLight,
+  MeshBuilder,
   Vector3,
   type Scene,
 } from "@babylonjs/core";
@@ -10,6 +11,7 @@ import { EntityManager } from "./entities";
 import { InputManager, type TEvent } from "./input";
 import type { ISubscriber } from "../../scene";
 import { StateManager } from "./state";
+import { SkyMaterial } from "@babylonjs/materials/sky";
 
 export class LevelOne implements ILevel, ISubscriber<TEvent> {
   constructor(scene: Scene, onFinish: () => void) {
@@ -49,6 +51,18 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     );
     light.intensity = 0.8;
     return light;
+  }
+
+  private setupSky(scene: Scene): void {
+    if (!scene.activeCamera) return;
+
+    const skyBox = MeshBuilder.CreateBox("skyBox", { size: 200 }, this.scene);
+    const skyMaterial = new SkyMaterial("skyMaterial", scene);
+    skyMaterial.backFaceCulling = false;
+    skyMaterial.cameraOffset.y = scene.activeCamera.globalPosition.y;
+    skyMaterial.inclination = 0;
+    skyBox.material = skyMaterial;
+    skyBox.infiniteDistance = false;
   }
 
   private handleScope(): void {
@@ -113,5 +127,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     await this.entityManager.init();
     this.inputManager = new InputManager();
     this.inputManager.subscribe(this);
+    this.setupSky(this.scene);
   }
 }
