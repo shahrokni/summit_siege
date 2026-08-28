@@ -1,9 +1,9 @@
 import {
-  Color3,
   Mesh,
   MeshBuilder,
   Scene,
   StandardMaterial,
+  Texture,
 } from "@babylonjs/core";
 import type {
   IEntity,
@@ -29,8 +29,15 @@ export class PyramidEntity implements IEntity<Array<Mesh>> {
     this.pyramidBase = pyramidBase;
     let currentPyramidBase = pyramidBase;
 
-    const clayMat = new StandardMaterial("clay", scene);
-    clayMat.diffuseColor = Color3.FromHexString("#A66A3F");
+    const material = new StandardMaterial("pyramidMaterial", scene);
+    const texture = new Texture(
+      "public/textures/ground007_1K/Ground007_1K-JPG_Color.jpg",
+      scene,
+    );
+
+    texture.uScale = 6;
+    texture.vScale = 6;
+    material.diffuseTexture = texture;
 
     while (currentPyramidBase > 0) {
       const boxOptions: Options = {
@@ -51,7 +58,7 @@ export class PyramidEntity implements IEntity<Array<Mesh>> {
       box.position.z = z;
 
       this.positions.set(subId, { x, y, z });
-      box.material = clayMat;
+      box.material = material;
       this.pyramid.push(box);
 
       currentPyramidBase -= FACTOR;

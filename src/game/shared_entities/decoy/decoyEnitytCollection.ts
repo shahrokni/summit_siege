@@ -1,8 +1,8 @@
 import {
-  Color3,
   LoadAssetContainerAsync,
   Mesh,
   StandardMaterial,
+  Texture,
   type Scene,
 } from "@babylonjs/core";
 import {
@@ -45,8 +45,14 @@ export class DecoyEntityCollection
     const rootId = this.getNextId();
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
-    const material = new StandardMaterial(`red-${rootId}`, this.scene);
-    material.diffuseColor = new Color3(1, 0, 0);
+
+    const material = new StandardMaterial("fabric050", this.scene);
+    const texture = new Texture(
+      "textures/fabric077_1K/Fabric077_1K-PNG_Color.png",
+      this.scene,
+    );
+    material.diffuseTexture = texture;
+
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
         m.position.set(param.position.x, param.position.y, param.position.z);

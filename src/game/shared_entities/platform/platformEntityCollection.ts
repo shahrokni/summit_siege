@@ -1,4 +1,10 @@
-import { LoadAssetContainerAsync, Mesh, type Scene } from "@babylonjs/core";
+import {
+  LoadAssetContainerAsync,
+  Mesh,
+  StandardMaterial,
+  Texture,
+  type Scene,
+} from "@babylonjs/core";
 import type { TPosition, TRotation } from "../../scene";
 import {
   EntityCollection,
@@ -29,7 +35,7 @@ export class PlatformEntityCollection
   public async init(): Promise<void> {
     if (this.container) return;
     this.container = await LoadAssetContainerAsync(
-      "/models/platform.obj",
+      "/models/platform1.obj",
       this.scene,
     );
 
@@ -40,6 +46,13 @@ export class PlatformEntityCollection
       bl: [gl / 2, gl / 2, -2, -2, Math.PI / -2],
       br: [gl / -2, gl / 2, 2, -2, Math.PI / -2],
     };
+
+    const material = new StandardMaterial("metalMaterial", this.scene);
+    const texture = new Texture(
+      "public/textures/metal053C_1K/Metal053C_1K-JPG_Color.jpg",
+      this.scene,
+    );
+    material.diffuseTexture = texture;
 
     Object.keys(locations).forEach((k) => {
       const [x, z, ax, az, rotationY] = locations[k];
@@ -58,6 +71,7 @@ export class PlatformEntityCollection
           m.position.set(_x, _y, _z);
           m.rotation.y = rotationY;
           m.scaling.setAll(0.6);
+          m.material = material;
           meshes.push(m);
         }
       }

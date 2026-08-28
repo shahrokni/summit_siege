@@ -1,8 +1,8 @@
 import {
-  Color3,
   GroundMesh,
   MeshBuilder,
   StandardMaterial,
+  Texture,
   type Scene,
 } from "@babylonjs/core";
 
@@ -20,8 +20,16 @@ export class GroundEntity implements IEntity<GroundMesh> {
     );
 
     const material = new StandardMaterial("groundMaterial", scene);
-    material.diffuseColor = Color3.FromHexString("#C7A66A");
+    const texture = new Texture(
+      "public/textures/ground062S_1K/Ground062S_1K-JPG_Color.jpg",
+      scene,
+    );
+
+    texture.uScale = 6;
+    texture.vScale = 6;
+    material.diffuseTexture = texture;
     ground.material = material;
+
     this.mesh = ground;
   }
 
