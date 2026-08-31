@@ -18,3 +18,39 @@ Contributions are very welcome! Feel free to open issues, suggest improvements, 
 
 
 <img width="1101" height="813" alt="image" src="https://github.com/user-attachments/assets/40e307bb-e5cf-4f7c-93c1-e8da2ab77467" />
+
+### Running the Project Locally
+
+To run the project please follow these steps:
+
+#### Clone the Project
+
+Make sure Git is installed on your machine. You can check the installed version by running:
+> git --version
+
+Clone the project by running the following command:
+
+> git clone https://github.com/shahrokni/summit_siege.git
+
+#### Install npm and node
+
+Make sure npm and node are installed on your machine. You can check the installed version by running:
+> npm --version
+
+> node --version
+
+#### Install Dependencies
+
+Open the project directory and install the dependencies:
+
+> cd summit_siege
+
+> npm install
+
+#### Run the Project
+
+Start the development server by running:
+> npm run dev
+
+Once the development server is running, open the following URL in your browser:
+> http://localhost:5173/
