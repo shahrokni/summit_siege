@@ -5,6 +5,7 @@ import { GroundEntity } from "./ground";
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
 import { PlatformEntityCollection } from "../../../shared_entities/platform/platformEntityCollection";
+import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humaveeEntityCollection";
 
 export type Entity = "ground" | "pyramid" | "trenches";
 
@@ -13,6 +14,7 @@ export type TEntityCollection = Partial<{
   pyramid: IEntity<Array<Mesh>>;
   platforms: PlatformEntityCollection;
   decoys: DecoyEntityCollection;
+  humavees: HumaveeEntityCollection;
 }>;
 
 export class EntityManager implements IEntityManager {
@@ -22,6 +24,7 @@ export class EntityManager implements IEntityManager {
       pyramid: undefined,
       platforms: undefined,
       decoys: undefined,
+      humavees: undefined,
     };
     this.scene = scene;
     registerBuiltInLoaders();
@@ -48,6 +51,7 @@ export class EntityManager implements IEntityManager {
     this.entityCollection.platforms = platformCollection;
     await platformCollection.init();
 
+    /* TEST */
     const decoyCollection = new DecoyEntityCollection(this.scene);
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
@@ -56,6 +60,16 @@ export class EntityManager implements IEntityManager {
       position: { x: 18, y: 2, z: 18 },
       scale: 0.3,
       rotation: { y: 0, x: 0, z: 0 },
+    });
+
+    const humaveeCollection = new HumaveeEntityCollection(this.scene);
+    this.entityCollection.humavees = humaveeCollection;
+    await humaveeCollection.init();
+
+    humaveeCollection.add({
+      position: { x: 18, y: 0, z: 13 },
+      scale: 1.5,
+      rotation: { y: Math.PI / -2, x: 0, z: 0 },
     });
   }
 
