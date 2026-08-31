@@ -19,6 +19,15 @@ export class GroundEntity implements IEntity<GroundMesh> {
       scene,
     );
 
+    const groundExtension = MeshBuilder.CreateGround(
+      `${id}-extension`,
+      {
+        width: this.length * 2,
+        height: this.length * 2,
+      },
+      scene,
+    );
+
     const material = new StandardMaterial("groundMaterial", scene);
     const texture = new Texture(
       "public/textures/ground062S_1K/Ground062S_1K-JPG_Color.jpg",
@@ -28,7 +37,11 @@ export class GroundEntity implements IEntity<GroundMesh> {
     texture.uScale = 6;
     texture.vScale = 6;
     material.diffuseTexture = texture;
-    ground.material = material;
+    groundExtension.material = material;
+
+    const transparent = new StandardMaterial("transparent", scene);
+    transparent.alpha = 0;
+    ground.material = transparent;
 
     this.mesh = ground;
   }

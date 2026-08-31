@@ -41,10 +41,10 @@ export class PlatformEntityCollection
 
     const gl = this.groundLength;
     const locations: Record<string, number[]> = {
-      tl: [gl / 2, gl / -2, -2, 2, Math.PI / 2],
-      tr: [gl / -2, gl / -2, 2, 2, Math.PI / 2],
+      // tl: [gl / 2, gl / -2, -2, 2, Math.PI / 2],
+      // tr: [gl / -2, gl / -2, 2, 2, Math.PI / 2],
       bl: [gl / 2, gl / 2, -2, -2, Math.PI / -2],
-      br: [gl / -2, gl / 2, 2, -2, Math.PI / -2],
+      // br: [gl / -2, gl / 2, 2, -2, Math.PI / -2],
     };
 
     const material = new StandardMaterial("metalMaterial", this.scene);
