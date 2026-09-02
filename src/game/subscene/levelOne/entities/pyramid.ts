@@ -25,7 +25,7 @@ const HEIGHT = 1;
 export class PyramidEntity implements IEntity<Array<Mesh>> {
   constructor(scene: Scene, id: string, groundLength: number) {
     this.rootId = id;
-    const pyramidBase = groundLength / FACTOR;
+    const pyramidBase = groundLength;
     this.pyramidBase = pyramidBase;
     let currentPyramidBase = pyramidBase;
 

@@ -44,12 +44,14 @@ export class EntityManager implements IEntityManager {
     );
     this.entityCollection.pyramid = pyramid;
 
-    const platformCollection = new PlatformEntityCollection(
-      this.scene,
-      ground.getCubeLength(),
-    );
+    const platformCollection = new PlatformEntityCollection(this.scene);
     this.entityCollection.platforms = platformCollection;
     await platformCollection.init();
+    platformCollection.add({
+      position: { x: 25, y: 0, z: 18 },
+      scale: 0.6,
+      rotation: { z: 0, x: 0, y: Math.PI / -2 },
+    });
 
     /* TEST */
     const decoyCollection = new DecoyEntityCollection(this.scene);
@@ -57,7 +59,7 @@ export class EntityManager implements IEntityManager {
     await decoyCollection.init();
 
     decoyCollection.add({
-      position: { x: 18, y: 2, z: 18 },
+      position: { x: 25, y: 2, z: 18 },
       scale: 0.3,
       rotation: { y: 0, x: 0, z: 0 },
     });
@@ -67,7 +69,7 @@ export class EntityManager implements IEntityManager {
     await humaveeCollection.init();
 
     humaveeCollection.add({
-      position: { x: 18, y: 0, z: 13 },
+      position: { x: 25, y: 0, z: 13 },
       scale: 1.5,
       rotation: { y: Math.PI / -2, x: 0, z: 0 },
     });
