@@ -6,7 +6,7 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
   constructor() {
     window.addEventListener("keydown", this.handleKeyPress.bind(this));
     window.addEventListener("click", this.handleClick.bind(this));
-    window.addEventListener("contextmenu", this.handleRightClick.bind(this));
+    window.addEventListener("auxclick", this.handleRightClick.bind(this));
     this.subscribers = [];
   }
 
@@ -30,7 +30,8 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
     this.subscribers?.forEach((s) => s.notify("fire"));
   }
 
-  private handleRightClick(): void {
+  private handleRightClick(event: PointerEvent): void {
+    if (event.button !== 2) return;
     this.subscribers?.forEach((s) => s.notify("scope"));
   }
 
@@ -49,6 +50,6 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
   public dispose(): void {
     window.removeEventListener("keydown", this.handleKeyPress);
     window.removeEventListener("click", this.handleClick);
-    window.removeEventListener("scope", this.handleRightClick);
+    window.removeEventListener("auxclick", this.handleRightClick);
   }
 }

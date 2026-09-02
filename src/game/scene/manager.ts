@@ -5,7 +5,13 @@ import type { ILevel } from "../subscene/level";
 import type { ISubscriber } from "./observer";
 
 export class Manager implements ISubscriber<IState> {
-  constructor(engine: Engine) {
+  constructor(
+    engine: Engine,
+    canvas: HTMLCanvasElement,
+    overlay: HTMLDivElement,
+  ) {
+    this.canvas = canvas;
+    this.overlay = overlay;
     this.id = "manager";
     this.scene = new Scene(engine);
     this.scene.defaultCursor = "crosshair";
@@ -18,6 +24,8 @@ export class Manager implements ISubscriber<IState> {
   private scene: Scene;
   private state: State;
   private levelInstance: ILevel | undefined;
+  private canvas: HTMLCanvasElement;
+  private overlay: HTMLDivElement;
 
   public notify(state: IState): void {
     switch (state.key) {
@@ -43,12 +51,16 @@ export class Manager implements ISubscriber<IState> {
       case 1:
         this.levelInstance = new LevelOne(
           this.scene,
+          this.canvas,
+          this.overlay,
           this.state.incrementLevel,
         );
         break;
       default:
         this.levelInstance = new LevelOne(
           this.scene,
+          this.canvas,
+          this.overlay,
           this.state.incrementLevel,
         );
     }

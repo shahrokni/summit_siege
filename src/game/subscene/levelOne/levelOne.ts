@@ -1,5 +1,4 @@
 import {
-  ArcRotateCamera,
   HemisphericLight,
   MeshBuilder,
   Vector3,
@@ -12,35 +11,37 @@ import { InputManager, type TEvent } from "./input";
 import type { ISubscriber } from "../../scene";
 import { StateManager } from "./state";
 import { SkyMaterial } from "@babylonjs/materials/sky";
+import { Camera } from "./entities/camera";
 
 export class LevelOne implements ILevel, ISubscriber<TEvent> {
-  constructor(scene: Scene, onFinish: () => void) {
+  constructor(
+    scene: Scene,
+    canvas: HTMLCanvasElement,
+    overlay: HTMLDivElement,
+    onFinish: () => void,
+  ) {
     this.id = "levelOne";
+    this.canvas = canvas;
+    this.overlay = overlay;
     this.scene = scene;
     this.stateManager = new StateManager();
     this.onFinish = onFinish;
   }
-  id: string;
 
+  id: string;
   private scene: Scene;
-  private camera: ArcRotateCamera | undefined;
   private light: HemisphericLight | undefined;
   private entityManager: EntityManager | undefined;
   private inputManager: InputManager | undefined;
   private stateManager: StateManager | undefined;
+  private camera: Camera | undefined;
+  private canvas: HTMLCanvasElement;
+  private overlay: HTMLDivElement;
 
-  private setupCameras(scene: Scene): ArcRotateCamera {
-    const camera = new ArcRotateCamera(
-      "camera",
-      Math.PI / 4,
-      Math.PI / 3,
-      60,
-      Vector3.Zero(),
-      scene,
-    );
-    // Just for debug
-    camera.attachControl();
-    return camera;
+  private async setCanvas(): Promise<void> {
+    await this.canvas.requestPointerLock({
+      unadjustedMovement: true,
+    });
   }
 
   private setupLights(scene: Scene): HemisphericLight {
@@ -66,33 +67,57 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   }
 
   private handleScope(): void {
-    const view = this.stateManager?.get("view");
-    if (!view) return;
+    const currentView = this.stateManager?.get("view");
+    if (!currentView || !this.camera || !this.stateManager) return;
 
-    if (view === "normal") {
-      /* TODO */
-      this.stateManager?.setView("scope1");
-    } else if (view === "scope1") {
-      /* TODO */
-      this.stateManager?.setView("scope2");
-    } else {
-      /* TODO */
-      this.stateManager?.setView("normal");
+    switch (currentView) {
+      case "normal":
+        this.stateManager.setView("scope1");
+        break;
+      case "scope1":
+        this.stateManager.setView("scope2");
+        break;
+      case "scope2":
+        this.stateManager.setView("normal");
+        break;
+      default:
+        break;
     }
+    if (
+      ["scope1", "scope2"].some((v) => v === this.stateManager?.get("view"))
+    ) {
+      this.overlay.style.background = `
+                          radial-gradient(
+                            circle at center,
+                            transparent 0,
+                            transparent 220px,
+                            black 221px,
+                            black 100%
+                          )
+                        `;
+      this.overlay.style.backgroundImage = `
+                        url('/scope-overlay.png'),
+                        radial-gradient(
+                          circle at center,
+                          transparent 0,
+                          transparent 220px,
+                          black 221px,
+                          black 100%
+                        )
+                      `;
+      this.overlay.style.backgroundPosition = "center";
+      this.overlay.style.backgroundRepeat = "no-repeat";
+    } else {
+      this.overlay.style.background = "";
+      this.overlay.style.backgroundImage = "";
+      this.overlay.style.backgroundPosition = "";
+      this.overlay.style.backgroundRepeat = "";
+    }
+
+    this.camera.changeFov(this.stateManager.get("view"));
   }
 
   private handleFire(): void {}
-
-  private handleDirection(dir: Extract<TEvent, "left" | "right">): void {
-    if (!this.camera) return;
-
-    const rotationSpeed = 0.01;
-    if (dir === "right") {
-      this.camera.alpha += rotationSpeed;
-    } else {
-      this.camera.alpha -= rotationSpeed;
-    }
-  }
 
   private run_loop(): void {}
 
@@ -100,10 +125,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     switch (context) {
       case "scope":
         this.handleScope();
-        break;
-      case "left":
-      case "right":
-        this.handleDirection(context);
         break;
       default:
         break;
@@ -121,8 +142,11 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
 
   public async run() {
     this.dispose();
-    this.camera = this.setupCameras(this.scene);
+    this.canvas.removeEventListener("click", this.setCanvas.bind(this));
+
+    this.camera = new Camera(this.scene);
     this.light = this.setupLights(this.scene);
+    this.canvas.addEventListener("click", this.setCanvas.bind(this));
     this.entityManager = new EntityManager(this.scene);
     await this.entityManager.init();
     this.inputManager = new InputManager();

@@ -1,9 +1,12 @@
 import { Engine } from "@babylonjs/core";
 import { Manager } from "./scene";
 
-export async function game(canvas: HTMLCanvasElement): Promise<() => void> {
+export async function game(
+  canvas: HTMLCanvasElement,
+  overlay: HTMLDivElement,
+): Promise<() => void> {
   const engine = new Engine(canvas, true);
-  const manager = new Manager(engine);
+  const manager = new Manager(engine, canvas, overlay);
   const scene = await manager.run();
 
   engine.runRenderLoop(() => {
