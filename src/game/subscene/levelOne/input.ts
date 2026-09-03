@@ -1,37 +1,47 @@
+import {
+  PointerEventTypes,
+  type Observer,
+  type PointerInfo,
+  type Scene,
+} from "@babylonjs/core";
 import type { IInputManager, IPublisher, ISubscriber } from "../../scene";
 
-export type TEvent = "scope" | "fire" | "left" | "right";
+export type TEvent = "scope" | "fire";
 
 export class InputManager implements IInputManager, IPublisher<TEvent> {
-  constructor() {
-    window.addEventListener("keydown", this.handleKeyPress.bind(this));
-    window.addEventListener("click", this.handleClick.bind(this));
-    window.addEventListener("auxclick", this.handleRightClick.bind(this));
-    this.subscribers = [];
+  constructor(scene: Scene) {
+    this.scene = scene;
+    this.scene.preventDefaultOnPointerDown = true;
+
+    this.pointerObserver = this.scene.onPointerObservable.add((pointerInfo) => {
+      const event = pointerInfo.event;
+
+      switch (event.button) {
+        case 2:
+          if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+            this.handleRightClick();
+          }
+          break;
+        case 0:
+          if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+            this.handleClick();
+          }
+          break;
+        default:
+          break;
+      }
+    });
   }
 
-  private subscribers: Array<ISubscriber<TEvent>> | undefined;
-
-  private handleKeyPress(event: KeyboardEvent): void {
-    const { key } = event;
-    switch (key.toLowerCase()) {
-      case "a":
-        this.subscribers?.forEach((s) => s.notify("left"));
-        break;
-      case "d":
-        this.subscribers?.forEach((s) => s.notify("right"));
-        break;
-      default:
-        break;
-    }
-  }
+  private subscribers: Array<ISubscriber<TEvent>> = [];
+  private scene: Scene;
+  private pointerObserver: Observer<PointerInfo>;
 
   private handleClick(): void {
     this.subscribers?.forEach((s) => s.notify("fire"));
   }
 
-  private handleRightClick(event: PointerEvent): void {
-    if (event.button !== 2) return;
+  private handleRightClick(): void {
     this.subscribers?.forEach((s) => s.notify("scope"));
   }
 
@@ -48,8 +58,7 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
   }
 
   public dispose(): void {
-    window.removeEventListener("keydown", this.handleKeyPress);
-    window.removeEventListener("click", this.handleClick);
-    window.removeEventListener("auxclick", this.handleRightClick);
+    this.scene.preventDefaultOnPointerDown = false;
+    this.scene.onPointerObservable.remove(this.pointerObserver);
   }
 }

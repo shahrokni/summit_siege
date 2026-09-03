@@ -39,9 +39,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private overlay: HTMLDivElement;
 
   private async setCanvas(): Promise<void> {
-    await this.canvas.requestPointerLock({
-      unadjustedMovement: true,
-    });
+    await this.canvas.requestPointerLock();
   }
 
   private setupLights(scene: Scene): HemisphericLight {
@@ -149,7 +147,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     this.canvas.addEventListener("click", this.setCanvas.bind(this));
     this.entityManager = new EntityManager(this.scene);
     await this.entityManager.init();
-    this.inputManager = new InputManager();
+    this.inputManager = new InputManager(this.scene);
     this.inputManager.subscribe(this);
     this.setupSky(this.scene);
   }
