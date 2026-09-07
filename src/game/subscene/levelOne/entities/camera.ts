@@ -1,4 +1,4 @@
-import { UniversalCamera, Vector3, type Scene } from "@babylonjs/core";
+import { Ray, UniversalCamera, Vector3, type Scene } from "@babylonjs/core";
 import type { TPlayerView } from "../state";
 
 export class Camera {
@@ -18,7 +18,7 @@ export class Camera {
   }
 
   private normalFov: number | undefined;
-  private camera: UniversalCamera | undefined;
+  private camera: UniversalCamera;
   private fovMap: Record<TPlayerView, number> | undefined;
 
   public changeFov(view: TPlayerView): void {
@@ -28,6 +28,14 @@ export class Camera {
 
     if (fov === undefined) return;
     this.camera.fov = fov;
+  }
+
+  public getForwardRay(length: number): Ray {
+    if (!this.camera) {
+      throw new Error("camera is undefined");
+    }
+
+    return this.camera.getForwardRay(length);
   }
 
   public dispose() {

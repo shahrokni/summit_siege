@@ -5,7 +5,7 @@ export async function game(
   canvas: HTMLCanvasElement,
   overlay: HTMLDivElement,
 ): Promise<() => void> {
-  const engine = new Engine(canvas, true);
+  const engine = new Engine(canvas, true, { audioEngine: true });
   const manager = new Manager(engine, canvas, overlay);
   const scene = await manager.run();
 

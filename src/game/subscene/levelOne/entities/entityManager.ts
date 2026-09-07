@@ -33,6 +33,10 @@ export class EntityManager implements IEntityManager {
   private entityCollection: TEntityCollection;
   private scene: Scene;
 
+  public getDecoysCollection(): DecoyEntityCollection | undefined {
+    return this.entityCollection.decoys;
+  }
+
   public async init(): Promise<void> {
     const ground = new GroundEntity(this.scene, "ground");
     this.entityCollection.ground = ground;

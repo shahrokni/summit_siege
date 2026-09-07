@@ -22,13 +22,14 @@ export interface IEntity<T extends TMesh> {
   dispose: () => void;
 }
 
-export interface IEntityCollection {
+export interface IEntityCollection<T> {
   add: (param: {
     position: TPosition;
     scale: number;
     rotation?: TRotation;
   }) => void;
   init: () => Promise<void>;
+  findBydId: (entityId: string) => { entity: T; idx: number } | undefined;
   dispose: () => void;
   disposeById: (entityId: string) => void;
 }
@@ -42,9 +43,7 @@ export class EntityCollection<T extends IEntity<TMesh>> {
   protected collection: Array<T> = [];
   protected container: AssetContainer | undefined;
 
-  protected findBydId(
-    entityId: string,
-  ): { entity: T; idx: number } | undefined {
+  public findBydId(entityId: string): { entity: T; idx: number } | undefined {
     const entityIndex = this.collection.findIndex(
       (e) => e.getId() === entityId,
     );

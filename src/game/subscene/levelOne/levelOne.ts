@@ -1,6 +1,7 @@
 import {
   HemisphericLight,
   MeshBuilder,
+  Sound,
   Vector3,
   type Scene,
 } from "@babylonjs/core";
@@ -12,6 +13,7 @@ import type { ISubscriber } from "../../scene";
 import { StateManager } from "./state";
 import { SkyMaterial } from "@babylonjs/materials/sky";
 import { Camera } from "./entities/camera";
+import type { DecoyEntity } from "../../shared_entities/decoy/decoy";
 
 export class LevelOne implements ILevel, ISubscriber<TEvent> {
   constructor(
@@ -26,6 +28,44 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     this.scene = scene;
     this.stateManager = new StateManager();
     this.onFinish = onFinish;
+    this.gunSound = new Sound(
+      "gun-shot",
+      "/sound/sniper_gun_fire.mp3",
+      this.scene,
+      undefined,
+      {
+        volume: 0.7,
+      },
+    );
+    this.helicopterSound = new Sound(
+      "helicopter",
+      "/sound/helicopter.mp3",
+      this.scene,
+      () => {
+        this.helicopterSound.play();
+      },
+      {
+        loop: true,
+        autoplay: false,
+        volume: 0.35,
+      },
+    );
+
+    this.radioChatSound = new Sound(
+      "helicopter",
+      "/sound/radio_chat.mp3",
+      this.scene,
+      () => {
+        this.helicopterSound.play();
+      },
+      {
+        loop: false,
+        autoplay: false,
+        volume: 0.6,
+      },
+    );
+
+    this.helicopterSound.play();
   }
 
   id: string;
@@ -37,6 +77,10 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private camera: Camera | undefined;
   private canvas: HTMLCanvasElement;
   private overlay: HTMLDivElement;
+  private gunLock: boolean = false;
+  private gunSound: Sound;
+  private helicopterSound: Sound;
+  private radioChatSound: Sound;
 
   private async setCanvas(): Promise<void> {
     await this.canvas.requestPointerLock();
@@ -84,25 +128,23 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     if (
       ["scope1", "scope2"].some((v) => v === this.stateManager?.get("view"))
     ) {
-      this.overlay.style.background = `
-                          radial-gradient(
+      const background = `radial-gradient(
                             circle at center,
                             transparent 0,
                             transparent 220px,
                             black 221px,
                             black 100%
-                          )
-                        `;
-      this.overlay.style.backgroundImage = `
-                        url('/scope-overlay.png'),
+                          )`;
+      const backgroundImage = `url('/scope-overlay.png'),
                         radial-gradient(
                           circle at center,
                           transparent 0,
                           transparent 220px,
                           black 221px,
                           black 100%
-                        )
-                      `;
+                        )`;
+      this.overlay.style.background = background;
+      this.overlay.style.backgroundImage = backgroundImage;
       this.overlay.style.backgroundPosition = "center";
       this.overlay.style.backgroundRepeat = "no-repeat";
     } else {
@@ -115,7 +157,43 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     this.camera.changeFov(this.stateManager.get("view"));
   }
 
-  private handleFire(): void {}
+  private handleFire(): void {
+    if (this.gunLock) return;
+
+    this.gunLock = true;
+    this.gunSound.play();
+    try {
+      const cameraRay = this.camera?.getForwardRay(1000);
+      if (!cameraRay) return;
+      const pickingRayInfo = this.scene.pickWithRay(cameraRay);
+      const name = pickingRayInfo?.pickedMesh?.name;
+      if (!name) {
+        return;
+      }
+
+      if (name.startsWith("decoy")) {
+        this.radioChatSound.play();
+        const decoyCollection = this.entityManager?.getDecoysCollection();
+        if (!decoyCollection) {
+          return;
+        }
+
+        const [e, idx] = name.split("-");
+        const entityId = `${e}-${idx}`;
+        const { entity } = decoyCollection.findBydId(entityId) || {};
+        const decoyEntity = entity as DecoyEntity;
+        if (!decoyEntity) {
+          return;
+        }
+        decoyEntity.hit();
+        setTimeout(() => {
+          decoyCollection.disposeById(entityId);
+        }, 10);
+      }
+    } finally {
+      this.gunLock = false;
+    }
+  }
 
   private run_loop(): void {}
 
@@ -123,6 +201,9 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     switch (context) {
       case "scope":
         this.handleScope();
+        break;
+      case "fire":
+        this.handleFire();
         break;
       default:
         break;

@@ -15,7 +15,7 @@ import type { TPosition, TRotation } from "../../scene/global";
 
 export class DecoyEntityCollection
   extends EntityCollection<IEntity<Array<Mesh>>>
-  implements IEntityCollection
+  implements IEntityCollection<IEntity<Array<Mesh>>>
 {
   constructor(scene: Scene) {
     super(scene);
@@ -24,9 +24,9 @@ export class DecoyEntityCollection
 
   private nextId: number;
 
-  private getNextId(): number {
+  private getNextId(): string {
     this.nextId += 1;
-    return this.nextId;
+    return `decoy-${this.nextId}`;
   }
 
   public async init(): Promise<void> {
@@ -53,8 +53,11 @@ export class DecoyEntityCollection
     );
     material.diffuseTexture = texture;
 
+    let counter = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
+        m.name = `${rootId}-${counter}`;
+        m.id = `${rootId}-${counter}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -64,6 +67,7 @@ export class DecoyEntityCollection
         }
         m.material = material;
         meshes.push(m);
+        counter += 1;
       }
     }
     const decoy = new DecoyEntity(`${rootId}`, meshes, param.position);
