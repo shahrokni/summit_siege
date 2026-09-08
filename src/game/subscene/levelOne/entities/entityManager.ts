@@ -75,7 +75,7 @@ export class EntityManager implements IEntityManager {
     humaveeCollection.add({
       position: { x: 25, y: 0, z: 13 },
       scale: 1.5,
-      rotation: { y: Math.PI / -2, x: 0, z: 0 },
+      rotation: { y: Math.PI / 2, x: 0, z: 0 },
     });
   }
 

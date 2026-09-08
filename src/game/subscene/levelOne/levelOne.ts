@@ -15,6 +15,10 @@ import { SkyMaterial } from "@babylonjs/materials/sky";
 import { Camera } from "./entities/camera";
 import type { DecoyEntity } from "../../shared_entities/decoy/decoy";
 
+const GUN_ACTION_BLOCK_MS = 1100;
+const DECOY_MESH_DISPOSE_DELAY_MS = 10;
+const FORWARD_RAY_LENGTH = 1000;
+
 export class LevelOne implements ILevel, ISubscriber<TEvent> {
   constructor(
     scene: Scene,
@@ -163,7 +167,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     this.gunLock = true;
     this.gunSound.play();
     try {
-      const cameraRay = this.camera?.getForwardRay(1000);
+      const cameraRay = this.camera?.getForwardRay(FORWARD_RAY_LENGTH);
       if (!cameraRay) return;
       const pickingRayInfo = this.scene.pickWithRay(cameraRay);
       const name = pickingRayInfo?.pickedMesh?.name;
@@ -188,10 +192,12 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         decoyEntity.hit();
         setTimeout(() => {
           decoyCollection.disposeById(entityId);
-        }, 10);
+        }, DECOY_MESH_DISPOSE_DELAY_MS);
       }
     } finally {
-      this.gunLock = false;
+      setTimeout(() => {
+        this.gunLock = false;
+      }, GUN_ACTION_BLOCK_MS);
     }
   }
 

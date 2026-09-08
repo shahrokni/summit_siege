@@ -30,18 +30,24 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
         default:
           break;
       }
+      setTimeout(() => {
+        this.observerEnabled = true;
+      }, 0);
     });
   }
 
   private subscribers: Array<ISubscriber<TEvent>> = [];
   private scene: Scene;
   private pointerObserver: Observer<PointerInfo>;
+  private observerEnabled: boolean = false;
 
   private handleClick(): void {
+    if (!this.observerEnabled) return;
     this.subscribers?.forEach((s) => s.notify("fire"));
   }
 
   private handleRightClick(): void {
+    if (!this.observerEnabled) return;
     this.subscribers?.forEach((s) => s.notify("scope"));
   }
 
@@ -58,6 +64,7 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
   }
 
   public dispose(): void {
+    this.observerEnabled = false;
     this.scene.preventDefaultOnPointerDown = false;
     this.scene.onPointerObservable.remove(this.pointerObserver);
   }
