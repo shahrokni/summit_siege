@@ -1,6 +1,6 @@
 import { type GroundMesh, type Mesh, type Scene } from "@babylonjs/core";
 import { PyramidEntity } from "./pyramid";
-import type { IEntity, IEntityManager } from "../../../scene";
+import type { IEntity, IEntityManager, IIntelligent } from "../../../scene";
 import { GroundEntity } from "./ground";
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
@@ -48,25 +48,32 @@ export class EntityManager implements IEntityManager {
     );
     this.entityCollection.pyramid = pyramid;
 
-    const platformCollection = new PlatformEntityCollection(this.scene);
-    this.entityCollection.platforms = platformCollection;
-    await platformCollection.init();
-    platformCollection.add({
-      position: { x: 25, y: 0, z: 18 },
-      scale: 0.6,
-      rotation: { z: 0, x: 0, y: Math.PI / -2 },
-    });
+    // const platformCollection = new PlatformEntityCollection(this.scene);
+    // this.entityCollection.platforms = platformCollection;
+    // await platformCollection.init();
+    // platformCollection.add({
+    //   position: { x: 25, y: 0, z: 18 },
+    //   scale: 0.6,
+    //   rotation: { z: 0, x: 0, y: Math.PI / -2 },
+    // });
 
     /* TEST */
     const decoyCollection = new DecoyEntityCollection(this.scene);
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
 
-    decoyCollection.add({
-      position: { x: 25, y: 2, z: 18 },
+    const id = decoyCollection.add({
+      position: { x: 25, y: 1, z: 18 },
       scale: 0.3,
       rotation: { y: 0, x: 0, z: 0 },
     });
+
+    // TEST
+    setInterval(() => {
+      const intelligent = decoyCollection.findBydId(id)
+        ?.entity as unknown as IIntelligent;
+      intelligent.think();
+    }, 1000);
 
     const humaveeCollection = new HumaveeEntityCollection(this.scene);
     this.entityCollection.humavees = humaveeCollection;

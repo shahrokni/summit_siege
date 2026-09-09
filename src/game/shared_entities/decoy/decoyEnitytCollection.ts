@@ -41,7 +41,7 @@ export class DecoyEntityCollection
     position: TPosition;
     scale: number;
     rotation?: TRotation;
-  }): void {
+  }): string {
     const rootId = this.getNextId();
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
@@ -72,5 +72,6 @@ export class DecoyEntityCollection
     }
     const decoy = new DecoyEntity(`${rootId}`, meshes, param.position);
     this.collection.push(decoy);
+    return rootId;
   }
 }
