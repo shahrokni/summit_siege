@@ -48,25 +48,17 @@ export class EntityManager implements IEntityManager {
     );
     this.entityCollection.pyramid = pyramid;
 
-    const platformCollection = new PlatformEntityCollection(this.scene);
-    this.entityCollection.platforms = platformCollection;
-    await platformCollection.init();
-    platformCollection.add({
-      position: { x: 25, y: 0, z: 18 },
-      scale: 0.6,
-      rotation: { z: 0, x: 0, y: Math.PI / -2 },
-    });
-
     /* TEST */
     const decoyCollection = new DecoyEntityCollection(this.scene);
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
 
-    decoyCollection.add({
-      position: { x: 25, y: 2, z: 18 },
+  decoyCollection.add({
+      position: { x: 25, y: 1, z: 18 },
       scale: 0.3,
       rotation: { y: 0, x: 0, z: 0 },
     });
+
 
     const humaveeCollection = new HumaveeEntityCollection(this.scene);
     this.entityCollection.humavees = humaveeCollection;

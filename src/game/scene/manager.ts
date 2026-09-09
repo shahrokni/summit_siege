@@ -1,6 +1,6 @@
 import { Engine, Scene } from "@babylonjs/core";
 import { LevelOne } from "../subscene";
-import { State, type IState } from "../state";
+import { GameState, type IState } from "../gameState";
 import type { ILevel } from "../subscene/level";
 import type { ISubscriber } from "./observer";
 
@@ -15,14 +15,14 @@ export class Manager implements ISubscriber<IState> {
     this.id = "manager";
     this.scene = new Scene(engine);
     this.scene.defaultCursor = "crosshair";
-    this.state = new State("easy");
+    this.state = new GameState("easy");
     // should be enabled when testing and debugging
     // createAxes(scene);
   }
 
   /* private */
   private scene: Scene;
-  private state: State;
+  private state: GameState;
   private levelInstance: ILevel | undefined;
   private canvas: HTMLCanvasElement;
   private overlay: HTMLDivElement;

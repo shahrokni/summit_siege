@@ -22,12 +22,16 @@ export interface IEntity<T extends TMesh> {
   dispose: () => void;
 }
 
+export interface IIntelligent {
+  think: () => void;
+}
+
 export interface IEntityCollection<T> {
   add: (param: {
     position: TPosition;
     scale: number;
     rotation?: TRotation;
-  }) => void;
+  }) => string;
   init: () => Promise<void>;
   findBydId: (entityId: string) => { entity: T; idx: number } | undefined;
   dispose: () => void;
