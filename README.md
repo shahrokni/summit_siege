@@ -20,6 +20,8 @@ If you have any questions, feel free to contact us at:
 > shahrokni.trivia@gmail.com
 
 
+<img width="1652" height="814" alt="image" src="https://github.com/user-attachments/assets/7a8d481c-5a21-4494-8320-4fcc07f8e3ed" />
+
 ### Contributing
 
 Contributions are very welcome! Feel free to open issues, suggest improvements, fix bugs, add new features, or implement new scenarios. If you plan to make a larger change, we recommend opening an issue first so we can discuss the idea before you start working on it.
