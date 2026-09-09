@@ -9,7 +9,7 @@ export interface IState {
   level: number;
 }
 
-export class State implements IPublisher<IState> {
+export class GameState implements IPublisher<IState> {
   constructor(difficulty: TDifficulty, gamer: string = "Player") {
     this.level = 1;
     this.difficulty = difficulty;

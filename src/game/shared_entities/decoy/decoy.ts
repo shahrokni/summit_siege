@@ -7,21 +7,30 @@ import {
 } from "@babylonjs/core";
 import type {
   IEntity,
+  IIntelligent,
   TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
 } from "../../scene";
+import { makeBrain, type Brain } from "../../brain";
+import { facts } from "./facts";
+import { stateMachine } from "./state_machine";
+import type { FactDB } from "../../factDB";
 
-export class DecoyEntity implements IEntity<Array<Mesh>> {
+export class DecoyEntity implements IEntity<Array<Mesh>>, IIntelligent {
   constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
     this.body = meshes;
+
     this.rootId = id;
     this.position = position;
+    this.brain = makeBrain(facts, stateMachine);
   }
+
   private body: Mesh[];
   private rootId: string;
   private position: TPosition;
+  private brain: Brain;
 
   public getId(): TEntityId {
     return this.rootId;
@@ -70,10 +79,11 @@ export class DecoyEntity implements IEntity<Array<Mesh>> {
 
     particles.particleTexture = texture;
 
+    const b = this.body[0];
     particles.emitter = new Vector3(
-      this.position.x,
-      this.position.y + 1,
-      this.position.z,
+      b.position.x,
+      b.position.y + 1,
+      b.position.z,
     );
 
     particles.color1 = new Color4(0.7, 0, 0, 1);
@@ -99,6 +109,40 @@ export class DecoyEntity implements IEntity<Array<Mesh>> {
     particles.targetStopDuration = 0.1;
 
     particles.start();
+  }
+
+  public think(): void {
+    const rnd = Math.floor(Math.random() * 3);
+    let fn: ((fdb: FactDB) => void) | undefined;
+
+    if (rnd === 0) {
+      fn = (fdb: FactDB) => {
+        fdb.setFact("is_left_pressed", 1);
+        fdb.setFact("is_right_pressed", 0);
+      };
+    } else if (rnd === 1) {
+      fn = (fdb: FactDB) => {
+        fdb.setFact("is_left_pressed", 0);
+        fdb.setFact("is_right_pressed", 1);
+      };
+    } else {
+      fn = (fdb: FactDB) => {
+        fdb.setFact("is_left_pressed", 0);
+        fdb.setFact("is_right_pressed", 0);
+      };
+    }
+    this.brain.think(fn!);
+    const state = this.brain.getCurState();
+
+    if (state === "GoRight") {
+      this.body.forEach((b) => {
+        b.position.x += 3;
+      });
+    } else if (state === "GoLeft") {
+      this.body.forEach((b) => {
+        b.position.x -= 3;
+      });
+    }
   }
 
   dispose(): void {
