@@ -7,21 +7,26 @@ import {
 } from "@babylonjs/core";
 import type {
   IEntity,
+  IIntelligent,
   TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
 } from "../../scene";
 
-export class DecoyEntity implements IEntity<Array<Mesh>> {
+export class DecoyEntity implements IEntity<Array<Mesh>>, IIntelligent {
   constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
     this.body = meshes;
+
     this.rootId = id;
     this.position = position;
+    // this.brain = makeBrain(facts, stateMachine);
   }
+
   private body: Mesh[];
   private rootId: string;
   private position: TPosition;
+  // private brain: Brain;
 
   public getId(): TEntityId {
     return this.rootId;
@@ -70,10 +75,11 @@ export class DecoyEntity implements IEntity<Array<Mesh>> {
 
     particles.particleTexture = texture;
 
+    const b = this.body[0];
     particles.emitter = new Vector3(
-      this.position.x,
-      this.position.y + 1,
-      this.position.z,
+      b.position.x,
+      b.position.y + 1,
+      b.position.z,
     );
 
     particles.color1 = new Color4(0.7, 0, 0, 1);
@@ -100,6 +106,8 @@ export class DecoyEntity implements IEntity<Array<Mesh>> {
 
     particles.start();
   }
+
+  public think(): void {}
 
   dispose(): void {
     this.body.forEach((m) => m.dispose());
