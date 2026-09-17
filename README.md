@@ -64,3 +64,31 @@ Start the development server by running:
 
 Once the development server is running, open the following URL in your browser:
 > http://localhost:5173/
+
+---
+
+### Running with Docker
+
+You can also run the project inside a Docker container without needing Node.js or npm installed locally.
+
+#### Prerequisites
+Make sure [Docker](https://docs.docker.com/get-docker/) and Docker Compose are installed and running on your system.
+
+#### Start the Application
+Run the following command in the project root:
+
+```bash
+docker compose up
+```
+
+This will build the image, install dependencies, and start the Vite development server with port `5173` mapped to your host.
+
+Once started, open your browser and navigate to:
+> http://localhost:5173/
+
+#### Stop the Application
+To stop the container, press `Ctrl + C` or run:
+
+```bash
+docker compose down
+```
