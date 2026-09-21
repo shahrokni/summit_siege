@@ -3,7 +3,7 @@ import type { FactDB } from "./factDB";
 const EPSILON: number = 0.01;
 
 export const OPERANDS = {
-  NOT_ZERO: "()", // x != 0  ->  if (x)
+  IS_NOT_ZERO: "()", // x != 0  ->  if (x)
   IS_ZERO: "!", // x == 0  ->  if (!x)
   AND: "&", // l && r
   OR: "|", // l || r
@@ -146,7 +146,7 @@ export class StateMachine {
     // Check facts size.
     switch (opr) {
       case OPERANDS.IS_ZERO:
-      case OPERANDS.NOT_ZERO:
+      case OPERANDS.IS_NOT_ZERO:
         if (facts.length != 1)
           throw Error(`Unary operator got ${facts.length} operands!`);
         break;
@@ -166,7 +166,7 @@ export class StateMachine {
     }
     // Evaluate facts.
     switch (opr) {
-      case OPERANDS.NOT_ZERO: {
+      case OPERANDS.IS_NOT_ZERO: {
         const fact = fdb.getFact(facts[0]);
         return !isZero(fact);
       }

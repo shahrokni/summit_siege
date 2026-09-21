@@ -7,26 +7,24 @@ import {
 } from "@babylonjs/core";
 import type {
   IEntity,
-  IIntelligent,
+  IAgent,
   TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
 } from "../../scene";
 
-export class DecoyEntity implements IEntity<Array<Mesh>>, IIntelligent {
+export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
   constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
     this.body = meshes;
 
     this.rootId = id;
     this.position = position;
-    // this.brain = makeBrain(facts, stateMachine);
   }
 
   private body: Mesh[];
   private rootId: string;
   private position: TPosition;
-  // private brain: Brain;
 
   public getId(): TEntityId {
     return this.rootId;
