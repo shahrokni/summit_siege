@@ -41,35 +41,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         volume: 0.7,
       },
     );
-    this.helicopterSound = new Sound(
-      "helicopter",
-      "/sound/helicopter.mp3",
-      this.scene,
-      () => {
-        this.helicopterSound.play();
-      },
-      {
-        loop: true,
-        autoplay: false,
-        volume: 0.35,
-      },
-    );
-
-    this.radioChatSound = new Sound(
-      "helicopter",
-      "/sound/radio_chat.mp3",
-      this.scene,
-      () => {
-        this.helicopterSound.play();
-      },
-      {
-        loop: false,
-        autoplay: false,
-        volume: 0.6,
-      },
-    );
-
-    this.helicopterSound.play();
   }
 
   id: string;
@@ -83,8 +54,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private overlay: HTMLDivElement;
   private gunLock: boolean = false;
   private gunSound: Sound;
-  private helicopterSound: Sound;
-  private radioChatSound: Sound;
 
   private async setCanvas(): Promise<void> {
     await this.canvas.requestPointerLock();
@@ -176,7 +145,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
       }
 
       if (name.startsWith("decoy")) {
-        this.radioChatSound.play();
         const decoyCollection = this.entityManager?.getDecoysCollection();
         if (!decoyCollection) {
           return;

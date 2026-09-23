@@ -1,6 +1,6 @@
 import { type GroundMesh, type Mesh, type Scene } from "@babylonjs/core";
 import { PyramidEntity } from "./pyramid";
-import type { IEntity, IEntityManager } from "../../../scene";
+import type { IAgent, IEntity, IEntityManager } from "../../../scene";
 import { GroundEntity } from "./ground";
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
@@ -33,11 +33,7 @@ export class EntityManager implements IEntityManager {
   private entityCollection: TEntityCollection;
   private scene: Scene;
 
-  public getDecoysCollection(): DecoyEntityCollection | undefined {
-    return this.entityCollection.decoys;
-  }
-
-  public async init(): Promise<void> {
+  private createEnv(): void {
     const ground = new GroundEntity(this.scene, "ground");
     this.entityCollection.ground = ground;
 
@@ -47,28 +43,31 @@ export class EntityManager implements IEntityManager {
       ground.getCubeLength(),
     );
     this.entityCollection.pyramid = pyramid;
+  }
 
-    /* TEST */
+  public getDecoysCollection(): DecoyEntityCollection | undefined {
+    return this.entityCollection.decoys;
+  }
+
+  public async init(): Promise<void> {
+    this.createEnv();
+    /* -- */
     const decoyCollection = new DecoyEntityCollection(this.scene);
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
 
-  decoyCollection.add({
+    const decoyId = decoyCollection.add({
       position: { x: 25, y: 1, z: 18 },
       scale: 0.3,
       rotation: { y: 0, x: 0, z: 0 },
     });
 
+    const decoy = this.entityCollection.decoys.findBydId(decoyId)
+      ?.entity as unknown as IAgent;
 
-    const humaveeCollection = new HumaveeEntityCollection(this.scene);
-    this.entityCollection.humavees = humaveeCollection;
-    await humaveeCollection.init();
-
-    humaveeCollection.add({
-      position: { x: 25, y: 0, z: 13 },
-      scale: 1.5,
-      rotation: { y: Math.PI / 2, x: 0, z: 0 },
-    });
+    setInterval(() => {
+      decoy.think();
+    }, 5000);
   }
 
   public dispose(): void {

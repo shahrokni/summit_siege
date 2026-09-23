@@ -1,10 +1,4 @@
-import {
-  Color4,
-  DynamicTexture,
-  Mesh,
-  ParticleSystem,
-  Vector3,
-} from "@babylonjs/core";
+import { Mesh } from "@babylonjs/core";
 import type {
   IEntity,
   IAgent,
@@ -13,6 +7,11 @@ import type {
   TEntityPosition,
   TPosition,
 } from "../../scene";
+import { makeBrain, type Brain } from "../../brain";
+import { facts } from "./state_machines/v1/facts";
+import { stateMachine } from "./state_machines/v1/state_machine";
+import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
+import type { FactDB } from "../../factDB";
 
 export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
   constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
@@ -20,11 +19,57 @@ export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
 
     this.rootId = id;
     this.position = position;
+    this.brain = makeBrain(facts, stateMachine);
   }
 
   private body: Mesh[];
   private rootId: string;
   private position: TPosition;
+  private brain: Brain;
+  private isAggressive = Date.now() % 2 === 0;
+
+  private states: Partial<Record<keyof typeof facts, boolean>> = {
+    true: true,
+    false: false,
+    is_cover_reached: false,
+    is_target_reached: false,
+    shot: false,
+    sniper_in_range: false,
+    target_path_found: false,
+  };
+
+  private updateFactDb(fdb: FactDB): void {
+    const factCheckers: Partial<Record<keyof typeof facts, boolean>> = {
+      false: this.states.false,
+      true: this.states.true,
+      is_cover_reached: this.states.is_cover_reached,
+      is_target_reached: this.states.is_target_reached,
+      shot: this.states.shot,
+      sniper_in_range: this.states.sniper_in_range,
+      target_path_found: this.states.target_path_found,
+    };
+
+    fdb.setFact("is_aggressive", this.isAggressive ? 1 : 0);
+
+    Object.entries(factCheckers).forEach((f) => {
+      const [fact, state] = f;
+      fdb.setFact(fact, state ? 1 : 0);
+    });
+  }
+
+  private findTargetPath(): void {
+    this.states = {
+      ...this.states,
+      is_target_reached: false,
+      target_path_found: false,
+      sniper_in_range: false,
+    };
+
+    /* show rotation animation */
+    /* find path async */
+    /* when found set the facts  */
+    /* stop animation */
+  }
 
   public getId(): TEntityId {
     return this.rootId;
@@ -49,63 +94,23 @@ export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
   public hit(): void {
     const scene = this.body[0]?.getScene();
     if (!scene) return;
-
-    const texture = new DynamicTexture(
-      "blood-particle",
-      { width: 64, height: 64 },
-      scene,
-      false,
-    );
-
-    texture.hasAlpha = true;
-
-    const ctx = texture.getContext();
-
-    ctx.clearRect(0, 0, 64, 64);
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(32, 32, 28, 0, Math.PI * 2);
-    ctx.fill();
-
-    texture.update();
-
-    const particles = new ParticleSystem("blood", 100, scene);
-
-    particles.particleTexture = texture;
-
-    const b = this.body[0];
-    particles.emitter = new Vector3(
-      b.position.x,
-      b.position.y + 1,
-      b.position.z,
-    );
-
-    particles.color1 = new Color4(0.7, 0, 0, 1);
-    particles.color2 = new Color4(0.35, 0, 0, 1);
-
-    particles.minSize = 0.05;
-    particles.maxSize = 0.18;
-
-    particles.minLifeTime = 0.4;
-    particles.maxLifeTime = 1.2;
-
-    particles.direction1 = new Vector3(-2, 1, -2);
-    particles.direction2 = new Vector3(2, 4, 2);
-
-    particles.minEmitPower = 2;
-    particles.maxEmitPower = 6;
-
-    particles.gravity = new Vector3(0, -9.81, 0);
-
-    particles.manualEmitCount = 50;
-
-    particles.disposeOnStop = true;
-    particles.targetStopDuration = 0.1;
-
-    particles.start();
+    renderBloodEffect(scene, this.body[0].position);
   }
 
-  public think(): void {}
+  public think(): void {
+    if (!this.brain.think(this.updateFactDb.bind(this))) return;
+
+    const currentState =
+      this.brain.getCurState() as keyof typeof stateMachine.states;
+
+    switch (currentState) {
+      case "FindingTargetPath":
+        this.findTargetPath();
+        break;
+      default:
+        break;
+    }
+  }
 
   dispose(): void {
     this.body.forEach((m) => m.dispose());
