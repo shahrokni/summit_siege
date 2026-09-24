@@ -71,6 +71,14 @@ export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
     /* stop animation */
   }
 
+  private advance(): void {}
+
+  private cover(): void {}
+
+  private findCoverPath(): void {}
+
+  private fire(): void {}
+
   public getId(): TEntityId {
     return this.rootId;
   }
@@ -106,6 +114,18 @@ export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
     switch (currentState) {
       case "FindingTargetPath":
         this.findTargetPath();
+        break;
+      case "Advancing":
+        this.advance();
+        break;
+      case "Covering":
+        this.cover();
+        break;
+      case "FindingCoverPath":
+        this.findCoverPath();
+        break;
+      case "Firing":
+        this.fire();
         break;
       default:
         break;

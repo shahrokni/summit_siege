@@ -1,0 +1,13 @@
+diff --git a/node_modules/recast-detour/recast.js b/node_modules/recast-detour/recast.js
+index 26480a1..3deb29e 100644
+--- a/node_modules/recast-detour/recast.js
++++ b/node_modules/recast-detour/recast.js
+@@ -2635,7 +2635,7 @@ Crowd.prototype["__destroy__"] = Crowd.prototype.__destroy__ = function () {
+   var self = this.ptr;
+   _emscripten_bind_Crowd___destroy___0(self);
+ };
+-this["Recast"] = Module;
++globalThis["Recast"] = Module;
+ 
+ 
+   return moduleArg.ready

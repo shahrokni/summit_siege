@@ -1,4 +1,9 @@
-import { type GroundMesh, type Mesh, type Scene } from "@babylonjs/core";
+import {
+  RecastJSPlugin,
+  type GroundMesh,
+  type Mesh,
+  type Scene,
+} from "@babylonjs/core";
 import { PyramidEntity } from "./pyramid";
 import type { IAgent, IEntity, IEntityManager } from "../../../scene";
 import { GroundEntity } from "./ground";
@@ -6,6 +11,7 @@ import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
 import { PlatformEntityCollection } from "../../../shared_entities/platform/platformEntityCollection";
 import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humaveeEntityCollection";
+import Recast from "recast-detour";
 
 export type Entity = "ground" | "pyramid" | "trenches";
 
@@ -32,6 +38,7 @@ export class EntityManager implements IEntityManager {
 
   private entityCollection: TEntityCollection;
   private scene: Scene;
+  private navigationPlugin: RecastJSPlugin | undefined = undefined;
 
   private createEnv(): void {
     const ground = new GroundEntity(this.scene, "ground");
@@ -62,11 +69,34 @@ export class EntityManager implements IEntityManager {
       rotation: { y: 0, x: 0, z: 0 },
     });
 
-    const decoy = this.entityCollection.decoys.findBydId(decoyId)
-      ?.entity as unknown as IAgent;
+    const decoy = this.entityCollection.decoys.findBydId(decoyId)?.entity;
+
+    const recast = await Recast();
+    this.navigationPlugin = new RecastJSPlugin(recast);
+    this.navigationPlugin.createNavMesh(
+      [
+        decoy!.getMesh()[0]!,
+        ...(this.entityCollection.pyramid?.getMesh() || []),
+      ],
+      {
+        cs: 0.2,
+        ch: 0.2,
+        walkableSlopeAngle: 35,
+        walkableHeight: 1,
+        walkableClimb: 1,
+        walkableRadius: 1,
+        maxEdgeLen: 12,
+        maxSimplificationError: 1.3,
+        minRegionArea: 8,
+        mergeRegionArea: 20,
+        maxVertsPerPoly: 6,
+        detailSampleDist: 6,
+        detailSampleMaxError: 1,
+      },
+    );
 
     setInterval(() => {
-      decoy.think();
+      (decoy as unknown as IAgent).think();
     }, 5000);
   }
 
