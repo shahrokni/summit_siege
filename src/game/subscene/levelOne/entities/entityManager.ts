@@ -1,5 +1,6 @@
 import {
   RecastJSPlugin,
+  StandardMaterial,
   Vector3,
   type GroundMesh,
   type Mesh,
@@ -17,7 +18,7 @@ import Recast from "recast-detour";
 export type Entity = "ground" | "pyramid" | "trenches";
 
 export type TEntityCollection = Partial<{
-  ground: IEntity<GroundMesh>;
+  ground: IEntity<Array<GroundMesh>>;
   pyramid: IEntity<Array<Mesh>>;
   platforms: PlatformEntityCollection;
   decoys: DecoyEntityCollection;
@@ -74,31 +75,40 @@ export class EntityManager implements IEntityManager {
 
     const recast = await Recast();
     this.navigationPlugin = new RecastJSPlugin(recast);
-    this.navigationPlugin.createNavMesh(
-      [
-        this.entityCollection.ground!.getMesh()!,
-        ...(this.entityCollection.pyramid?.getMesh() || []),
-      ],
-      {
-        cs: 0.2,
-        ch: 0.2,
-        walkableSlopeAngle: 35,
-        walkableHeight: 1,
-        walkableClimb: 1,
-        walkableRadius: 0.3,
-        maxEdgeLen: 12,
-        maxSimplificationError: 1.3,
-        minRegionArea: 8,
-        mergeRegionArea: 20,
-        maxVertsPerPoly: 6,
-        detailSampleDist: 6,
-        detailSampleMaxError: 1,
-      },
-    );
+    // this.navigationPlugin.createNavMesh(
+    //   [
+    //     ...(this.entityCollection.ground!.getMesh() || []),
+    //     ...(this.entityCollection.pyramid?.getMesh() || []),
+    //   ],
+    //   {
+    //     cs: 0.2,
+    //     ch: 0.2,
 
-    const start = new Vector3(25, 1, 18);
-    const end = new Vector3(0, 20, 0);
-    console.log(this.navigationPlugin.computePath(start, end));
+    //     walkableSlopeAngle: 0,
+    //     walkableHeight: 9,
+    //     walkableClimb: 6,
+    //     walkableRadius: 0,
+
+    //     maxEdgeLen: 12,
+    //     maxSimplificationError: 1.3,
+    //     minRegionArea: 8,
+    //     mergeRegionArea: 20,
+    //     maxVertsPerPoly: 6,
+    //     detailSampleDist: 6,
+    //     detailSampleMaxError: 1,
+    //   },
+    // );
+
+    // const navmeshDebug = this.navigationPlugin.createDebugNavMesh(this.scene);
+
+    // const mat = new StandardMaterial("navmeshMat", this.scene);
+    // mat.alpha = 0.8;
+
+    // navmeshDebug.material = mat;
+
+    // const start = new Vector3(25, 1, 18);
+    // const end = new Vector3(0, 20, 0);
+    // console.log(this.navigationPlugin.computePath(start, end));
 
     setInterval(() => {
       (decoy as unknown as IAgent).think();

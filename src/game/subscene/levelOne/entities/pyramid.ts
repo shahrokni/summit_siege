@@ -41,7 +41,7 @@ export class PyramidEntity implements IEntity<Array<Mesh>> {
 
     while (currentPyramidBase > 0) {
       const boxOptions: Options = {
-        height: 1,
+        height: HEIGHT,
         width: currentPyramidBase,
         depth: currentPyramidBase,
       };

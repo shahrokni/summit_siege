@@ -8,7 +8,7 @@ import {
 
 import type { IEntity, TPosition } from "../../../scene";
 
-export class GroundEntity implements IEntity<GroundMesh> {
+export class GroundEntity implements IEntity<Array<GroundMesh>> {
   constructor(scene: Scene, id: string) {
     this.id = id;
     this.length = 40;
@@ -22,8 +22,8 @@ export class GroundEntity implements IEntity<GroundMesh> {
     const groundExtension = MeshBuilder.CreateGround(
       `${id}-extension`,
       {
-        width: this.length * 2,
-        height: this.length * 2,
+        width: this.length * 3,
+        height: this.length * 3,
       },
       scene,
     );
@@ -43,7 +43,8 @@ export class GroundEntity implements IEntity<GroundMesh> {
     transparent.alpha = 0;
     ground.material = transparent;
 
-    this.mesh = ground;
+    this.mesh = [];
+    this.mesh.push(ground, groundExtension);
   }
 
   isComplex(): boolean {
@@ -52,14 +53,14 @@ export class GroundEntity implements IEntity<GroundMesh> {
 
   private id: string;
   private length: number;
-  private mesh: GroundMesh;
+  private mesh: Array<GroundMesh>;
   private position: TPosition;
 
   getPosition(): TPosition {
     return this.position;
   }
 
-  public getMesh(): GroundMesh {
+  public getMesh(): Array<GroundMesh> {
     return this.mesh;
   }
 
@@ -72,6 +73,6 @@ export class GroundEntity implements IEntity<GroundMesh> {
   }
 
   public dispose(): void {
-    this.mesh.dispose();
+    this.mesh.forEach((m) => m.dispose());
   }
 }
