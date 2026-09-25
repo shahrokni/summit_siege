@@ -1,0 +1,341 @@
+package statemachine
+
+import "testing"
+
+func TestConvert(t *testing.T) {
+	uxf := `
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>14</zoom_level>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>952</x>
+      <y>14</y>
+      <w>28</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>type=initial</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>98</x>
+      <y>98</y>
+      <w>196</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>FindingTargetPath</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>98</x>
+      <y>350</y>
+      <w>196</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Advancing</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>126</x>
+      <y>140</y>
+      <w>196</w>
+      <h>238</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TAdvance:
+target_path_found</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>896</x>
+      <y>588</y>
+      <w>154</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Firing</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>910</x>
+      <y>98</y>
+      <w>126</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Spawned</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>952</x>
+      <y>28</y>
+      <w>42</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1596</x>
+      <y>98</y>
+      <w>182</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>FindingCoverPath</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1596</x>
+      <y>252</y>
+      <w>196</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Covering</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>280</x>
+      <y>98</y>
+      <w>658</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TNotFire:
+!sniper_in_range</panel_attributes>
+    <additional_attributes>450.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>952</x>
+      <y>140</y>
+      <w>126</w>
+      <h>476</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TAggrFire:</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;320.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1022</x>
+      <y>98</y>
+      <w>602</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TFindCover:
+!is_aggressive &amp; sniper_in_range</panel_attributes>
+    <additional_attributes>10.0;20.0;410.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>280</x>
+      <y>378</y>
+      <w>686</w>
+      <h>266</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TAggrFire:
+is_aggressive &amp; sniper_in_range</panel_attributes>
+    <additional_attributes>10.0;10.0;270.0;10.0;270.0;170.0;440.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>252</x>
+      <y>392</y>
+      <w>742</w>
+      <h>350</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TNotFire:</panel_attributes>
+    <additional_attributes>510.0;180.0;510.0;230.0;10.0;230.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>112</x>
+      <y>392</y>
+      <w>196</w>
+      <h>420</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TSurvive:
+is_target_reached</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;280.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>224</x>
+      <y>140</y>
+      <w>1400</w>
+      <h>238</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TFindCover:</panel_attributes>
+    <additional_attributes>10.0;150.0;10.0;120.0;800.0;120.0;800.0;10.0;980.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1652</x>
+      <y>140</y>
+      <w>266</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TCover: is_cover_reached</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1036</x>
+      <y>294</y>
+      <w>672</w>
+      <h>364</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TAggrFire:
+is_cover_reached &amp; sniper_in_range</panel_attributes>
+    <additional_attributes>460.0;10.0;460.0;230.0;10.0;230.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>224</x>
+      <y>140</y>
+      <w>1428</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TFire: sniper_in_range</panel_attributes>
+    <additional_attributes>1000.0;80.0;1000.0;50.0;10.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>0</x>
+      <y>126</y>
+      <w>1008</w>
+      <h>910</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TShot:</panel_attributes>
+    <additional_attributes>70.0;10.0;20.0;10.0;20.0;630.0;700.0;620.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1008</x>
+      <y>630</y>
+      <w>98</w>
+      <h>364</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TShot:</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;240.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>196</x>
+      <y>392</y>
+      <w>826</w>
+      <h>602</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TShot:</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;330.0;570.0;330.0;570.0;410.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1022</x>
+      <y>126</y>
+      <w>182</w>
+      <h>868</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TShot: shot</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;600.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1092</x>
+      <y>294</y>
+      <w>714</w>
+      <h>728</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TShot:</panel_attributes>
+    <additional_attributes>450.0;10.0;450.0;500.0;10.0;500.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1036</x>
+      <y>112</y>
+      <w>994</w>
+      <h>1064</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+TShot:</panel_attributes>
+    <additional_attributes>530.0;10.0;650.0;10.0;650.0;740.0;10.0;740.0;10.0;650.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>70</x>
+      <y>784</y>
+      <w>112</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Survived</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>980</x>
+      <y>966</y>
+      <w>126</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Dead</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
+`
+
+	got, err := Convert(uxf)
+	if err != nil {
+		t.Fatalf("Convert() returned unexpected error: %v", err)
+	}
+
+	if got.InitialState != "" {
+		t.Errorf("InitialState = %q, want empty string", got.InitialState)
+	}
+}

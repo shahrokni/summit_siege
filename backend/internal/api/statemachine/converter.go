@@ -1,6 +1,9 @@
 package statemachine
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"fmt"
+)
 
 type UMLElementType string
 
@@ -24,7 +27,9 @@ func Convert(uxfStr string) (StateMachine, error) {
 		Exprs:  make(map[string]Expr),
 	}
 
-	// UXF -> StateMachine conversion
+	for _, e := range diagram.Elements {
+		fmt.Printf("%s %s\n", e.ID, e.PanelAttributes)
+	}
 
 	return stateMachine, nil
 }
