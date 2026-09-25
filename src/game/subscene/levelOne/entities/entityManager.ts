@@ -1,5 +1,6 @@
 import {
   RecastJSPlugin,
+  Vector3,
   type GroundMesh,
   type Mesh,
   type Scene,
@@ -75,7 +76,7 @@ export class EntityManager implements IEntityManager {
     this.navigationPlugin = new RecastJSPlugin(recast);
     this.navigationPlugin.createNavMesh(
       [
-        decoy!.getMesh()[0]!,
+        this.entityCollection.ground!.getMesh()!,
         ...(this.entityCollection.pyramid?.getMesh() || []),
       ],
       {
@@ -84,7 +85,7 @@ export class EntityManager implements IEntityManager {
         walkableSlopeAngle: 35,
         walkableHeight: 1,
         walkableClimb: 1,
-        walkableRadius: 1,
+        walkableRadius: 0.3,
         maxEdgeLen: 12,
         maxSimplificationError: 1.3,
         minRegionArea: 8,
@@ -94,6 +95,10 @@ export class EntityManager implements IEntityManager {
         detailSampleMaxError: 1,
       },
     );
+
+    const start = new Vector3(25, 1, 18);
+    const end = new Vector3(0, 20, 0);
+    console.log(this.navigationPlugin.computePath(start, end));
 
     setInterval(() => {
       (decoy as unknown as IAgent).think();
