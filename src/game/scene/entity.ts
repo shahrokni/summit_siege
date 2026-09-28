@@ -1,4 +1,10 @@
-import type { AssetContainer, GroundMesh, Mesh, Scene } from "@babylonjs/core";
+import type {
+  AssetContainer,
+  GroundMesh,
+  Mesh,
+  RecastJSPlugin,
+  Scene,
+} from "@babylonjs/core";
 import type { TPosition, TRotation } from "./global";
 
 export type TMesh = GroundMesh | Array<Mesh>;
@@ -22,8 +28,11 @@ export interface IEntity<T extends TMesh> {
   dispose: () => void;
 }
 
+export type TThinkTool = { computePath: RecastJSPlugin["computePath"] };
+export type TThinkFN = (tools: TThinkTool) => void;
+
 export interface IAgentEntity<T extends TMesh> extends IEntity<T> {
-  think: () => void;
+  think: TThinkFN;
 }
 
 export interface IEntityCollection<T> {
@@ -34,6 +43,7 @@ export interface IEntityCollection<T> {
   }) => string;
   init: () => Promise<void>;
   findBydId: (entityId: string) => { entity: T; idx: number } | undefined;
+  getAll: () => T[];
   dispose: () => void;
   disposeById: (entityId: string) => void;
 }
@@ -53,6 +63,10 @@ export class EntityCollection<T extends IEntity<TMesh>> {
     );
     if (entityIndex == -1) return undefined;
     return { entity: this.collection[entityIndex], idx: entityIndex };
+  }
+
+  public getAll(): T[] {
+    return this.collection;
   }
 
   public dispose(): void {

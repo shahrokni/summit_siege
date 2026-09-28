@@ -70,7 +70,9 @@ export class DecoyEntityCollection
         counter += 1;
       }
     }
-    const decoy = new DecoyEntity(`${rootId}`, meshes, param.position);
+    /* debug only */
+    const goalPosition = { x: -25, y: 1, z: 0 };
+    const decoy = new DecoyEntity(`${rootId}`, meshes, goalPosition);
     this.collection.push(decoy);
     return rootId;
   }

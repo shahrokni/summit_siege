@@ -1,10 +1,11 @@
-import { Mesh } from "@babylonjs/core";
+import { Mesh, Vector3 } from "@babylonjs/core";
 import type {
   IAgentEntity,
   TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
+  TThinkTool,
 } from "../../scene";
 import { makeBrain, type Brain } from "../../brain";
 import { facts } from "./state_machines/v1/facts";
@@ -13,19 +14,19 @@ import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
 import type { FactDB } from "../../factDB";
 
 export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
-  constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
+  constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
     this.body = meshes;
-
+    this.targetPosition = targetPosition;
     this.rootId = id;
-    this.position = position;
     this.brain = makeBrain(facts, stateMachine);
   }
 
   private body: Mesh[];
   private rootId: string;
-  private position: TPosition;
   private brain: Brain;
+  private targetPosition: TPosition;
   private isAggressive = Date.now() % 2 === 0;
+  private computedTargetPath: Vector3[] | undefined;
 
   private states: Partial<Record<keyof typeof facts, boolean>> = {
     true: true,
@@ -56,21 +57,20 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
     });
   }
 
-  private findTargetPath(): void {
-    this.states = {
-      ...this.states,
-      is_target_reached: false,
-      target_path_found: false,
-      sniper_in_range: false,
-    };
-
-    /* show rotation animation */
-    /* find path async */
-    /* when found set the facts  */
-    /* stop animation */
+  private findTargetPath(computePath: TThinkTool["computePath"]): void {
+    const { x, y, z } = this.getPosition() as TPosition;
+    const { x: tx, y: ty, z: tz } = this.targetPosition;
+    const start = new Vector3(x, y, z);
+    const end = new Vector3(tx, ty, tz);
+    this.computedTargetPath = computePath(start, end);
+    this.states.target_path_found = true;
   }
 
-  private advance(): void {}
+  private advance(): void {
+    if (!this.computedTargetPath || this.computedTargetPath.length < 2) {
+      return;
+    }
+  }
 
   private cover(): void {}
 
@@ -83,7 +83,11 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   }
 
   public getPosition(): TEntityPosition {
-    return this.position;
+    const m = this.body[0];
+    if (!m) {
+      throw new Error("Body mesh is undefined or null!");
+    }
+    return { x: m.position.x, y: m.position.y, z: m.position.z };
   }
 
   public getCubeLength(): TEntityCubeLength {
@@ -104,15 +108,18 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
     renderBloodEffect(scene, this.body[0].position);
   }
 
-  public think(): void {
+  public think(tools: TThinkTool): void {
     if (!this.brain.think(this.updateFactDb.bind(this))) return;
 
     const currentState =
       this.brain.getCurState() as keyof typeof stateMachine.states;
 
+    /* TODO:debug only */
+    console.warn(`${this.getId()} state:`, currentState);
+
     switch (currentState) {
       case "FindingTargetPath":
-        this.findTargetPath();
+        this.findTargetPath(tools.computePath);
         break;
       case "Advancing":
         this.advance();
