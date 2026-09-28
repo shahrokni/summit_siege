@@ -22,7 +22,7 @@ export interface IEntity<T extends TMesh> {
   dispose: () => void;
 }
 
-export interface IAgent {
+export interface IAgentEntity<T extends TMesh> extends IEntity<T> {
   think: () => void;
 }
 

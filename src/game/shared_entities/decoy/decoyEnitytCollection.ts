@@ -7,15 +7,15 @@ import {
 } from "@babylonjs/core";
 import {
   EntityCollection,
-  type IEntity,
+  type IAgentEntity,
   type IEntityCollection,
 } from "../../scene/entity";
 import { DecoyEntity } from "./decoy";
 import type { TPosition, TRotation } from "../../scene/global";
 
 export class DecoyEntityCollection
-  extends EntityCollection<IEntity<Array<Mesh>>>
-  implements IEntityCollection<IEntity<Array<Mesh>>>
+  extends EntityCollection<IAgentEntity<Array<Mesh>>>
+  implements IEntityCollection<IAgentEntity<Array<Mesh>>>
 {
   constructor(scene: Scene) {
     super(scene);

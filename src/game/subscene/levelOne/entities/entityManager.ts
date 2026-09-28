@@ -7,7 +7,7 @@ import {
   type Scene,
 } from "@babylonjs/core";
 import { PyramidEntity } from "./pyramid";
-import type { IAgent, IEntity, IEntityManager } from "../../../scene";
+import type { IEntity, IEntityManager } from "../../../scene";
 import { GroundEntity } from "./ground";
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
@@ -40,7 +40,10 @@ export class EntityManager implements IEntityManager {
 
   private entityCollection: TEntityCollection;
   private scene: Scene;
-  private navigationPlugin: RecastJSPlugin | undefined = undefined;
+  private navigationWorker: Worker = new Worker(
+    new URL("../navigation-worker.ts", import.meta.url),
+    { type: "module" },
+  );
 
   private createEnv(): void {
     const ground = new GroundEntity(this.scene, "ground");
@@ -72,46 +75,14 @@ export class EntityManager implements IEntityManager {
     });
 
     const decoy = this.entityCollection.decoys.findBydId(decoyId)?.entity;
+    this.navigationWorker.postMessage(["ping"]);
 
-    const recast = await Recast();
-    this.navigationPlugin = new RecastJSPlugin(recast);
-    // this.navigationPlugin.createNavMesh(
-    //   [
-    //     ...(this.entityCollection.ground!.getMesh() || []),
-    //     ...(this.entityCollection.pyramid?.getMesh() || []),
-    //   ],
-    //   {
-    //     cs: 0.2,
-    //     ch: 0.2,
-
-    //     walkableSlopeAngle: 0,
-    //     walkableHeight: 9,
-    //     walkableClimb: 6,
-    //     walkableRadius: 0,
-
-    //     maxEdgeLen: 12,
-    //     maxSimplificationError: 1.3,
-    //     minRegionArea: 8,
-    //     mergeRegionArea: 20,
-    //     maxVertsPerPoly: 6,
-    //     detailSampleDist: 6,
-    //     detailSampleMaxError: 1,
-    //   },
-    // );
-
-    // const navmeshDebug = this.navigationPlugin.createDebugNavMesh(this.scene);
-
-    // const mat = new StandardMaterial("navmeshMat", this.scene);
-    // mat.alpha = 0.8;
-
-    // navmeshDebug.material = mat;
-
-    // const start = new Vector3(25, 1, 18);
-    // const end = new Vector3(0, 20, 0);
-    // console.log(this.navigationPlugin.computePath(start, end));
+    this.navigationWorker.onmessage = (e) => {
+      console.log(e.data);
+    };
 
     setInterval(() => {
-      (decoy as unknown as IAgent).think();
+      decoy?.think();
     }, 5000);
   }
 

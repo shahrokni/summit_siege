@@ -1,7 +1,6 @@
 import { Mesh } from "@babylonjs/core";
 import type {
-  IEntity,
-  IAgent,
+  IAgentEntity,
   TEntityCubeLength,
   TEntityId,
   TEntityPosition,
@@ -13,7 +12,7 @@ import { stateMachine } from "./state_machines/v1/state_machine";
 import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
 import type { FactDB } from "../../factDB";
 
-export class DecoyEntity implements IEntity<Array<Mesh>>, IAgent {
+export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
     this.body = meshes;
 
