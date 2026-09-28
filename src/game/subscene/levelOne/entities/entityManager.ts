@@ -17,9 +17,9 @@ import {
 import { GroundEntity } from "./ground";
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
-import { PlatformEntityCollection } from "../../../shared_entities/platform/platformEntityCollection";
 import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humaveeEntityCollection";
 import Recast from "recast-detour";
+import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
 
 const THINK_INTERVAL_MS = 10000;
 export type Entity = "ground" | "pyramid" | "trenches";
@@ -27,7 +27,6 @@ export type Entity = "ground" | "pyramid" | "trenches";
 export type TEntityCollection = Partial<{
   ground: IEntity<Array<GroundMesh>>;
   pyramid: IEntity<Array<Mesh>>;
-  platforms: PlatformEntityCollection;
   decoys: DecoyEntityCollection;
   humavees: HumaveeEntityCollection;
 }>;
@@ -37,7 +36,6 @@ export class EntityManager implements IEntityManager {
     this.entityCollection = {
       ground: undefined,
       pyramid: undefined,
-      platforms: undefined,
       decoys: undefined,
       humavees: undefined,
     };
@@ -124,8 +122,29 @@ export class EntityManager implements IEntityManager {
     this.createEnv();
     /* -- */
 
+    const crateCollection = new CrateEntityCollection(this.scene);
+    await crateCollection.init();
+    crateCollection.add({
+      position: { x: 32, y: 0, z: 19 },
+      scale: 1,
+      rotation: { y: Math.PI * 2, x: 0, z: 0 },
+    });
+
+    crateCollection.add({
+      position: { x: 34, y: 0, z: 21 },
+      scale: 1,
+      rotation: { y: Math.PI * 2, x: 0, z: 0 },
+    });
+
+    crateCollection.add({
+      position: { x: 34, y: 1, z: 21 },
+      scale: 1,
+      rotation: { y: Math.PI * 2, x: 0, z: 0 },
+    });
+
     await this.createNavMesh(false);
 
+    /* decoy */
     const decoyCollection = new DecoyEntityCollection(this.scene);
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
@@ -134,6 +153,17 @@ export class EntityManager implements IEntityManager {
       position: { x: 25, y: 1, z: 18 },
       scale: 0.3,
       rotation: { y: 0, x: 0, z: 0 },
+    });
+    /* humavee */
+
+    const humaveeCollection = new HumaveeEntityCollection(this.scene);
+    this.entityCollection.humavees = humaveeCollection;
+    await humaveeCollection.init();
+
+    humaveeCollection.add({
+      position: { x: 28, y: 0, z: 13 },
+      scale: 1.5,
+      rotation: { y: Math.PI * 2, x: 0, z: 0 },
     });
 
     this.intervalId = setInterval(

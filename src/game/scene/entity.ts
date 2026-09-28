@@ -7,7 +7,7 @@ import type {
 } from "@babylonjs/core";
 import type { TPosition, TRotation } from "./global";
 
-export type TMesh = GroundMesh | Array<Mesh>;
+export type TMesh = GroundMesh | Array<Mesh> | Mesh;
 export type TEntityCubeLength =
   | number
   | { width: number; height: number; depth: number };
