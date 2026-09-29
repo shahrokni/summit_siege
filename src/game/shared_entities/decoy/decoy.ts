@@ -1,4 +1,4 @@
-import { Mesh, Vector3 } from "@babylonjs/core";
+import { Mesh, Scene, Vector3 } from "@babylonjs/core";
 import type {
   IAgentEntity,
   TEntityCubeLength,
@@ -12,15 +12,18 @@ import { facts } from "./state_machines/v1/facts";
 import { stateMachine } from "./state_machines/v1/state_machine";
 import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
 import type { FactDB } from "../../factDB";
+import { generatePathAnimation } from "../../utils/babylon/animationGenerator";
 
 export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
     this.body = meshes;
+    this.scene = meshes[0].getScene();
     this.targetPosition = targetPosition;
     this.rootId = id;
     this.brain = makeBrain(facts, stateMachine);
   }
 
+  private scene: Scene;
   private body: Mesh[];
   private rootId: string;
   private brain: Brain;
@@ -69,6 +72,19 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   private advance(): void {
     if (!this.computedTargetPath || this.computedTargetPath.length < 2) {
       return;
+    }
+
+    const animation = generatePathAnimation(
+      this.getId() as string,
+      this.computedTargetPath,
+      2,
+      60,
+    );
+    for (const m of this.body) {
+      m.animations.push(animation);
+    }
+    for (const m of this.body) {
+      this.scene.beginAnimation(m, 0, animation.getHighestFrame(), false);
     }
   }
 

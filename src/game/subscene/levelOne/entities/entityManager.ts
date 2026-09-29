@@ -21,7 +21,7 @@ import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humave
 import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
 
-const THINK_INTERVAL_MS = 10000;
+const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
 
 export type TEntityCollection = Partial<{
@@ -149,11 +149,21 @@ export class EntityManager implements IEntityManager {
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
 
-    decoyCollection.add({
-      position: { x: 25, y: 1, z: 18 },
-      scale: 0.3,
-      rotation: { y: 0, x: 0, z: 0 },
+    [
+      [25, 2],
+      [23, 5],
+      [28, 19],
+      [27, 15],
+      [-50, 2],
+      [-40, 5],
+    ].forEach((i) => {
+      decoyCollection.add({
+        position: { x: i[0], y: 1, z: i[1] },
+        scale: 0.3,
+        rotation: { y: 0, x: 0, z: 0 },
+      });
     });
+
     /* humavee */
 
     const humaveeCollection = new HumaveeEntityCollection(this.scene);
