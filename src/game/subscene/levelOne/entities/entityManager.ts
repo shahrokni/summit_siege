@@ -20,6 +20,7 @@ import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoy_enit
 import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humavee_entity_collection";
 import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
+import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
@@ -130,18 +131,6 @@ export class EntityManager implements IEntityManager {
       rotation: { y: Math.PI * 2, x: 0, z: 0 },
     });
 
-    crateCollection.add({
-      position: { x: 34, y: 0, z: 21 },
-      scale: 1,
-      rotation: { y: Math.PI * 2, x: 0, z: 0 },
-    });
-
-    crateCollection.add({
-      position: { x: 34, y: 1, z: 21 },
-      scale: 1,
-      rotation: { y: Math.PI * 2, x: 0, z: 0 },
-    });
-
     await this.createNavMesh(false);
 
     /* decoy */
@@ -171,6 +160,14 @@ export class EntityManager implements IEntityManager {
       position: { x: 28, y: 0, z: 13 },
       scale: 1.5,
       rotation: { y: Math.PI * 2, x: 0, z: 0 },
+    });
+
+    /* barrel */
+    const barrelCollection = new BarrelEntityCollection(this.scene);
+    await barrelCollection.init();
+    barrelCollection.add({
+      position: { x: 33, y: 0, z: 16 },
+      scale: 1,
     });
 
     this.intervalId = setInterval(
