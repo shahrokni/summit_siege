@@ -149,19 +149,16 @@ export class EntityManager implements IEntityManager {
     this.entityCollection.decoys = decoyCollection;
     await decoyCollection.init();
 
-    [
-      [25, 2],
-      [23, 5],
-      [28, 19],
-      [27, 15],
-      [-50, 2],
-      [-40, 5],
-    ].forEach((i) => {
-      decoyCollection.add({
-        position: { x: i[0], y: 1, z: i[1] },
-        scale: 0.3,
-        rotation: { y: 0, x: 0, z: 0 },
-      });
+    decoyCollection.add({
+      position: { x: 25, y: 1, z: 2 },
+      scale: 0.3,
+      rotation: { y: 0, x: 0, z: 0 },
+    });
+
+    decoyCollection.add({
+      position: { x: 28, y: 1, z: -2 },
+      scale: 0.3,
+      rotation: { y: 0, x: 0, z: 0 },
     });
 
     /* humavee */

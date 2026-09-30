@@ -74,17 +74,23 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
       return;
     }
 
-    const animation = generatePathAnimation(
+    const [animationPosition, animationRotate] = generatePathAnimation(
       this.getId() as string,
       this.computedTargetPath,
       2,
       60,
     );
     for (const m of this.body) {
-      m.animations.push(animation);
+      m.animations.push(animationPosition);
+      m.animations.push(animationRotate);
     }
     for (const m of this.body) {
-      this.scene.beginAnimation(m, 0, animation.getHighestFrame(), false);
+      this.scene.beginAnimation(
+        m,
+        0,
+        animationPosition.getHighestFrame(),
+        false,
+      );
     }
   }
 

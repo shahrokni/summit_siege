@@ -1,18 +1,18 @@
 import { Animation, Vector3 } from "@babylonjs/core";
 
-type TKeyFrame = Array<{ frame: number; value: Vector3 }>;
+type TKeyFrame = Array<{ frame: number; value: Vector3 | number }>;
 
 export const generatePathAnimation = (
   entityId: string,
   path: Vector3[],
   speed: number = 2,
   frameRate: number = 60,
-): Animation => {
+): Animation[] => {
   if (path.length < 2) {
     throw new Error("Path must at least contain two points");
   }
 
-  const animation = new Animation(
+  const positionAnimation = new Animation(
     `${entityId}-move`,
     "position",
     frameRate,
@@ -20,23 +20,40 @@ export const generatePathAnimation = (
     Animation.ANIMATIONLOOPMODE_CONSTANT,
   );
 
-  let currentFrame = 0;
-  /* TODO: add Y after the actual pyramid is added to the scene  */
-  const keys: TKeyFrame = [
-    { frame: 0, value: new Vector3(path[0].x, 1, path[0].z) },
-  ];
+  const rotationAnimation = new Animation(
+    `${entityId}-rotate`,
+    "rotation.y",
+    frameRate,
+    Animation.ANIMATIONTYPE_FLOAT,
+    Animation.ANIMATIONLOOPMODE_CONSTANT,
+  );
 
-  for (let i = 1; i < path.length; i += 1) {
-    const prev = path[i - 1];
-    const curr = path[i];
-    const distance = Vector3.Distance(prev, curr);
-    const durationSeconds = distance / speed;
-    currentFrame += durationSeconds * frameRate;
-    keys.push({
+  /* TODO: add Y after the actual pyramid is added to the scene  */
+  const positionKeys: TKeyFrame = [];
+  const rotationKeys: TKeyFrame = [];
+  let currentFrame = 0;
+
+  for (let i = 0; i < path.length; i += 1) {
+    const point = path[i];
+    if (i > 0) {
+      const previous = path[i - 1];
+      const distance = Vector3.Distance(previous, point);
+      currentFrame += (distance / speed) * frameRate;
+    }
+    positionKeys.push({
       frame: currentFrame,
-      value: new Vector3(curr.x, 1, curr.z),
+      value: new Vector3(point.x, 1, point.z),
     });
+
+    if (i < path.length - 1) {
+      const next = path[i + 1];
+      const direction = next.subtract(point);
+      const angle = Math.atan2(direction.x, direction.y);
+      rotationKeys.push({ frame: currentFrame, value: angle });
+    }
   }
-  animation.setKeys(keys);
-  return animation;
+
+  positionAnimation.setKeys(positionKeys);
+  rotationAnimation.setKeys(rotationKeys);
+  return [positionAnimation, rotationAnimation];
 };
