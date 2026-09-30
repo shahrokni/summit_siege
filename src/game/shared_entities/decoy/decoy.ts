@@ -125,9 +125,7 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   }
 
   public hit(): void {
-    const scene = this.body[0]?.getScene();
-    if (!scene) return;
-    renderBloodEffect(scene, this.body[0].position);
+    renderBloodEffect(this.scene, this.body[0].position);
   }
 
   public think(tools: TThinkTool): void {

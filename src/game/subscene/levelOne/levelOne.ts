@@ -14,6 +14,11 @@ import { StateManager } from "./state";
 import { SkyMaterial } from "@babylonjs/materials/sky";
 import { Camera } from "./entities/camera";
 import type { DecoyEntity } from "../../shared_entities/decoy/decoy";
+import type { DecoyEntityCollection } from "../../shared_entities/decoy/decoy_enityt_collection";
+import type { BarrelEntityCollection } from "../../shared_entities/barrel/barrel_entity_collection";
+import type { BarrelEntity } from "../../shared_entities/barrel/barrel";
+import type { HumaveeEntityCollection } from "../../shared_entities/humavee/humavee_entity_collection";
+import type { HumaveeEntity } from "../../shared_entities/humavee/humavee";
 
 const GUN_ACTION_BLOCK_MS = 1100;
 const DECOY_MESH_DISPOSE_DELAY_MS = 10;
@@ -140,12 +145,15 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
       if (!cameraRay) return;
       const pickingRayInfo = this.scene.pickWithRay(cameraRay);
       const name = pickingRayInfo?.pickedMesh?.name;
+      console.log(name);
       if (!name) {
         return;
       }
 
       if (name.startsWith("decoy")) {
-        const decoyCollection = this.entityManager?.getDecoysCollection();
+        const decoyCollection = this.entityManager?.getCollection(
+          "decoys",
+        ) as DecoyEntityCollection;
         if (!decoyCollection) {
           return;
         }
@@ -161,6 +169,35 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         setTimeout(() => {
           decoyCollection.disposeById(entityId);
         }, DECOY_MESH_DISPOSE_DELAY_MS);
+      } else if (name.startsWith("barrel")) {
+        const barrelCollection = this.entityManager?.getCollection(
+          "barrels",
+        ) as BarrelEntityCollection;
+        const [e, idx] = name.split("-");
+        const entityId = `${e}-${idx}`;
+        const { entity } = barrelCollection.findBydId(entityId) || {};
+        const barrelEntity = entity as BarrelEntity;
+        if (!barrelEntity) {
+          return;
+        }
+        if (pickingRayInfo.pickedPoint) {
+          barrelEntity.hit(pickingRayInfo.pickedPoint);
+        }
+      } else if (name.startsWith("humavee")) {
+        const humaveeCollection = this.entityManager?.getCollection(
+          "humavees",
+        ) as HumaveeEntityCollection;
+        const [e, idx] = name.split("-");
+        const entityId = `${e}-${idx}`;
+        const { entity } = humaveeCollection.findBydId(entityId) || {};
+        console.log({ entityId, entity });
+        const humaveeEntity = entity as HumaveeEntity;
+        if (!humaveeEntity) {
+          return;
+        }
+        if (pickingRayInfo.pickedPoint) {
+          humaveeEntity.hit(pickingRayInfo.pickedPoint);
+        }
       }
     } finally {
       setTimeout(() => {

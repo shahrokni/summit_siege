@@ -43,7 +43,7 @@ export class HumaveeEntityCollection
     scale: number;
     rotation?: TRotation;
   }): string {
-    const rootId = this.getNextId();
+    const rootId = `humavee-${this.getNextId()}`;
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
@@ -54,8 +54,11 @@ export class HumaveeEntityCollection
     );
     material.diffuseTexture = texture;
 
+    let counter = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
+        m.name = `${rootId}-${counter}`;
+        m.id = `${rootId}-${counter}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -65,10 +68,11 @@ export class HumaveeEntityCollection
         }
         m.material = material;
         meshes.push(m);
+        counter += 1;
       }
     }
     const humavee = new HumaveeEntity(`${rootId}`, meshes, param.position);
     this.collection.push(humavee);
-    return `humavee-${rootId}`;
+    return rootId;
   }
 }

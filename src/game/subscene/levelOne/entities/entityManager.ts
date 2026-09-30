@@ -31,6 +31,7 @@ export type TEntityCollection = Partial<{
   pyramid: IEntity<Array<Mesh>>;
   decoys: DecoyEntityCollection;
   humavees: HumaveeEntityCollection;
+  barrels: BarrelEntityCollection;
 }>;
 
 export class EntityManager implements IEntityManager {
@@ -116,8 +117,10 @@ export class EntityManager implements IEntityManager {
     }
   }
 
-  public getDecoysCollection(): DecoyEntityCollection | undefined {
-    return this.entityCollection.decoys;
+  public getCollection(
+    name: keyof TEntityCollection,
+  ): TEntityCollection[keyof TEntityCollection] | undefined {
+    return this.entityCollection[name];
   }
 
   public async init(): Promise<void> {
@@ -165,6 +168,7 @@ export class EntityManager implements IEntityManager {
 
     /* barrel */
     const barrelCollection = new BarrelEntityCollection(this.scene);
+    this.entityCollection.barrels = barrelCollection;
     await barrelCollection.init();
     barrelCollection.add({
       position: { x: 33, y: 0, z: 16 },
