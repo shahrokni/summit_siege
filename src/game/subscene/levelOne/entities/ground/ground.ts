@@ -6,7 +6,7 @@ import {
   type Scene,
 } from "@babylonjs/core";
 
-import type { IEntity, TPosition } from "../../../scene";
+import type { IEntity, TPosition } from "../../../../scene";
 
 export class GroundEntity implements IEntity<Array<GroundMesh>> {
   constructor(scene: Scene, id: string) {

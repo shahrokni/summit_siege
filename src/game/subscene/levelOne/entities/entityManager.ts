@@ -6,7 +6,7 @@ import {
   type Mesh,
   type Scene,
 } from "@babylonjs/core";
-import { PyramidEntity } from "./pyramid";
+import { SimplePyramidEntity } from "./simple_pyramid/simple_pyramid";
 import {
   EntityCollection,
   type IEntity,
@@ -14,10 +14,10 @@ import {
   type TThinkFN,
   type TThinkTool,
 } from "../../../scene";
-import { GroundEntity } from "./ground";
+import { GroundEntity } from "./ground/ground";
 import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
-import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoyEnitytCollection";
-import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humaveeEntityCollection";
+import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoy_enityt_collection";
+import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humavee_entity_collection";
 import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
 
@@ -53,7 +53,7 @@ export class EntityManager implements IEntityManager {
     const ground = new GroundEntity(this.scene, "ground");
     this.entityCollection.ground = ground;
 
-    const pyramid = new PyramidEntity(
+    const pyramid = new SimplePyramidEntity(
       this.scene,
       "pyramid",
       ground.getCubeLength(),

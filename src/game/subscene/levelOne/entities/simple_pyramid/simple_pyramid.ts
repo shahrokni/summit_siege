@@ -11,7 +11,7 @@ import type {
   TEntityId,
   TEntityPosition,
   TPosition,
-} from "../../../scene";
+} from "../../../../scene";
 
 type Options = {
   height: 1;
@@ -22,7 +22,7 @@ type Options = {
 const FACTOR = 2;
 const HEIGHT = 1;
 
-export class PyramidEntity implements IEntity<Array<Mesh>> {
+export class SimplePyramidEntity implements IEntity<Array<Mesh>> {
   constructor(scene: Scene, id: string, groundLength: number) {
     this.rootId = id;
     const pyramidBase = groundLength;

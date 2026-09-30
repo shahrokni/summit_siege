@@ -16,7 +16,7 @@ import { HumaveeEntity } from "./humavee";
 
 export class HumaveeEntityCollection
   extends EntityCollection<IEntity<Array<Mesh>>>
-  implements IEntityCollection
+  implements IEntityCollection<IEntity<Array<Mesh>>>
 {
   constructor(scene: Scene) {
     super(scene);
@@ -42,7 +42,7 @@ export class HumaveeEntityCollection
     position: TPosition;
     scale: number;
     rotation?: TRotation;
-  }): void {
+  }): string {
     const rootId = this.getNextId();
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
@@ -67,7 +67,8 @@ export class HumaveeEntityCollection
         meshes.push(m);
       }
     }
-    const decoy = new HumaveeEntity(`${rootId}`, meshes, param.position);
-    this.collection.push(decoy);
+    const humavee = new HumaveeEntity(`${rootId}`, meshes, param.position);
+    this.collection.push(humavee);
+    return `humavee-${rootId}`;
   }
 }
