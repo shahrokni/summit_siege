@@ -21,6 +21,7 @@ import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humave
 import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
+import { ShedEntityCollection } from "../../../shared_entities/shed/shed_entity_collection";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
@@ -167,6 +168,14 @@ export class EntityManager implements IEntityManager {
     await barrelCollection.init();
     barrelCollection.add({
       position: { x: 33, y: 0, z: 16 },
+      scale: 1,
+    });
+
+    /* shed */
+    const shedCollection = new ShedEntityCollection(this.scene);
+    await shedCollection.init();
+    shedCollection.add({
+      position: { x: 33, y: 0, z: 28 },
       scale: 1,
     });
 
