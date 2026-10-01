@@ -177,8 +177,8 @@ export class EntityManager implements IEntityManager {
     const shedCollection = new ShedEntityCollection(this.scene);
     await shedCollection.init();
     shedCollection.add({
-      position: { x: 33, y: 0, z: 28 },
-      scale: 1,
+      position: { x: 55, y: 0, z: 30 },
+      scale: 1.8,
     });
 
     this.intervalId = setInterval(
