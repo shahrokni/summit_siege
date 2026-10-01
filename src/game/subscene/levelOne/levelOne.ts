@@ -19,6 +19,7 @@ import type { BarrelEntityCollection } from "../../shared_entities/barrel/barrel
 import type { BarrelEntity } from "../../shared_entities/barrel/barrel";
 import type { HumaveeEntityCollection } from "../../shared_entities/humavee/humavee_entity_collection";
 import type { HumaveeEntity } from "../../shared_entities/humavee/humavee";
+import { registerBuiltInLoaders } from "@babylonjs/loaders";
 
 const GUN_ACTION_BLOCK_MS = 1100;
 const DECOY_MESH_DISPOSE_DELAY_MS = 10;
@@ -46,6 +47,8 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         volume: 0.7,
       },
     );
+
+    registerBuiltInLoaders();
   }
 
   id: string;
@@ -206,8 +209,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     }
   }
 
-  private run_loop(): void {}
-
   public notify(context: TEvent): void {
     switch (context) {
       case "scope":
@@ -235,6 +236,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     this.canvas.removeEventListener("click", this.setCanvas.bind(this));
 
     this.camera = new Camera(this.scene);
+    await this.camera.init();
     this.light = this.setupLights(this.scene);
     this.canvas.addEventListener("click", this.setCanvas.bind(this));
     this.entityManager = new EntityManager(this.scene);

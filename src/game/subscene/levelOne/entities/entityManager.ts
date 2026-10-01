@@ -15,7 +15,6 @@ import {
   type TThinkTool,
 } from "../../../scene";
 import { GroundEntity } from "./ground/ground";
-import { registerBuiltInLoaders } from "@babylonjs/loaders/dynamic";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoy_enityt_collection";
 import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humavee_entity_collection";
 import Recast from "recast-detour";
@@ -43,7 +42,6 @@ export class EntityManager implements IEntityManager {
       humavees: undefined,
     };
     this.scene = scene;
-    registerBuiltInLoaders();
   }
 
   private entityCollection: TEntityCollection;
