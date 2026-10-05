@@ -4,7 +4,8 @@
 
 Summit Siege is a 3D first-person shooter developed by [Vahid Heydari](https://github.com/VahidHeidari) and [Seyed Mahmoud Shahrokni](https://github.com/shahrokni) and released under the Apache License 2.0.
 
-<img width="873" height="512" alt="image" src="https://github.com/user-attachments/assets/55573eac-9ca5-4d85-9f1b-c131e89c442b" />
+<img width="1109" height="734" alt="image" src="https://github.com/user-attachments/assets/44250af2-6f8d-4d65-876e-f7d56c3c8508" />
+
 
 The project is especially open to computer science students, junior developers, and anyone who wants to gain hands-on experience in game development. You do not need to be an expert to contribute. If you have an idea, want to experiment with a game mechanic, improve an existing feature, or simply learn how a real project is structured, you are welcome here.
 
