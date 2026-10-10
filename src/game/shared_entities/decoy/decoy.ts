@@ -13,6 +13,7 @@ import { stateMachine } from "./state_machines/v1/state_machine";
 import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
 import type { FactDB } from "../../factDB";
 import { generatePathAnimation } from "../../utils/babylon/animationGenerator";
+import { calculate2DMotionAngle } from "../../utils/Math/trigonometry";
 
 export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
@@ -73,16 +74,20 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
     if (!this.computedTargetPath || this.computedTargetPath.length < 2) {
       return;
     }
+    const [p1, p2] = this.computedTargetPath;
+    const angle = calculate2DMotionAngle(p1, p2);
+    this.body.forEach((m) => {
+      m.rotation.y = angle;
+    });
 
-    const [animationPosition, animationRotate] = generatePathAnimation(
+    const [animationPosition] = generatePathAnimation(
       this.getId() as string,
       this.computedTargetPath,
-      2,
+      1,
       60,
     );
     for (const m of this.body) {
       m.animations.push(animationPosition);
-      m.animations.push(animationRotate);
     }
     for (const m of this.body) {
       this.scene.beginAnimation(

@@ -146,12 +146,6 @@ export class EntityManager implements IEntityManager {
       rotation: { y: 0, x: 0, z: 0 },
     });
 
-    decoyCollection.add({
-      position: { x: 28, y: 1, z: -2 },
-      scale: 0.3,
-      rotation: { y: 0, x: 0, z: 0 },
-    });
-
     /* humavee */
 
     const humaveeCollection = new HumaveeEntityCollection(this.scene);

@@ -71,7 +71,7 @@ export class DecoyEntityCollection
       }
     }
     /* debug only */
-    const goalPosition = { x: -25, y: 1, z: 0 };
+    const goalPosition = { x: 23, y: 1, z: -7 };
     const decoy = new DecoyEntity(`${rootId}`, meshes, goalPosition);
     this.collection.push(decoy);
     return rootId;
