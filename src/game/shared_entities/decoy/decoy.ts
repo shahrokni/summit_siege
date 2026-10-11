@@ -1,4 +1,4 @@
-import { Mesh, Scene, Vector3 } from "@babylonjs/core";
+import { AnimationEvent, Mesh, Scene, Vector3 } from "@babylonjs/core";
 import type {
   IAgentEntity,
   TEntityCubeLength,
@@ -13,7 +13,10 @@ import { stateMachine } from "./state_machines/v1/state_machine";
 import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
 import type { FactDB } from "../../factDB";
 import { generatePathAnimation } from "../../utils/babylon/animationGenerator";
-import { calculatePathHeadings } from "../../utils/Math/trigonometry";
+import {
+  calculatePathHeadings,
+  type TPath,
+} from "../../utils/Math/trigonometry";
 
 export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
@@ -74,29 +77,47 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
     if (!this.computedTargetPath || this.computedTargetPath.length < 2) {
       return;
     }
-    const offset = Math.PI / 2;
-    const [p1, p2] = this.computedTargetPath;
-    const angle = calculatePathHeadings([{ p1, p2 }], offset);
-    this.body.forEach((m) => {
-      m.rotation.y = angle[0] * -1;
-    });
+    const OFFSET = Math.PI / 2;
+    const targetPath: TPath = [];
 
-    const [animationPosition] = generatePathAnimation(
+    for (let i = 0; i < this.computedTargetPath.length; i += 1) {
+      if (i === this.computedTargetPath.length - 1) {
+        break;
+      }
+      targetPath.push({
+        p1: this.computedTargetPath[i],
+        p2: this.computedTargetPath[i + 1],
+      });
+    }
+
+    const headings = calculatePathHeadings(targetPath, OFFSET).map(
+      (h) => h * -1,
+    );
+
+    const { animation, keyFrames } = generatePathAnimation(
       this.getId() as string,
       this.computedTargetPath,
       4,
       60,
     );
+
+    keyFrames.forEach((kf, idx) => {
+      if (idx < keyFrames.length - 1) {
+        animation.addEvent(
+          new AnimationEvent(kf, () => {
+            for (const m of this.body) {
+              m.rotation.y = headings[idx];
+            }
+          }),
+        );
+      }
+    });
+
     for (const m of this.body) {
-      m.animations.push(animationPosition);
+      m.animations.push(animation);
     }
     for (const m of this.body) {
-      this.scene.beginAnimation(
-        m,
-        0,
-        animationPosition.getHighestFrame(),
-        false,
-      );
+      this.scene.beginAnimation(m, 0, animation.getHighestFrame(), false);
     }
   }
 

@@ -148,7 +148,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
       if (!cameraRay) return;
       const pickingRayInfo = this.scene.pickWithRay(cameraRay);
       const name = pickingRayInfo?.pickedMesh?.name;
-      console.log(name);
       if (!name) {
         return;
       }
@@ -193,7 +192,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
         const { entity } = humaveeCollection.findBydId(entityId) || {};
-        console.log({ entityId, entity });
         const humaveeEntity = entity as HumaveeEntity;
         if (!humaveeEntity) {
           return;

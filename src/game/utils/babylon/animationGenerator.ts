@@ -7,7 +7,7 @@ export const generatePathAnimation = (
   path: Vector3[],
   speed: number = 2,
   frameRate: number = 60,
-): Animation[] => {
+): { animation: Animation; keyFrames: number[] } => {
   if (path.length < 2) {
     throw new Error("Path must at least contain two points");
   }
@@ -23,22 +23,23 @@ export const generatePathAnimation = (
   /* TODO: add Y after the actual pyramid is added to the scene  */
   const positionKeys: TKeyFrame = [];
 
-  let currentFrame = 0;
-
+  let positionCurrentFrame = 0;
   for (let i = 0; i < path.length; i += 1) {
     const point = path[i];
     if (i > 0) {
       const previous = path[i - 1];
       const distance = Vector3.Distance(previous, point);
-      currentFrame += (distance / speed) * frameRate;
+      positionCurrentFrame += (distance / speed) * frameRate;
     }
     positionKeys.push({
-      frame: currentFrame,
+      frame: positionCurrentFrame,
       value: new Vector3(point.x, 1, point.z),
     });
   }
-
   positionAnimation.setKeys(positionKeys);
 
-  return [positionAnimation];
+  return {
+    animation: positionAnimation,
+    keyFrames: positionKeys.map((pk) => pk.frame),
+  };
 };
