@@ -143,7 +143,7 @@ export class EntityManager implements IEntityManager {
     decoyCollection.add({
       position: { x: 25, y: 1, z: 2 },
       scale: 0.3,
-      rotation: { y: 0, x: 0, z: 0 },
+      rotation: { y: Math.PI / 2, x: 0, z: 0 },
     });
 
     /* humavee */
@@ -155,7 +155,7 @@ export class EntityManager implements IEntityManager {
     humaveeCollection.add({
       position: { x: 28, y: 0, z: 13 },
       scale: 1.5,
-      rotation: { y: Math.PI * 2, x: 0, z: 0 },
+      rotation: { y: 0, x: 0, z: 0 },
     });
 
     /* barrel */

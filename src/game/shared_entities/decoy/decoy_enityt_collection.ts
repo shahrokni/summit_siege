@@ -32,7 +32,7 @@ export class DecoyEntityCollection
   public async init(): Promise<void> {
     if (this.container) return;
     this.container = await LoadAssetContainerAsync(
-      "/models/enemy_place_holder.obj",
+      "/models/decoy/decoy.obj",
       this.scene,
     );
   }
@@ -71,7 +71,7 @@ export class DecoyEntityCollection
       }
     }
     /* debug only */
-    const goalPosition = { x: 23, y: 1, z: -7 };
+    const goalPosition = { x: 0, y: 1, z: 17 };
     const decoy = new DecoyEntity(`${rootId}`, meshes, goalPosition);
     this.collection.push(decoy);
     return rootId;

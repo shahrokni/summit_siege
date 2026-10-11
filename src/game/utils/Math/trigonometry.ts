@@ -28,16 +28,21 @@ const DIRECTION_TO_HEADING: Record<
   W: 180,
 };
 
-const toHeading = (degrees: number): number =>
-  parseFloat(degToRad(degrees).toFixed(2));
+const toHeading = (degrees: number, offset: number = 0): number =>
+  parseFloat(degToRad(degrees).toFixed(2)) + offset;
 
 /**
  * calculates the heading between two points
  * @param p1 start point
  * @param p2 end point
+ * @param offset object offset angle (radian)
  * @returns heading in radian
  */
-export const calculateHeading = (p1: Vector3, p2: Vector3): number => {
+export const calculateHeading = (
+  p1: Vector3,
+  p2: Vector3,
+  offset: number = 0,
+): number => {
   const { x: sx, z: sz } = p1;
   const { x: ex, z: ez } = p2;
   const delta = { x: ex - sx, z: ez - sz };
@@ -66,10 +71,12 @@ export const calculateHeading = (p1: Vector3, p2: Vector3): number => {
   }
 
   if (direction in DIRECTION_TO_HEADING) {
-    return parseFloat(
-      degToRad(
-        DIRECTION_TO_HEADING[direction as keyof typeof DIRECTION_TO_HEADING],
-      ).toFixed(2),
+    return (
+      parseFloat(
+        degToRad(
+          DIRECTION_TO_HEADING[direction as keyof typeof DIRECTION_TO_HEADING],
+        ).toFixed(2),
+      ) + offset
     );
   }
 
@@ -79,13 +86,13 @@ export const calculateHeading = (p1: Vector3, p2: Vector3): number => {
 
   const theta = radToDeg(Math.atan(Math.abs(oppThea) / Math.abs(adjTheta)));
   if (direction === "NE") {
-    return toHeading(theta);
+    return toHeading(theta, offset);
   } else if (direction === "NW") {
-    return toHeading(180 - theta);
+    return toHeading(180 - theta, offset);
   } else if (direction === "SW") {
-    return toHeading(180 + theta);
+    return toHeading(180 + theta, offset);
   } else {
-    return toHeading(270 + theta);
+    return toHeading(270 + theta, offset);
   }
 };
 
@@ -94,6 +101,9 @@ export const calculateHeading = (p1: Vector3, p2: Vector3): number => {
  * @param path is an array of point start and point end
  * @returns
  */
-export const calculatePathHeadings = (path: TPath): number[] => {
-  return path.map(({ p1, p2 }) => calculateHeading(p1, p2));
+export const calculatePathHeadings = (
+  path: TPath,
+  offset: number = 0,
+): number[] => {
+  return path.map(({ p1, p2 }) => calculateHeading(p1, p2, offset));
 };
