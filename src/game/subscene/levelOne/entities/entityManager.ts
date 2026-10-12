@@ -133,6 +133,12 @@ export class EntityManager implements IEntityManager {
       rotation: { y: Math.PI * 2, x: 0, z: 0 },
     });
 
+    crateCollection.add({
+      position: { x: 32, y: 1, z: 19 },
+      scale: 1,
+      rotation: { y: Math.PI * 2, x: 0, z: 0 },
+    });
+
     await this.createNavMesh(false);
 
     /* decoy */
