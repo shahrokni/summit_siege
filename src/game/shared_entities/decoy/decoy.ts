@@ -74,6 +74,37 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   }
 
   private advance(): void {
+    /* override */
+    this.computedTargetPath = [];
+    if (this.rootId === `decoy-0`) {
+      this.computedTargetPath.push(new Vector3(25, 1, 2));
+      this.computedTargetPath.push(new Vector3(35, 1, 2));
+      this.computedTargetPath.push(new Vector3(35, 1, 10));
+      this.computedTargetPath.push(new Vector3(40, 1, 14));
+      this.computedTargetPath.push(new Vector3(24, 1, 31));
+    } else if (this.rootId === `decoy-1`) {
+      this.computedTargetPath.push(new Vector3(28, 1, -3));
+      this.computedTargetPath.push(new Vector3(24, 1, 0));
+      this.computedTargetPath.push(new Vector3(28, 1, 3));
+      this.computedTargetPath.push(new Vector3(24, 1, 6));
+      this.computedTargetPath.push(new Vector3(28, 1, 9));
+      this.computedTargetPath.push(new Vector3(23, 1, 12));
+      this.computedTargetPath.push(new Vector3(29, 1, 15));
+      this.computedTargetPath.push(new Vector3(23, 1, 20));
+      this.computedTargetPath.push(new Vector3(21, 1, 26));
+    } else if (this.rootId === `decoy-2`) {
+      this.computedTargetPath.push(new Vector3(30, 1, 4));
+      this.computedTargetPath.push(new Vector3(29, 1, 31));
+    } else if (this.rootId === `decoy-3`) {
+      this.computedTargetPath.push(new Vector3(22, 1, -1));
+      this.computedTargetPath.push(new Vector3(27, 1, 31));
+      this.computedTargetPath.push(new Vector3(31, 1, 18));
+    } else if (this.rootId === `decoy-4`) {
+      this.computedTargetPath.push(new Vector3(26, 1, 7));
+      this.computedTargetPath.push(new Vector3(20, 1, 22));
+      this.computedTargetPath.push(new Vector3(16, 1, 25));
+    }
+
     if (!this.computedTargetPath || this.computedTargetPath.length < 2) {
       return;
     }

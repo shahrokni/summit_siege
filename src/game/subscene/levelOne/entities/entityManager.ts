@@ -146,6 +146,36 @@ export class EntityManager implements IEntityManager {
       rotation: { y: Math.PI / 2, x: 0, z: 0 },
     });
 
+    decoyCollection.add({
+      position: { x: 28, y: 1, z: -3 },
+      scale: 0.3,
+      rotation: { y: Math.PI / 2, x: 0, z: 0 },
+    });
+
+    decoyCollection.add({
+      position: { x: 30, y: 1, z: 4 },
+      scale: 0.3,
+      rotation: { y: Math.PI / 2, x: 0, z: 0 },
+    });
+
+    decoyCollection.add({
+      position: { x: 22, y: 1, z: -1 },
+      scale: 0.3,
+      rotation: { y: Math.PI / 2, x: 0, z: 0 },
+    });
+
+    decoyCollection.add({
+      position: { x: 26, y: 1, z: 7 },
+      scale: 0.3,
+      rotation: { y: Math.PI / 2, x: 0, z: 0 },
+    });
+
+    // decoyCollection.add({
+    //   position: { x: 30, y: 1, z: -10 },
+    //   scale: 0.3,
+    //   rotation: { y: Math.PI / 2, x: 0, z: 0 },
+    // });
+
     /* humavee */
 
     const humaveeCollection = new HumaveeEntityCollection(this.scene);
@@ -153,7 +183,7 @@ export class EntityManager implements IEntityManager {
     await humaveeCollection.init();
 
     humaveeCollection.add({
-      position: { x: 28, y: 0, z: 13 },
+      position: { x: 45, y: 0, z: 13 },
       scale: 1.5,
       rotation: { y: 0, x: 0, z: 0 },
     });
@@ -163,17 +193,26 @@ export class EntityManager implements IEntityManager {
     this.entityCollection.barrels = barrelCollection;
     await barrelCollection.init();
     barrelCollection.add({
-      position: { x: 33, y: 0, z: 16 },
+      position: { x: 17, y: 0, z: 25 },
+      scale: 1,
+    });
+
+    barrelCollection.add({
+      position: { x: 20, y: 0, z: 28 },
+      scale: 1,
+    });
+
+    barrelCollection.add({
+      position: { x: 23, y: 0, z: 32 },
+      scale: 1,
+    });
+
+    barrelCollection.add({
+      position: { x: 30, y: 0, z: 32 },
       scale: 1,
     });
 
     /* shed */
-    const shedCollection = new ShedEntityCollection(this.scene);
-    await shedCollection.init();
-    shedCollection.add({
-      position: { x: 55, y: 0, z: 30 },
-      scale: 1.8,
-    });
 
     this.intervalId = setInterval(
       this.provokeThink.bind(this),
