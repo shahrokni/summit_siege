@@ -1,7 +1,6 @@
 import { Mesh, MeshBuilder, Scene } from "@babylonjs/core";
 import type {
   IEntity,
-  TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
@@ -42,10 +41,6 @@ export class TrenchEntity implements IEntity<Array<Mesh>> {
     });
   }
 
-  isComplex(): boolean {
-    return Array.isArray(this.trenches);
-  }
-
   private rootId: string;
   private subIds: string[] = [];
   private trenches: Mesh[] = [];
@@ -56,10 +51,6 @@ export class TrenchEntity implements IEntity<Array<Mesh>> {
   }
   public getPosition(): TEntityPosition {
     return this.positions;
-  }
-
-  getCubeLength(): TEntityCubeLength {
-    return DIAMETER;
   }
 
   getMesh(): Mesh[] {

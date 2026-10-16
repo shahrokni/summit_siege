@@ -47,10 +47,6 @@ export class GroundEntity implements IEntity<Array<GroundMesh>> {
     this.mesh.push(ground, groundExtension);
   }
 
-  isComplex(): boolean {
-    return Array.isArray(this.mesh);
-  }
-
   private id: string;
   private length: number;
   private mesh: Array<GroundMesh>;

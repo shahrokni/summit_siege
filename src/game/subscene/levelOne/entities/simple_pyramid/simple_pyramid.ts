@@ -7,7 +7,6 @@ import {
 } from "@babylonjs/core";
 import type {
   IEntity,
-  TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
@@ -26,7 +25,6 @@ export class SimplePyramidEntity implements IEntity<Array<Mesh>> {
   constructor(scene: Scene, id: string, groundLength: number) {
     this.rootId = id;
     const pyramidBase = groundLength;
-    this.pyramidBase = pyramidBase;
     let currentPyramidBase = pyramidBase;
 
     const material = new StandardMaterial("pyramidMaterial", scene);
@@ -65,15 +63,10 @@ export class SimplePyramidEntity implements IEntity<Array<Mesh>> {
     }
   }
 
-  isComplex(): boolean {
-    return Array.isArray(this.pyramid);
-  }
-
   private rootId: string;
   private subIds: string[] = [];
   private positions: Map<string, TPosition> = new Map();
   private pyramid: Mesh[] = [];
-  private pyramidBase: number | undefined;
 
   public getId(): TEntityId {
     return { rootId: this.rootId, subIds: this.subIds };
@@ -81,16 +74,6 @@ export class SimplePyramidEntity implements IEntity<Array<Mesh>> {
 
   public getPosition(): TEntityPosition {
     return this.positions;
-  }
-
-  public getCubeLength(): TEntityCubeLength {
-    const base = this.pyramidBase as number;
-    // bugfix, either depth or hight should be calculated manually
-    return {
-      width: base,
-      height: base,
-      depth: base,
-    };
   }
 
   public getMesh(): Mesh[] {

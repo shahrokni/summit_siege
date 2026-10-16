@@ -81,7 +81,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     if (!scene.activeCamera) return;
 
     const skyBox = MeshBuilder.CreateBox("skyBox", { size: 200 }, this.scene);
-    const skyMaterial = new SkyMaterial("skyMaterial", scene);
+    const skyMaterial = new SkyMaterial("sky-material", scene);
     skyMaterial.backFaceCulling = false;
     skyMaterial.cameraOffset.y = scene.activeCamera.globalPosition.y;
     skyMaterial.inclination = 0;

@@ -7,10 +7,7 @@ import type {
 } from "@babylonjs/core";
 import type { TPosition, TRotation } from "./global";
 
-export type TMesh = GroundMesh | Array<Mesh> | Mesh;
-export type TEntityCubeLength =
-  | number
-  | { width: number; height: number; depth: number };
+export type TMesh = GroundMesh | Array<Mesh>;
 export type TEntityPosition = TPosition | Map<string, TPosition>;
 export type TEntityId = string | { rootId: string; subIds: string[] };
 
@@ -21,14 +18,13 @@ export interface IEntityManager {
 
 export interface IEntity<T extends TMesh> {
   getId: () => TEntityId;
-  getPosition: () => TEntityPosition;
-  getCubeLength: () => TEntityCubeLength;
-  isComplex: () => boolean;
+  getPosition: (index: number) => TEntityPosition;
   getMesh: () => T;
   dispose: () => void;
 }
 
 export type TThinkTool = { computePath: RecastJSPlugin["computePath"] };
+
 export type TThinkFN = (tools: TThinkTool) => void;
 
 export interface IAgentEntity<T extends TMesh> extends IEntity<T> {
@@ -53,14 +49,21 @@ export class EntityCollection<T extends IEntity<TMesh>> {
     this.scene = scene;
   }
 
+  private nextId = -1;
   protected scene: Scene;
   protected collection: Array<T> = [];
   protected container: AssetContainer | undefined;
+
+  protected getNextId(): number {
+    this.nextId += 1;
+    return this.nextId;
+  }
 
   public findBydId(entityId: string): { entity: T; idx: number } | undefined {
     const entityIndex = this.collection.findIndex(
       (e) => e.getId() === entityId,
     );
+    console.log(this.collection, entityId, entityIndex);
     if (entityIndex == -1) return undefined;
     return { entity: this.collection[entityIndex], idx: entityIndex };
   }

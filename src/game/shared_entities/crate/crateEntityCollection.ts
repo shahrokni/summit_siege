@@ -15,19 +15,11 @@ import type { TPosition, TRotation } from "../../scene/global";
 import { CrateEntity } from "./crate";
 
 export class CrateEntityCollection
-  extends EntityCollection<IEntity<Mesh>>
-  implements IEntityCollection<IEntity<Mesh>>
+  extends EntityCollection<IEntity<Array<Mesh>>>
+  implements IEntityCollection<IEntity<Array<Mesh>>>
 {
   constructor(scene: Scene) {
     super(scene);
-    this.nextId = -1;
-  }
-
-  private nextId: number;
-
-  private getNextId(): string {
-    this.nextId += 1;
-    return `crate-${this.nextId}`;
   }
 
   public async init(): Promise<void> {
@@ -43,18 +35,20 @@ export class CrateEntityCollection
     scale: number;
     rotation?: TRotation;
   }): string {
-    const rootId = this.getNextId();
-    let mesh: Mesh | undefined = undefined;
+    const rootId = `crate-${this.getNextId()}`;
+    const mesh: Array<Mesh> = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("crate", this.scene);
+    const material = new StandardMaterial("crate-material", this.scene);
     const texture = new Texture("/models/crate/crate.bmp", this.scene);
+
     material.diffuseTexture = texture;
 
+    let cnt = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
-        m.name = `${rootId}`;
-        m.id = `${rootId}`;
+        m.name = `${rootId}-${cnt}`;
+        m.id = `${rootId}-${cnt}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -63,12 +57,11 @@ export class CrateEntityCollection
           m.rotation.z = param.rotation.z;
         }
         m.material = material;
-        mesh = m;
-
-        break;
+        mesh.push(m);
+        cnt += 1;
       }
     }
-    const decoy = new CrateEntity(`${rootId}`, mesh!);
+    const decoy = new CrateEntity(`${rootId}`, mesh);
     this.collection.push(decoy);
     return rootId;
   }

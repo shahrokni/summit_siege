@@ -1,38 +1,33 @@
 import type { Mesh } from "@babylonjs/core";
-import type {
-  IEntity,
-  TEntityCubeLength,
-  TEntityId,
-  TEntityPosition,
-  TPosition,
-} from "../../scene";
+import type { IEntity, TEntityId, TEntityPosition } from "../../scene";
+import { STD_ERR } from "../../scene/errors";
 
-export class CrateEntity implements IEntity<Mesh> {
-  constructor(id: string, mesh: Mesh) {
+export class CrateEntity implements IEntity<Array<Mesh>> {
+  constructor(id: string, mesh: Array<Mesh>) {
     this.body = mesh;
     this.rootId = id;
   }
 
-  private body: Mesh | undefined;
+  private body: Array<Mesh>;
   private rootId: string;
 
   public getId(): TEntityId {
     return this.rootId;
   }
-  public getPosition(): TEntityPosition {
-    const { x, y, z } = this.body?.position as TPosition;
+
+  public getPosition(index: number = 0): TEntityPosition {
+    if (index > this.body.length) {
+      throw new Error(STD_ERR.index_out_of_range);
+    }
+    const { x, y, z } = this.body[index].position;
     return { x, y, z };
   }
-  public getCubeLength(): TEntityCubeLength {
-    throw new Error("");
+
+  public getMesh(): Array<Mesh> {
+    return this.body;
   }
-  public isComplex(): boolean {
-    return Array.isArray(this.body);
-  }
-  public getMesh(): Mesh {
-    return this.body!;
-  }
+
   public dispose(): void {
-    this.body?.dispose();
+    this.body.forEach((m) => m.dispose());
   }
 }

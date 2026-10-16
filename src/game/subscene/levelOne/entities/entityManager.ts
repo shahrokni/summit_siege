@@ -20,7 +20,6 @@ import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humave
 import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
-import { ShedEntityCollection } from "../../../shared_entities/shed/shed_entity_collection";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
@@ -123,7 +122,6 @@ export class EntityManager implements IEntityManager {
 
   public async init(): Promise<void> {
     this.createEnv();
-    /* -- */
 
     const crateCollection = new CrateEntityCollection(this.scene);
     await crateCollection.init();
@@ -133,47 +131,31 @@ export class EntityManager implements IEntityManager {
       rotation: { y: Math.PI * 2, x: 0, z: 0 },
     });
 
-    await this.createNavMesh(false);
-
-    /* decoy */
-    const decoyCollection = new DecoyEntityCollection(this.scene);
-    this.entityCollection.decoys = decoyCollection;
-    await decoyCollection.init();
-
-    decoyCollection.add({
-      position: { x: 25, y: 1, z: 2 },
-      scale: 0.3,
-      rotation: { y: Math.PI / 2, x: 0, z: 0 },
-    });
-
-    /* humavee */
-
-    const humaveeCollection = new HumaveeEntityCollection(this.scene);
-    this.entityCollection.humavees = humaveeCollection;
-    await humaveeCollection.init();
-
-    humaveeCollection.add({
-      position: { x: 28, y: 0, z: 13 },
-      scale: 1.5,
-      rotation: { y: 0, x: 0, z: 0 },
-    });
-
-    /* barrel */
     const barrelCollection = new BarrelEntityCollection(this.scene);
     this.entityCollection.barrels = barrelCollection;
     await barrelCollection.init();
     barrelCollection.add({
-      position: { x: 33, y: 0, z: 16 },
+      position: { x: 33, y: 0, z: 20 },
       scale: 1,
     });
 
-    /* shed */
-    const shedCollection = new ShedEntityCollection(this.scene);
-    await shedCollection.init();
-    shedCollection.add({
-      position: { x: 55, y: 0, z: 30 },
-      scale: 1.8,
+    const decoyCollection = new DecoyEntityCollection(this.scene);
+    this.entityCollection.decoys = decoyCollection;
+    await decoyCollection.init();
+    decoyCollection.add({
+      position: { x: 34, y: 1, z: 21 },
+      scale: 0.3,
     });
+
+    const humaveeCollection = new HumaveeEntityCollection(this.scene);
+    this.entityCollection.humavees = humaveeCollection;
+    await humaveeCollection.init();
+    humaveeCollection.add({
+      position: { x: 39, y: 0, z: 20 },
+      scale: 1.2,
+    });
+
+    await this.createNavMesh(false);
 
     this.intervalId = setInterval(
       this.provokeThink.bind(this),

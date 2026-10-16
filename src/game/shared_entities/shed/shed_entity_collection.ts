@@ -20,14 +20,6 @@ export class ShedEntityCollection
 {
   constructor(scene: Scene) {
     super(scene);
-    this.nextId = -1;
-  }
-
-  private nextId: number;
-
-  private getNextId(): number {
-    this.nextId += 1;
-    return this.nextId;
   }
 
   public async init(): Promise<void> {
@@ -43,16 +35,19 @@ export class ShedEntityCollection
     scale: number;
     rotation?: TRotation;
   }): string {
-    const rootId = this.getNextId();
+    const rootId = `shed-${this.getNextId()}`;
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("texture", this.scene);
+    const material = new StandardMaterial("shed-material", this.scene);
     const texture = new Texture("public/models/shed/shed.png", this.scene);
     material.diffuseTexture = texture;
 
+    let cnt = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
+        m.id = `${rootId}-${cnt}`;
+        m.name = `${rootId}-${cnt}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -62,10 +57,11 @@ export class ShedEntityCollection
         }
         m.material = material;
         meshes.push(m);
+        cnt += 1;
       }
     }
-    const shed = new ShedEntity(`${rootId}`, meshes, param.position);
+    const shed = new ShedEntity(`${rootId}`, meshes);
     this.collection.push(shed);
-    return `shed-${rootId}`;
+    return rootId;
   }
 }

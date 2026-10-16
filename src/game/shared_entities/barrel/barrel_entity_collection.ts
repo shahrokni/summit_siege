@@ -15,19 +15,11 @@ import type { TPosition, TRotation } from "../../scene/global";
 import { BarrelEntity } from "./barrel";
 
 export class BarrelEntityCollection
-  extends EntityCollection<IEntity<Mesh>>
-  implements IEntityCollection<IEntity<Mesh>>
+  extends EntityCollection<IEntity<Array<Mesh>>>
+  implements IEntityCollection<IEntity<Array<Mesh>>>
 {
   constructor(scene: Scene) {
     super(scene);
-    this.nextId = -1;
-  }
-
-  private nextId: number;
-
-  private getNextId(): string {
-    this.nextId += 1;
-    return `barrel-${this.nextId}`;
   }
 
   public async init(): Promise<void> {
@@ -43,18 +35,20 @@ export class BarrelEntityCollection
     scale: number;
     rotation?: TRotation;
   }): string {
-    const rootId = this.getNextId();
-    let mesh: Mesh | undefined = undefined;
+    const rootId = `barrel-${this.getNextId()}`;
+    const mesh: Array<Mesh> = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("barrel", this.scene);
+    const material = new StandardMaterial("barrel-material", this.scene);
     const texture = new Texture("/models/barrel/barrel.png", this.scene);
+
     material.diffuseTexture = texture;
 
+    let cnt = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
-        m.name = `${rootId}`;
-        m.id = `${rootId}`;
+        m.name = `${rootId}-${cnt}`;
+        m.id = `${rootId}-${cnt}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -63,12 +57,11 @@ export class BarrelEntityCollection
           m.rotation.z = param.rotation.z;
         }
         m.material = material;
-        mesh = m;
-
-        break;
+        mesh.push(m);
+        cnt += 1;
       }
     }
-    const decoy = new BarrelEntity(`${rootId}`, mesh!);
+    const decoy = new BarrelEntity(`${rootId}`, mesh);
     this.collection.push(decoy);
     return rootId;
   }

@@ -19,14 +19,6 @@ export class DecoyEntityCollection
 {
   constructor(scene: Scene) {
     super(scene);
-    this.nextId = -1;
-  }
-
-  private nextId: number;
-
-  private getNextId(): string {
-    this.nextId += 1;
-    return `decoy-${this.nextId}`;
   }
 
   public async init(): Promise<void> {
@@ -42,22 +34,22 @@ export class DecoyEntityCollection
     scale: number;
     rotation?: TRotation;
   }): string {
-    const rootId = this.getNextId();
+    const rootId = `decoy-${this.getNextId()}`;
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("fabric", this.scene);
+    const material = new StandardMaterial("decoy-material", this.scene);
     const texture = new Texture(
       "public/textures/fabric033_1K/Fabric033_1K-JPG_Color.jpg",
       this.scene,
     );
     material.diffuseTexture = texture;
 
-    let counter = 0;
+    let cnt = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
-        m.name = `${rootId}-${counter}`;
-        m.id = `${rootId}-${counter}`;
+        m.name = `${rootId}-${cnt}`;
+        m.id = `${rootId}-${cnt}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -67,7 +59,7 @@ export class DecoyEntityCollection
         }
         m.material = material;
         meshes.push(m);
-        counter += 1;
+        cnt += 1;
       }
     }
     /* debug only */

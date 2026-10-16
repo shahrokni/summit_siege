@@ -1,7 +1,6 @@
 import { AnimationEvent, Mesh, Scene, Vector3 } from "@babylonjs/core";
 import type {
   IAgentEntity,
-  TEntityCubeLength,
   TEntityId,
   TEntityPosition,
   TPosition,
@@ -17,6 +16,7 @@ import {
   calculatePathHeadings,
   type TPath,
 } from "../../utils/Math/trigonometry";
+import { STD_ERR } from "../../scene/errors";
 
 export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
@@ -131,20 +131,13 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
     return this.rootId;
   }
 
-  public getPosition(): TEntityPosition {
-    const m = this.body[0];
-    if (!m) {
-      throw new Error("Body mesh is undefined or null!");
+  public getPosition(index: number = 0): TEntityPosition {
+    if (index > this.body.length) {
+      throw new Error(STD_ERR.index_out_of_range);
     }
-    return { x: m.position.x, y: m.position.y, z: m.position.z };
-  }
 
-  public getCubeLength(): TEntityCubeLength {
-    throw new Error("TODO");
-  }
-
-  public isComplex(): boolean {
-    return !!this.body.length;
+    const { x, y, z } = this.body[index].position;
+    return { x, y, z };
   }
 
   public getMesh(): Mesh[] {
@@ -160,9 +153,6 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
 
     const currentState =
       this.brain.getCurState() as keyof typeof stateMachine.states;
-
-    /* TODO:debug only */
-    console.warn(`${this.getId()} state:`, currentState);
 
     switch (currentState) {
       case "FindingTargetPath":

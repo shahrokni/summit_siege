@@ -1,38 +1,33 @@
 import type { Mesh, Scene, Vector3 } from "@babylonjs/core";
-import type {
-  IEntity,
-  TEntityCubeLength,
-  TEntityId,
-  TEntityPosition,
-  TPosition,
-} from "../../scene";
+import type { IEntity, TEntityId, TEntityPosition } from "../../scene";
 import { renderSparkEffect } from "../../utils/babylon/sparkEffect";
+import { STD_ERR } from "../../scene/errors";
 
-export class BarrelEntity implements IEntity<Mesh> {
-  constructor(id: string, mesh: Mesh) {
+export class BarrelEntity implements IEntity<Array<Mesh>> {
+  constructor(id: string, mesh: Array<Mesh>) {
     this.body = mesh;
     this.rootId = id;
-    this.scene = this.body.getScene();
+    this.scene = this.body[0].getScene();
   }
 
-  private body: Mesh | undefined;
+  private body: Array<Mesh>;
   private rootId: string;
   private scene: Scene;
 
   public getId(): TEntityId {
     return this.rootId;
   }
-  public getPosition(): TEntityPosition {
-    const { x, y, z } = this.body?.position as TPosition;
+
+  public getPosition(index: number = 0): TEntityPosition {
+    if (index > this.body.length) {
+      throw new Error(STD_ERR.index_out_of_range);
+    }
+
+    const { x, y, z } = this.body[index].position;
     return { x, y, z };
   }
-  public getCubeLength(): TEntityCubeLength {
-    throw new Error("");
-  }
-  public isComplex(): boolean {
-    return Array.isArray(this.body);
-  }
-  public getMesh(): Mesh {
+
+  public getMesh(): Array<Mesh> {
     return this.body!;
   }
 
@@ -42,6 +37,6 @@ export class BarrelEntity implements IEntity<Mesh> {
   }
 
   public dispose(): void {
-    this.body?.dispose();
+    this.body.forEach((m) => m.dispose());
   }
 }

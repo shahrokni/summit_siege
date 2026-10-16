@@ -20,14 +20,6 @@ export class HumaveeEntityCollection
 {
   constructor(scene: Scene) {
     super(scene);
-    this.nextId = -1;
-  }
-
-  private nextId: number;
-
-  private getNextId(): number {
-    this.nextId += 1;
-    return this.nextId;
   }
 
   public async init(): Promise<void> {
@@ -47,18 +39,18 @@ export class HumaveeEntityCollection
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("texture", this.scene);
+    const material = new StandardMaterial("humavee-material", this.scene);
     const texture = new Texture(
       "public/models/humavee/humavee.jpg",
       this.scene,
     );
     material.diffuseTexture = texture;
 
-    let counter = 0;
+    let cnt = 0;
     for (const m of instance?.rootNodes || []) {
       if (m instanceof Mesh) {
-        m.name = `${rootId}-${counter}`;
-        m.id = `${rootId}-${counter}`;
+        m.name = `${rootId}-${cnt}`;
+        m.id = `${rootId}-${cnt}`;
         m.position.set(param.position.x, param.position.y, param.position.z);
         m.scaling.setAll(param.scale);
         if (param.rotation) {
@@ -68,10 +60,10 @@ export class HumaveeEntityCollection
         }
         m.material = material;
         meshes.push(m);
-        counter += 1;
+        cnt += 1;
       }
     }
-    const humavee = new HumaveeEntity(`${rootId}`, meshes, param.position);
+    const humavee = new HumaveeEntity(`${rootId}`, meshes);
     this.collection.push(humavee);
     return rootId;
   }

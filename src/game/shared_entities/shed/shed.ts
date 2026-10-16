@@ -1,36 +1,25 @@
 import type { Mesh } from "@babylonjs/core";
-import type {
-  IEntity,
-  TEntityCubeLength,
-  TEntityId,
-  TEntityPosition,
-  TPosition,
-} from "../../scene";
+import type { IEntity, TEntityId, TEntityPosition } from "../../scene";
+import { STD_ERR } from "../../scene/errors";
 
 export class ShedEntity implements IEntity<Array<Mesh>> {
-  constructor(id: string, meshes: Array<Mesh>, position: TPosition) {
+  constructor(id: string, meshes: Array<Mesh>) {
     this.body = meshes;
     this.rootId = id;
-    this.position = position;
   }
   private body: Mesh[];
   private rootId: string;
-  private position: TPosition;
 
   public getId(): TEntityId {
     return this.rootId;
   }
 
-  public getPosition(): TEntityPosition {
-    return this.position;
-  }
-
-  public getCubeLength(): TEntityCubeLength {
-    throw new Error("TODO");
-  }
-
-  public isComplex(): boolean {
-    return !!this.body.length;
+  public getPosition(index: number = 0): TEntityPosition {
+    if (index > this.body.length) {
+      throw new Error(STD_ERR.index_out_of_range);
+    }
+    const { x, y, z } = this.body[index].position;
+    return { x, y, z };
   }
 
   public getMesh(): Mesh[] {
