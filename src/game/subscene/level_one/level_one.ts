@@ -20,6 +20,10 @@ import type { BarrelEntity } from "../../shared_entities/barrel/barrel";
 import type { HumaveeEntityCollection } from "../../shared_entities/humavee/humavee_entity_collection";
 import type { HumaveeEntity } from "../../shared_entities/humavee/humavee";
 import { registerBuiltInLoaders } from "@babylonjs/loaders";
+import {
+  FULLY_TRANSPARENT_OVERLAY,
+  SNIPER_SCOPE_OVERLAY,
+} from "./overlay/sniper_scope";
 
 const GUN_ACTION_BLOCK_MS = 1100;
 const DECOY_MESH_DISPOSE_DELAY_MS = 10;
@@ -109,30 +113,9 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     if (
       ["scope1", "scope2"].some((v) => v === this.stateManager?.get("view"))
     ) {
-      const background = `radial-gradient(
-                            circle at center,
-                            transparent 0,
-                            transparent 220px,
-                            black 221px,
-                            black 100%
-                          )`;
-      const backgroundImage = `url('/scope-overlay.png'),
-                        radial-gradient(
-                          circle at center,
-                          transparent 0,
-                          transparent 220px,
-                          black 221px,
-                          black 100%
-                        )`;
-      this.overlay.style.background = background;
-      this.overlay.style.backgroundImage = backgroundImage;
-      this.overlay.style.backgroundPosition = "center";
-      this.overlay.style.backgroundRepeat = "no-repeat";
+      this.overlay.replaceChildren(SNIPER_SCOPE_OVERLAY);
     } else {
-      this.overlay.style.background = "";
-      this.overlay.style.backgroundImage = "";
-      this.overlay.style.backgroundPosition = "";
-      this.overlay.style.backgroundRepeat = "";
+      this.overlay.replaceChildren(FULLY_TRANSPARENT_OVERLAY);
     }
 
     this.camera.changeFov(this.stateManager.get("view"));
