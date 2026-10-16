@@ -1,3 +1,3 @@
-export interface IInputManager {
-  dispose: () => void;
-}
+import type { IDisposable } from "./global";
+
+export type IInputManager = IDisposable;

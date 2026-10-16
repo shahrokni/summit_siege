@@ -5,22 +5,21 @@ import type {
   RecastJSPlugin,
   Scene,
 } from "@babylonjs/core";
-import type { TPosition, TRotation } from "./global";
+import type { IDisposable, TPosition, TRotation } from "./global";
+import { printStdWarn } from "./errors";
 
 export type TMesh = GroundMesh | Array<Mesh>;
 export type TEntityPosition = TPosition | Map<string, TPosition>;
 export type TEntityId = string | { rootId: string; subIds: string[] };
 
-export interface IEntityManager {
+export interface IEntityManager extends IDisposable {
   init: () => Promise<void>;
-  dispose: () => void;
 }
 
-export interface IEntity<T extends TMesh> {
+export interface IEntity<T extends TMesh> extends IDisposable {
   getId: () => TEntityId;
   getPosition: (index: number) => TEntityPosition;
   getMesh: () => T;
-  dispose: () => void;
 }
 
 export type TThinkTool = { computePath: RecastJSPlugin["computePath"] };
@@ -31,7 +30,7 @@ export interface IAgentEntity<T extends TMesh> extends IEntity<T> {
   think: TThinkFN;
 }
 
-export interface IEntityCollection<T> {
+export interface IEntityCollection<T> extends IDisposable {
   add: (param: {
     position: TPosition;
     scale: number;
@@ -40,7 +39,6 @@ export interface IEntityCollection<T> {
   init: () => Promise<void>;
   findBydId: (entityId: string) => { entity: T; idx: number } | undefined;
   getAll: () => T[];
-  dispose: () => void;
   disposeById: (entityId: string) => void;
 }
 
@@ -80,7 +78,10 @@ export class EntityCollection<T extends IEntity<TMesh>> {
   public disposeById(entityId: string): void {
     const response = this.findBydId(entityId);
     if (!response) {
-      console.warn("No object found to dispose!");
+      printStdWarn(
+        ["src\\game\\scene\\entity.ts", "EntityCollection", "disposeById"],
+        "not_found",
+      );
       return;
     }
     const { entity, idx } = response;
