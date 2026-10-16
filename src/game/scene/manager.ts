@@ -4,7 +4,7 @@ import { GameState, type IState } from "../gameState";
 import type { ILevel } from "../subscene/level";
 import type { ISubscriber } from "./observer";
 
-export class Manager implements ISubscriber<IState> {
+export class Main implements ISubscriber<IState> {
   constructor(
     engine: Engine,
     canvas: HTMLCanvasElement,

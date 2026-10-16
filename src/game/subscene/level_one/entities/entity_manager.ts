@@ -18,7 +18,7 @@ import { GroundEntity } from "./ground/ground";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoy_enityt_collection";
 import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humavee_entity_collection";
 import Recast from "recast-detour";
-import { CrateEntityCollection } from "../../../shared_entities/crate/crateEntityCollection";
+import { CrateEntityCollection } from "../../../shared_entities/crate/crate_entity_collection";
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
 
 const THINK_INTERVAL_MS = 3000;
