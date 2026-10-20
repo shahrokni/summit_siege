@@ -1,10 +1,9 @@
 import { AnimationEvent, Mesh, Scene, Vector3 } from "@babylonjs/core";
-import type {
-  IAgentEntity,
-  TEntityId,
-  TEntityPosition,
-  TPosition,
-  TThinkTool,
+import {
+  Entity,
+  type IAgentEntity,
+  type TPosition,
+  type TThinkTool,
 } from "../../scene";
 import { makeBrain, type Brain } from "../../brain";
 import { facts } from "./state_machines/v1/facts";
@@ -15,21 +14,20 @@ import { generatePathAnimation } from "../../utils/babylon/animationGenerator";
 import {
   calculatePathHeadings,
   type TPath,
-} from "../../utils/Math/trigonometry";
-import { STD_ERR } from "../../scene/errors";
+} from "../../utils/math/trigonometry";
 
-export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
+export class DecoyEntity
+  extends Entity<Array<Mesh>>
+  implements IAgentEntity<Array<Mesh>>
+{
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
-    this.body = meshes;
+    super(id, meshes);
     this.scene = meshes[0].getScene();
     this.targetPosition = targetPosition;
-    this.rootId = id;
     this.brain = makeBrain(facts, stateMachine);
   }
 
   private scene: Scene;
-  private body: Mesh[];
-  private rootId: string;
   private brain: Brain;
   private targetPosition: TPosition;
   private isAggressive = Date.now() % 2 === 0;
@@ -65,7 +63,7 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
   }
 
   private findTargetPath(computePath: TThinkTool["computePath"]): void {
-    const { x, y, z } = this.getPosition() as TPosition;
+    const { x, y, z } = this.getPosition(0) as TPosition;
     const { x: tx, y: ty, z: tz } = this.targetPosition;
     const start = new Vector3(x, y, z);
     const end = new Vector3(tx, ty, tz);
@@ -105,7 +103,7 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
       if (idx < keyFrames.length - 1) {
         animation.addEvent(
           new AnimationEvent(kf, () => {
-            for (const m of this.body) {
+            for (const m of this.getMesh()) {
               m.rotation.y = headings[idx];
             }
           }),
@@ -113,10 +111,10 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
       }
     });
 
-    for (const m of this.body) {
+    for (const m of this.getMesh()) {
       m.animations.push(animation);
     }
-    for (const m of this.body) {
+    for (const m of this.getMesh()) {
       this.scene.beginAnimation(m, 0, animation.getHighestFrame(), false);
     }
   }
@@ -127,25 +125,8 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
 
   private fire(): void {}
 
-  public getId(): TEntityId {
-    return this.rootId;
-  }
-
-  public getPosition(index: number = 0): TEntityPosition {
-    if (index > this.body.length) {
-      throw new Error(STD_ERR.index_out_of_range);
-    }
-
-    const { x, y, z } = this.body[index].position;
-    return { x, y, z };
-  }
-
-  public getMesh(): Mesh[] {
-    return this.body;
-  }
-
   public hit(): void {
-    renderBloodEffect(this.scene, this.body[0].position);
+    renderBloodEffect(this.scene, this.getPosition(0) as TPosition);
   }
 
   public think(tools: TThinkTool): void {
@@ -173,9 +154,5 @@ export class DecoyEntity implements IAgentEntity<Array<Mesh>> {
       default:
         break;
     }
-  }
-
-  dispose(): void {
-    this.body.forEach((m) => m.dispose());
   }
 }

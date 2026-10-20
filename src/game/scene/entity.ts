@@ -8,7 +8,7 @@ import type {
 import type { IDisposable, TPosition, TRotation } from "./global";
 import { printStdWarn, STD_ERR } from "./errors";
 
-export type TMesh = GroundMesh | Array<Mesh>;
+export type TMesh = Array<GroundMesh> | Array<Mesh>;
 export type TEntityPosition = TPosition | Map<string, TPosition>;
 export type TEntityId = string;
 
@@ -20,6 +20,37 @@ export interface IEntity<T extends TMesh> extends IDisposable {
   getId: () => TEntityId;
   getPosition: (index: number) => TEntityPosition;
   getMesh: () => T;
+}
+
+export class Entity<T extends TMesh> implements IEntity<T> {
+  constructor(id: string, mesh: T) {
+    this.rootId = id;
+    this.body = mesh;
+  }
+
+  private rootId: string;
+  private body: T;
+
+  public getId(): TEntityId {
+    return this.rootId;
+  }
+
+  getPosition(index: number): TEntityPosition {
+    if (index > this.body.length) {
+      throw new Error(STD_ERR.index_out_of_range);
+    }
+
+    const { x, y, z } = this.body[index].position;
+    return { x, y, z };
+  }
+
+  public getMesh(): T {
+    return this.body;
+  }
+
+  public dispose(): void {
+    this.body.forEach((m) => m.dispose());
+  }
 }
 
 export type TThinkTool = { computePath: RecastJSPlugin["computePath"] };
