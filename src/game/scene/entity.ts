@@ -6,11 +6,11 @@ import type {
   Scene,
 } from "@babylonjs/core";
 import type { IDisposable, TPosition, TRotation } from "./global";
-import { printStdWarn } from "./errors";
+import { printStdWarn, STD_ERR } from "./errors";
 
 export type TMesh = GroundMesh | Array<Mesh>;
 export type TEntityPosition = TPosition | Map<string, TPosition>;
-export type TEntityId = string | { rootId: string; subIds: string[] };
+export type TEntityId = string;
 
 export interface IEntityManager extends IDisposable {
   init: () => Promise<void>;
@@ -37,7 +37,7 @@ export interface IEntityCollection<T> extends IDisposable {
     rotation?: TRotation;
   }) => string;
   init: () => Promise<void>;
-  findBydId: (entityId: string) => { entity: T; idx: number } | undefined;
+  getBydId: (entityId: string) => { entity: T; idx: number } | undefined;
   getAll: () => T[];
   disposeById: (entityId: string) => void;
 }
@@ -57,7 +57,7 @@ export class EntityCollection<T extends IEntity<TMesh>> {
     return this.nextId;
   }
 
-  public findBydId(entityId: string): { entity: T; idx: number } | undefined {
+  public getBydId(entityId: string): { entity: T; idx: number } | undefined {
     const entityIndex = this.collection.findIndex(
       (e) => e.getId() === entityId,
     );
@@ -66,8 +66,19 @@ export class EntityCollection<T extends IEntity<TMesh>> {
     return { entity: this.collection[entityIndex], idx: entityIndex };
   }
 
+  public getByIndex(index: number): T {
+    if (index > this.collection.length - 1) {
+      throw new Error(STD_ERR.index_out_of_range);
+    }
+    return this.collection[index];
+  }
+
   public getAll(): T[] {
     return this.collection;
+  }
+
+  public getCollectionLength(): number {
+    return this.collection.length;
   }
 
   public dispose(): void {
@@ -76,7 +87,7 @@ export class EntityCollection<T extends IEntity<TMesh>> {
   }
 
   public disposeById(entityId: string): void {
-    const response = this.findBydId(entityId);
+    const response = this.getBydId(entityId);
     if (!response) {
       printStdWarn(
         ["src\\game\\scene\\entity.ts", "EntityCollection", "disposeById"],

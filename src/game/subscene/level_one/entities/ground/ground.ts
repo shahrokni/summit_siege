@@ -1,74 +1,34 @@
-import {
-  GroundMesh,
-  MeshBuilder,
-  StandardMaterial,
-  Texture,
-  type Scene,
-} from "@babylonjs/core";
-
-import type { IEntity, TPosition } from "../../../../scene";
+import type { GroundMesh } from "@babylonjs/core";
+import type { IEntity, TEntityId, TEntityPosition } from "../../../..";
+import { STD_ERR } from "../../../../scene/errors";
 
 export class GroundEntity implements IEntity<Array<GroundMesh>> {
-  constructor(scene: Scene, id: string) {
-    this.id = id;
-    this.length = 40;
-    this.position = { x: 0, y: 0, z: 0 };
-    const ground = MeshBuilder.CreateGround(
-      id,
-      { width: this.length, height: this.length },
-      scene,
-    );
-
-    const groundExtension = MeshBuilder.CreateGround(
-      `${id}-extension`,
-      {
-        width: this.length * 3,
-        height: this.length * 3,
-      },
-      scene,
-    );
-
-    const material = new StandardMaterial("groundMaterial", scene);
-    const texture = new Texture(
-      "public/textures/ground062S_1K/Ground062S_1K-JPG_Color.jpg",
-      scene,
-    );
-
-    texture.uScale = 6;
-    texture.vScale = 6;
-    material.diffuseTexture = texture;
-    groundExtension.material = material;
-
-    const transparent = new StandardMaterial("transparent", scene);
-    transparent.alpha = 0;
-    ground.material = transparent;
-
-    this.mesh = [];
-    this.mesh.push(ground, groundExtension);
+  constructor(id: string, mesh: Array<GroundMesh>) {
+    this.rootId = id;
+    this.body = mesh;
   }
 
-  private id: string;
-  private length: number;
-  private mesh: Array<GroundMesh>;
-  private position: TPosition;
+  private body: Array<GroundMesh>;
+  private rootId: string;
 
-  getPosition(): TPosition {
-    return this.position;
+  public getId(): TEntityId {
+    return this.rootId;
   }
 
-  public getMesh(): Array<GroundMesh> {
-    return this.mesh;
+  getPosition(index: number): TEntityPosition {
+    if (index > this.body.length) {
+      throw new Error(STD_ERR.index_out_of_range);
+    }
+
+    const { x, y, z } = this.body[index].position;
+    return { x, y, z };
   }
 
-  public getId(): string {
-    return this.id;
-  }
-
-  public getCubeLength(): number {
-    return this.length;
+  public getMesh(): GroundMesh[] {
+    return this.body;
   }
 
   public dispose(): void {
-    this.mesh.forEach((m) => m.dispose());
+    this.body.forEach((m) => m.dispose());
   }
 }

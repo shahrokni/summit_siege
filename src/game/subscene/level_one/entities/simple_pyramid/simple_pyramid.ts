@@ -45,7 +45,6 @@ export class SimplePyramidEntity implements IEntity<Array<Mesh>> {
       };
       const subId = `${this.rootId}-${currentPyramidBase}`;
       const box = MeshBuilder.CreateBox(subId, boxOptions, scene);
-      this.subIds.push(subId);
 
       const x = 0;
       const y = (HEIGHT / 2) * (pyramidBase - currentPyramidBase) + HEIGHT / 2;
@@ -64,12 +63,11 @@ export class SimplePyramidEntity implements IEntity<Array<Mesh>> {
   }
 
   private rootId: string;
-  private subIds: string[] = [];
   private positions: Map<string, TPosition> = new Map();
   private pyramid: Mesh[] = [];
 
   public getId(): TEntityId {
-    return { rootId: this.rootId, subIds: this.subIds };
+    return this.rootId;
   }
 
   public getPosition(): TEntityPosition {

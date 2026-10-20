@@ -2,7 +2,6 @@ import {
   Color3,
   RecastJSPlugin,
   StandardMaterial,
-  type GroundMesh,
   type Mesh,
   type Scene,
 } from "@babylonjs/core";
@@ -14,18 +13,18 @@ import {
   type TThinkFN,
   type TThinkTool,
 } from "../../../scene";
-import { GroundEntity } from "./ground/ground";
 import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoy_enityt_collection";
 import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humavee_entity_collection";
 import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crate_entity_collection";
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
+import { GroundEntityCollection } from "./ground/ground_entity_collection";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
 
 export type TEntityCollection = Partial<{
-  ground: IEntity<Array<GroundMesh>>;
+  ground: GroundEntityCollection;
   pyramid: IEntity<Array<Mesh>>;
   decoys: DecoyEntityCollection;
   humavees: HumaveeEntityCollection;
@@ -39,6 +38,7 @@ export class EntityManager implements IEntityManager {
       pyramid: undefined,
       decoys: undefined,
       humavees: undefined,
+      barrels: undefined,
     };
     this.scene = scene;
   }
@@ -50,21 +50,23 @@ export class EntityManager implements IEntityManager {
   private thinkToolSet: TThinkTool | undefined;
 
   private createEnv(): void {
-    const ground = new GroundEntity(this.scene, "ground");
-    this.entityCollection.ground = ground;
+    const length = 40;
+    const groundCollection = new GroundEntityCollection(this.scene, length);
+    this.entityCollection.ground = groundCollection;
+    groundCollection.init();
+    groundCollection.add({
+      position: { x: 0, y: 0, z: 0 },
+      scale: 1,
+    });
 
-    const pyramid = new SimplePyramidEntity(
-      this.scene,
-      "pyramid",
-      ground.getCubeLength(),
-    );
+    const pyramid = new SimplePyramidEntity(this.scene, "pyramid", length);
     this.entityCollection.pyramid = pyramid;
   }
 
   private async createNavMesh(debugMode: boolean = false): Promise<void> {
     const recast = await Recast();
     this.navigationPlugin = new RecastJSPlugin(recast);
-    const grounds = this.entityCollection.ground!.getMesh();
+    const grounds = this.entityCollection.ground!.getByIndex(0).getMesh();
     this.navigationPlugin.createNavMesh(
       [grounds[0], grounds[1], ...this.entityCollection.pyramid!.getMesh()],
       {

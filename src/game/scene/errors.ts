@@ -4,6 +4,7 @@ export const STD_ERR = Object.freeze({
 
 export const STD_WARNING = Object.freeze({
   not_found: "Not found",
+  entity_limit_reached: "Entity limit reached",
 });
 
 export const printStdWarn = (

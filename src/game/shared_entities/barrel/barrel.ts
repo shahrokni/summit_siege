@@ -28,7 +28,7 @@ export class BarrelEntity implements IEntity<Array<Mesh>> {
   }
 
   public getMesh(): Array<Mesh> {
-    return this.body!;
+    return this.body;
   }
 
   public hit(position: Vector3): void {

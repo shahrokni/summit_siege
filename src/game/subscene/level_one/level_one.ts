@@ -145,7 +145,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
 
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
-        const { entity } = decoyCollection.findBydId(entityId) || {};
+        const { entity } = decoyCollection.getBydId(entityId) || {};
         const decoyEntity = entity as DecoyEntity;
         if (!decoyEntity) {
           return;
@@ -160,7 +160,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         ) as BarrelEntityCollection;
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
-        const { entity } = barrelCollection.findBydId(entityId) || {};
+        const { entity } = barrelCollection.getBydId(entityId) || {};
         const barrelEntity = entity as BarrelEntity;
         if (!barrelEntity) {
           return;
@@ -174,7 +174,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         ) as HumaveeEntityCollection;
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
-        const { entity } = humaveeCollection.findBydId(entityId) || {};
+        const { entity } = humaveeCollection.getBydId(entityId) || {};
         const humaveeEntity = entity as HumaveeEntity;
         if (!humaveeEntity) {
           return;
