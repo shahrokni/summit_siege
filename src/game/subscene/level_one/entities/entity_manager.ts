@@ -2,13 +2,11 @@ import {
   Color3,
   RecastJSPlugin,
   StandardMaterial,
-  type Mesh,
   type Scene,
 } from "@babylonjs/core";
-import { SimplePyramidEntity } from "./simple_pyramid/simple_pyramid";
+
 import {
   EntityCollection,
-  type IEntity,
   type IEntityManager,
   type TThinkFN,
   type TThinkTool,
@@ -19,13 +17,14 @@ import Recast from "recast-detour";
 import { CrateEntityCollection } from "../../../shared_entities/crate/crate_entity_collection";
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
 import { GroundEntityCollection } from "./ground/ground_entity_collection";
+import { PyramidEntityCollection } from "./pyramid/pyramid_entity_collection";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
 
 export type TEntityCollection = Partial<{
   ground: GroundEntityCollection;
-  pyramid: IEntity<Array<Mesh>>;
+  pyramid: PyramidEntityCollection;
   decoys: DecoyEntityCollection;
   humavees: HumaveeEntityCollection;
   barrels: BarrelEntityCollection;
@@ -59,8 +58,10 @@ export class EntityManager implements IEntityManager {
       scale: 1,
     });
 
-    const pyramid = new SimplePyramidEntity(this.scene, "pyramid", length);
-    this.entityCollection.pyramid = pyramid;
+    const pyramidCollection = new PyramidEntityCollection(this.scene, length);
+    this.entityCollection.pyramid = pyramidCollection;
+    pyramidCollection.init();
+    pyramidCollection.add({ position: { x: 0, y: 0, z: 0 }, scale: 1 });
   }
 
   private async createNavMesh(debugMode: boolean = false): Promise<void> {
@@ -68,7 +69,11 @@ export class EntityManager implements IEntityManager {
     this.navigationPlugin = new RecastJSPlugin(recast);
     const grounds = this.entityCollection.ground!.getByIndex(0).getMesh();
     this.navigationPlugin.createNavMesh(
-      [grounds[0], grounds[1], ...this.entityCollection.pyramid!.getMesh()],
+      [
+        grounds[0],
+        grounds[1],
+        ...this.entityCollection.pyramid!.getByIndex(0).getMesh(),
+      ],
       {
         cs: 0.2,
         ch: 0.2,
@@ -88,7 +93,7 @@ export class EntityManager implements IEntityManager {
 
     if (debugMode) {
       const navMeshDebug = this.navigationPlugin.createDebugNavMesh(this.scene);
-      const matDebug = new StandardMaterial("matdebug", this.scene);
+      const matDebug = new StandardMaterial("debug-material", this.scene);
       matDebug.diffuseColor = new Color3(0.1, 0.2, 1);
       matDebug.alpha = 0.5;
       navMeshDebug.material = matDebug;
