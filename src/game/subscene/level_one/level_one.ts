@@ -145,14 +145,14 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
 
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
-        const { entity } = decoyCollection.getBydId(entityId) || {};
+        const { entity } = decoyCollection.getById({ id: entityId }) || {};
         const decoyEntity = entity as DecoyEntity;
         if (!decoyEntity) {
           return;
         }
         decoyEntity.hit();
         setTimeout(() => {
-          decoyCollection.disposeById(entityId);
+          decoyCollection.disposeById({ id: entityId });
         }, DECOY_MESH_DISPOSE_DELAY_MS);
       } else if (name.startsWith("barrel")) {
         const barrelCollection = this.entityManager?.getCollection(
@@ -160,7 +160,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         ) as BarrelEntityCollection;
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
-        const { entity } = barrelCollection.getBydId(entityId) || {};
+        const { entity } = barrelCollection.getById({ id: entityId }) || {};
         const barrelEntity = entity as BarrelEntity;
         if (!barrelEntity) {
           return;
@@ -174,7 +174,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         ) as HumaveeEntityCollection;
         const [e, idx] = name.split("-");
         const entityId = `${e}-${idx}`;
-        const { entity } = humaveeCollection.getBydId(entityId) || {};
+        const { entity } = humaveeCollection.getById({ id: entityId }) || {};
         const humaveeEntity = entity as HumaveeEntity;
         if (!humaveeEntity) {
           return;

@@ -1,5 +1,6 @@
 export const STD_ERR = Object.freeze({
   index_out_of_range: "Index our of range",
+  must_be_implemented_by_child: "The method must be implemented by the child",
 });
 
 export const STD_WARNING = Object.freeze({

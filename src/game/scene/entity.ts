@@ -9,8 +9,14 @@ import type { IDisposable, TPosition, TRotation } from "./global";
 import { printStdWarn, STD_ERR } from "./errors";
 
 export type TMesh = Array<GroundMesh> | Array<Mesh>;
+
 export type TEntityPosition = TPosition | Map<string, TPosition>;
+
 export type TEntityId = string;
+
+export type TEntityCollection = Partial<{
+  [id: string]: IEntityCollection<IEntity<TMesh>>;
+}>;
 
 export interface IEntityManager extends IDisposable {
   init: () => Promise<void>;
@@ -68,12 +74,15 @@ export interface IEntityCollection<T> extends IDisposable {
     rotation?: TRotation;
   }) => string;
   init: () => Promise<void>;
-  getBydId: (entityId: string) => { entity: T; idx: number } | undefined;
+  getById: (param: { id: string }) => { entity: T; idx: number } | undefined;
   getAll: () => T[];
-  disposeById: (entityId: string) => void;
+  getByIndex: (parm: { index: number }) => T;
+  disposeById: (param: { id: string }) => void;
 }
 
-export class EntityCollection<T extends IEntity<TMesh>> {
+export class EntityCollection<
+  T extends IEntity<TMesh>,
+> implements IEntityCollection<T> {
   constructor(scene: Scene) {
     this.scene = scene;
   }
@@ -88,20 +97,35 @@ export class EntityCollection<T extends IEntity<TMesh>> {
     return this.nextId;
   }
 
-  public getBydId(entityId: string): { entity: T; idx: number } | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public add(param: {
+    position: TPosition;
+    scale: number;
+    rotation?: TRotation;
+  }): string {
+    throw new Error(STD_ERR.must_be_implemented_by_child);
+  }
+
+  public async init(): Promise<void> {
+    throw new Error(STD_ERR.must_be_implemented_by_child);
+  }
+
+  public getById(param: {
+    id: string;
+  }): { entity: T; idx: number } | undefined {
     const entityIndex = this.collection.findIndex(
-      (e) => e.getId() === entityId,
+      (e) => e.getId() === param.id,
     );
-    console.log(this.collection, entityId, entityIndex);
+    console.log(this.collection, param.id, entityIndex);
     if (entityIndex == -1) return undefined;
     return { entity: this.collection[entityIndex], idx: entityIndex };
   }
 
-  public getByIndex(index: number): T {
-    if (index > this.collection.length - 1) {
+  public getByIndex(param: { index: number }): T {
+    if (param.index > this.collection.length - 1) {
       throw new Error(STD_ERR.index_out_of_range);
     }
-    return this.collection[index];
+    return this.collection[param.index];
   }
 
   public getAll(): T[] {
@@ -117,8 +141,8 @@ export class EntityCollection<T extends IEntity<TMesh>> {
     this.collection.splice(0, this.collection.length);
   }
 
-  public disposeById(entityId: string): void {
-    const response = this.getBydId(entityId);
+  public disposeById(param: { id: string }): void {
+    const response = this.getById(param);
     if (!response) {
       printStdWarn(
         ["src\\game\\scene\\entity.ts", "EntityCollection", "disposeById"],

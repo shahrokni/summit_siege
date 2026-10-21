@@ -8,6 +8,7 @@ import {
 import {
   EntityCollection,
   type IEntityManager,
+  type TEntityCollection,
   type TThinkFN,
   type TThinkTool,
 } from "../../../scene";
@@ -18,19 +19,12 @@ import { CrateEntityCollection } from "../../../shared_entities/crate/crate_enti
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
 import { GroundEntityCollection } from "./ground/ground_entity_collection";
 import { PyramidEntityCollection } from "./pyramid/pyramid_entity_collection";
+import type { ICLI, TCLIEntityCollection } from "../../../cli/cli";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";
 
-export type TEntityCollection = Partial<{
-  ground: GroundEntityCollection;
-  pyramid: PyramidEntityCollection;
-  decoys: DecoyEntityCollection;
-  humavees: HumaveeEntityCollection;
-  barrels: BarrelEntityCollection;
-}>;
-
-export class EntityManager implements IEntityManager {
+export class EntityManager implements IEntityManager, ICLI {
   constructor(scene: Scene) {
     this.entityCollection = {
       ground: undefined,
@@ -67,12 +61,14 @@ export class EntityManager implements IEntityManager {
   private async createNavMesh(debugMode: boolean = false): Promise<void> {
     const recast = await Recast();
     this.navigationPlugin = new RecastJSPlugin(recast);
-    const grounds = this.entityCollection.ground!.getByIndex(0).getMesh();
+    const grounds = this.entityCollection
+      .ground!.getByIndex({ index: 0 })
+      .getMesh();
     this.navigationPlugin.createNavMesh(
       [
         grounds[0],
         grounds[1],
-        ...this.entityCollection.pyramid!.getByIndex(0).getMesh(),
+        ...this.entityCollection.pyramid!.getByIndex({ index: 0 }).getMesh(),
       ],
       {
         cs: 0.2,
@@ -175,5 +171,13 @@ export class EntityManager implements IEntityManager {
     Object.keys(this.entityCollection).forEach((k) => {
       this.entityCollection[k as keyof TEntityCollection]?.dispose();
     });
+  }
+
+  public getAllCollections(): TCLIEntityCollection {
+    return this.entityCollection;
+  }
+
+  public getScene(): Scene {
+    return this.scene;
   }
 }
