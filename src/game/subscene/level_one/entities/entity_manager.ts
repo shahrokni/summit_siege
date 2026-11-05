@@ -19,7 +19,7 @@ import { CrateEntityCollection } from "../../../shared_entities/crate/crate_enti
 import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
 import { GroundEntityCollection } from "./ground/ground_entity_collection";
 import { PyramidEntityCollection } from "./pyramid/pyramid_entity_collection";
-import type { ICLI, TCLIEntityCollection } from "../../../cli/cli";
+import type { ICLI, TCLIEntityCollection } from "../../../cli/models";
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = "ground" | "pyramid" | "trenches";

@@ -6,9 +6,9 @@ import {
   type Scene,
 } from "@babylonjs/core";
 
-import type { ILevel } from "../level";
+import { Level, type ILevel } from "../level";
 import { EntityManager } from "./entities";
-import { InputManager, type TEvent } from "./input";
+import { InputManager, type TEvent } from "./input_manager";
 import type { ISubscriber } from "../../scene";
 import { StateManager } from "./state";
 import { SkyMaterial } from "@babylonjs/materials/sky";
@@ -24,18 +24,20 @@ import {
   FULLY_TRANSPARENT_OVERLAY,
   SNIPER_SCOPE_OVERLAY,
 } from "./overlay/sniper_scope";
+import { GameCLI } from "../../cli/cli";
 
 const GUN_ACTION_BLOCK_MS = 1100;
 const DECOY_MESH_DISPOSE_DELAY_MS = 10;
 const FORWARD_RAY_LENGTH = 1000;
 
-export class LevelOne implements ILevel, ISubscriber<TEvent> {
+export class LevelOne extends Level implements ILevel, ISubscriber<TEvent> {
   constructor(
     scene: Scene,
     canvas: HTMLCanvasElement,
     overlay: HTMLDivElement,
     onFinish: () => void,
   ) {
+    super();
     this.id = "levelOne";
     this.canvas = canvas;
     this.overlay = overlay;
@@ -51,7 +53,6 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
         volume: 0.7,
       },
     );
-
     registerBuiltInLoaders();
   }
 
@@ -59,6 +60,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
   private scene: Scene;
   private light: HemisphericLight | undefined;
   private entityManager: EntityManager | undefined;
+  private gameCLI: GameCLI | undefined;
   private inputManager: InputManager | undefined;
   private stateManager: StateManager | undefined;
   private camera: Camera | undefined;
@@ -192,11 +194,16 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
 
   public notify(context: TEvent): void {
     switch (context) {
-      case "scope":
+      case "right_click":
         this.handleScope();
         break;
-      case "fire":
+      case "left_click":
         this.handleFire();
+        break;
+      case "terminal_activated":
+        this.stateManager?.setView("normal");
+        this.overlay.replaceChildren(FULLY_TRANSPARENT_OVERLAY);
+        this.handleTerminalActivated(this.overlay, this.gameCLI);
         break;
       default:
         break;
@@ -221,6 +228,7 @@ export class LevelOne implements ILevel, ISubscriber<TEvent> {
     this.light = this.setupLights(this.scene);
     this.canvas.addEventListener("click", this.setCanvas.bind(this));
     this.entityManager = new EntityManager(this.scene);
+    this.gameCLI = new GameCLI(this.entityManager);
     await this.entityManager.init();
     this.inputManager = new InputManager(this.scene);
     this.inputManager.subscribe(this);

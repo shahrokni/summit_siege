@@ -1,4 +1,5 @@
 import {
+  KeyboardInfo,
   PointerEventTypes,
   type Observer,
   type PointerInfo,
@@ -6,7 +7,7 @@ import {
 } from "@babylonjs/core";
 import type { IInputManager, IPublisher, ISubscriber } from "../../scene";
 
-export type TEvent = "scope" | "fire";
+export type TEvent = "right_click" | "left_click" | "terminal_activated";
 
 export class InputManager implements IInputManager, IPublisher<TEvent> {
   constructor(scene: Scene) {
@@ -30,25 +31,33 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
         default:
           break;
       }
-      setTimeout(() => {
-        this.observerEnabled = true;
-      }, 0);
     });
+
+    this.keyboardObserver = this.scene.onKeyboardObservable.add(
+      (keyboardInfo) => {
+        const event = keyboardInfo.event;
+        if (event.code === "ControlLeft") {
+          this.handleBackquotePressed();
+        }
+      },
+    );
   }
 
   private subscribers: Array<ISubscriber<TEvent>> = [];
   private scene: Scene;
   private pointerObserver: Observer<PointerInfo>;
-  private observerEnabled: boolean = false;
+  private keyboardObserver: Observer<KeyboardInfo>;
+
+  private handleBackquotePressed(): void {
+    this.subscribers.forEach((s) => s.notify("terminal_activated"));
+  }
 
   private handleClick(): void {
-    if (!this.observerEnabled) return;
-    this.subscribers?.forEach((s) => s.notify("fire"));
+    this.subscribers?.forEach((s) => s.notify("left_click"));
   }
 
   private handleRightClick(): void {
-    if (!this.observerEnabled) return;
-    this.subscribers?.forEach((s) => s.notify("scope"));
+    this.subscribers?.forEach((s) => s.notify("right_click"));
   }
 
   public subscribe(subscriber: ISubscriber<TEvent>): void {
@@ -64,8 +73,8 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
   }
 
   public dispose(): void {
-    this.observerEnabled = false;
     this.scene.preventDefaultOnPointerDown = false;
     this.scene.onPointerObservable.remove(this.pointerObserver);
+    this.scene.onKeyboardObservable.remove(this.keyboardObserver);
   }
 }

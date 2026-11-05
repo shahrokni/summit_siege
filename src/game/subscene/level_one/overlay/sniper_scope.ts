@@ -1,4 +1,4 @@
-export const SNIPER_SCOPE_OVERLAY = (() => {
+export const SNIPER_SCOPE_OVERLAY = ((): HTMLDivElement => {
   const overlay = document.createElement("div");
   const background = `radial-gradient(
                             circle at center,
@@ -26,7 +26,7 @@ export const SNIPER_SCOPE_OVERLAY = (() => {
   return overlay;
 })();
 
-export const FULLY_TRANSPARENT_OVERLAY = (() => {
+export const FULLY_TRANSPARENT_OVERLAY = ((): HTMLDivElement => {
   const overlay = document.createElement("div");
   overlay.style.width = "100%";
   overlay.style.height = "100%";

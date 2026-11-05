@@ -67,12 +67,14 @@ export interface IAgentEntity<T extends TMesh> extends IEntity<T> {
   think: TThinkFN;
 }
 
+export interface IAddParam {
+  position: TPosition;
+  scale: number;
+  rotation?: TRotation;
+}
+
 export interface IEntityCollection<T> extends IDisposable {
-  add: (param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }) => string;
+  add: (param: IAddParam) => string;
   init: () => Promise<void>;
   getById: (param: { id: string }) => { entity: T; idx: number } | undefined;
   getAll: () => T[];
@@ -116,7 +118,6 @@ export class EntityCollection<
     const entityIndex = this.collection.findIndex(
       (e) => e.getId() === param.id,
     );
-    console.log(this.collection, param.id, entityIndex);
     if (entityIndex == -1) return undefined;
     return { entity: this.collection[entityIndex], idx: entityIndex };
   }

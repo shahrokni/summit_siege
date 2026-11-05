@@ -4,6 +4,7 @@ import { game } from "../game/game";
 export const GameCanvas = (): ReactElement => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+   
 
   useEffect(() => {
     if (!canvasRef.current) {
