@@ -2,18 +2,27 @@ import type { IEntity, IEntityCollection, TMesh } from "../scene";
 
 export type TSpecialCommands = "help" | "clear" | "quit";
 
-export type TCLIEntityCollectionMethods =
+export type TCLIEntityCollectionCommands =
   | "add"
   | "disposeById"
   | "getAll"
   | "getById";
 
+export const ALL_ENTITY_COLLECTION_COMMANDS: TCLIEntityCollectionCommands[] = [
+  "add",
+  "disposeById",
+  "getAll",
+  "getById",
+];
+
 export type TCLIRootCommands = "getAllCollections";
+
+export const ALL_ROOT_COMMANDS = ["getAllCollections"];
 
 export type TCLIEntityCollection = Partial<{
   [id: string]: Pick<
     IEntityCollection<IEntity<TMesh>>,
-    TCLIEntityCollectionMethods
+    TCLIEntityCollectionCommands
   >;
 }>;
 

@@ -1,6 +1,12 @@
 import { CommandHandler, type ICommandHandler } from "./command_handler";
 import { CLI_ERRORS } from "./errors";
-import type { ICLI, IRecord, TCLIRootCommands, THelpObject } from "./models";
+import {
+  ALL_ROOT_COMMANDS,
+  type ICLI,
+  type IRecord,
+  type TCLIRootCommands,
+  type THelpObject,
+} from "./models";
 
 export const ROOT_COMMANDS_HELP: THelpObject<TCLIRootCommands> = {
   getAllCollections: {
@@ -25,7 +31,7 @@ export class RootCommandHandler
     const arr = record.text.split(" ");
     const method = arr[1].trim() as TCLIRootCommands;
 
-    if (!method) {
+    if (!ALL_ROOT_COMMANDS.some((i) => i === method)) {
       record.status = "rejected";
       record.response = {
         text: `${method} ${CLI_ERRORS.command_method_not_found}`,

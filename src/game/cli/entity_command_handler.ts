@@ -1,16 +1,17 @@
 import type { IAddParam } from "../scene";
 import { CommandHandler, type ICommandHandler } from "./command_handler";
 import { CLI_ERRORS } from "./errors";
-import type {
-  ICLI,
-  IRecord,
-  TCLIEntityCollectionMethods,
-  TCommandDefinition,
-  TExecParam,
-  THelpObject,
+import {
+  ALL_ENTITY_COLLECTION_COMMANDS,
+  type ICLI,
+  type IRecord,
+  type TCLIEntityCollectionCommands,
+  type TCommandDefinition,
+  type TExecParam,
+  type THelpObject,
 } from "./models";
 
-export const ENTITY_COMMANDS_HELP: THelpObject<TCLIEntityCollectionMethods> = {
+export const ENTITY_COMMANDS_HELP: THelpObject<TCLIEntityCollectionCommands> = {
   add: {
     desc: "adds a new entity to the collection.",
     template:
@@ -30,7 +31,7 @@ export const ENTITY_COMMANDS_HELP: THelpObject<TCLIEntityCollectionMethods> = {
   },
 };
 
-const ENTITY_COMMANDS_DEFINITION: TCommandDefinition<TCLIEntityCollectionMethods> =
+const ENTITY_COMMANDS_DEFINITION: TCommandDefinition<TCLIEntityCollectionCommands> =
   {
     add: [
       {
@@ -88,7 +89,7 @@ export class EntityCommandHandler
     const arr = record.text.split(" ");
     const entityKey = arr[1].trim();
     const entity = this.cli.getAllCollections()[entityKey];
-    const method = arr[2].trim() as TCLIEntityCollectionMethods;
+    const method = arr[2].trim() as TCLIEntityCollectionCommands;
 
     if (!entityKey || !entity) {
       record.status = "rejected";
@@ -99,7 +100,7 @@ export class EntityCommandHandler
       return;
     }
 
-    if (!method) {
+    if (!ALL_ENTITY_COLLECTION_COMMANDS.some((i) => i === method)) {
       record.status = "rejected";
       record.response = {
         text: `${method} ${CLI_ERRORS.command_method_not_found}`,

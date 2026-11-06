@@ -45,7 +45,11 @@ export class CommandHandler {
               ? arr[paramIdx + i]
               : Number(arr[paramIdx + i]);
 
-          if (typeof paramValue !== prm.leadingValuesType) {
+          if (
+            (prm.leadingValuesType === "string" &&
+              typeof paramValue !== "string") ||
+            (prm.leadingValuesType === "number" && Number.isNaN(paramValue))
+          ) {
             paramTypesError += ` ${paramValue} `;
           }
 
