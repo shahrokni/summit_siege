@@ -1,9 +1,31 @@
 import {
   ENTITY_COMMANDS_HELP,
   EntityCommandHandler,
-} from "./entityCommandHandler";
+} from "./entity_command_handler";
 import { CLI_ERRORS } from "./errors";
-import type { ICLI, IRecord, THistory } from "./models";
+import type {
+  ICLI,
+  IRecord,
+  THelpObject,
+  THistory,
+  TSpecialCommands,
+} from "./models";
+import { ROOT_COMMANDS_HELP, RootCommandHandler } from "./root_command_handler";
+
+const SPECIAL_COMMANDS_HELP: THelpObject<TSpecialCommands> = {
+  help: {
+    desc: "gives a set of instructions about the terminal.",
+    template: "help",
+  },
+  clear: {
+    desc: "clears the terminal. You can also use its synonym cls.",
+    template: "clear",
+  },
+  quit: {
+    desc: "closes the terminal. You can also use its synonym exit.",
+    template: "quit",
+  },
+};
 
 export class GameCLI {
   constructor(cli: ICLI) {
@@ -11,9 +33,11 @@ export class GameCLI {
     this.history = [];
     this.locked = false;
     this.entityCommandHandler = new EntityCommandHandler(cli);
+    this.rootCommandHandler = new RootCommandHandler(cli);
   }
 
   private entityCommandHandler: EntityCommandHandler;
+  private rootCommandHandler: RootCommandHandler;
   private history: THistory;
   private index: number;
   private locked: boolean;
@@ -22,17 +46,33 @@ export class GameCLI {
     return (this.index += 1);
   }
 
-  private handleEntityExec(record: IRecord): void {
+  private handleRootCommandExec(record: IRecord): void {
+    this.rootCommandHandler.exec(record);
+    return;
+  }
+
+  private handleEntityCommandExec(record: IRecord): void {
     this.entityCommandHandler.exec(record);
     return;
   }
 
   private buildHelp(): string {
-    let help = "_____Entities_____\n";
-    Object.entries(ENTITY_COMMANDS_HELP).forEach(([key, value]) => {
+    let help = "\n_Root Commands_\n";
+    Object.entries(ROOT_COMMANDS_HELP).forEach(([key, value]) => {
       help += ` ${key} command ${value.desc}\n`;
       help += ` ${value.template}\n`;
-      help += "___________________\n";
+    });
+
+    help = help.concat("\n_Entity Commands_\n");
+    Object.entries(ENTITY_COMMANDS_HELP).forEach(([key, value]) => {
+      help += ` ${key} command ${value.desc}\n`;
+      help += ` ${value.template}\n\n`;
+    });
+
+    help = help.concat("\n_Special Commands_\n");
+    Object.entries(SPECIAL_COMMANDS_HELP).forEach(([key, value]) => {
+      help += ` ${key} command ${value.desc}\n`;
+      help += ` ${value.template}\n\n`;
     });
     return help;
   }
@@ -50,6 +90,7 @@ export class GameCLI {
 
     const arr = cmd.split(" ");
     const base = arr[0];
+
     if (arr.length === 1 || !base) {
       record.status = "rejected";
       record.response = {
@@ -59,8 +100,11 @@ export class GameCLI {
       return;
     }
 
-    if (base === "entities") {
-      this.handleEntityExec(record);
+    if (base === "root") {
+      this.handleRootCommandExec(record);
+      return;
+    } else if (base === "entities") {
+      this.handleEntityCommandExec(record);
       return;
     }
   }

@@ -1,4 +1,5 @@
-import type { GameCLI, IRecord } from "../cli/cli";
+import type { GameCLI } from "../cli/cli";
+import type { IRecord } from "../cli/models";
 
 const COLORS = {
   info: "#76FF8A",
@@ -32,6 +33,14 @@ export class TerminalOverlay {
             this.destroy();
           }, 0);
           return;
+        case "clear":
+        case "cls":
+          setTimeout(() => {
+            if (this.screenElement) {
+              this.screenElement.innerHTML = "";
+            }
+          }, 0);
+          break;
         default:
           break;
       }
@@ -41,6 +50,9 @@ export class TerminalOverlay {
       const [req, res] = this.createRecord(topRecord);
       if (req) this.screenElement?.appendChild(req);
       if (res) this.screenElement?.appendChild(res);
+      if (this.screenElement) {
+        this.screenElement.scrollTop = this.screenElement.scrollHeight;
+      }
 
       this.input = "";
       if (this.inputElement) {
@@ -68,11 +80,12 @@ export class TerminalOverlay {
   private createContainer(): HTMLDivElement {
     const container = document.createElement("div");
     container.style.fontFamily = '"GameTerminal",monospace';
+    container.style.fontSize = "13px";
     container.style.width = "60%";
     container.style.height = "60%";
     container.style.padding = "4px";
     container.style.opacity = "0.6";
-    container.style.position = "absolute";
+    container.style.position = "fixed";
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.backgroundColor = "#000000";
@@ -80,16 +93,20 @@ export class TerminalOverlay {
     container.style.right = "0";
     container.style.top = "25%";
     container.style.marginInline = "auto";
+    container.style.overflow = "hidden";
     return container;
   }
 
   private createScreen(): HTMLDivElement {
     const screen = document.createElement("div");
     screen.style.width = "100%";
-    screen.style.height = "90%";
+    screen.style.flex = "1";
+    screen.style.minHeight = "0";
+    screen.style.minWidth = "0";
+    screen.style.overflowX = "hidden";
     screen.style.display = "flex";
     screen.style.flexDirection = "column";
-
+    screen.style.overflowY = "auto";
     return screen;
   }
 
@@ -98,6 +115,7 @@ export class TerminalOverlay {
     recordElement.style.width = "100%";
     recordElement.style.height = "fir-content";
     recordElement.style.padding = "4px";
+    recordElement.style.boxSizing = "border-box";
     const { type, text, status, response } = record;
     let recordColor: string;
     let responseColor: string;
@@ -119,6 +137,7 @@ export class TerminalOverlay {
 
     if (responseElement && response) {
       responseElement.style.color = responseColor;
+      responseElement.style.boxSizing = "border-box";
       responseElement.style.padding = "4px";
       responseElement.innerText = response.text;
     }

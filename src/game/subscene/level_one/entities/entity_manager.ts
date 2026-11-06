@@ -176,8 +176,4 @@ export class EntityManager implements IEntityManager, ICLI {
   public getAllCollections(): TCLIEntityCollection {
     return this.entityCollection;
   }
-
-  public getScene(): Scene {
-    return this.scene;
-  }
 }
