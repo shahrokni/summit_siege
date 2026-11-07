@@ -1,4 +1,5 @@
-import { Color4, DynamicTexture, ParticleSystem, Vector3, type Scene } from '@babylonjs/core';
+import { Color4, DynamicTexture, ParticleSystem, type Scene, Vector3 } from '@babylonjs/core';
+
 import type { TPosition } from '../../scene';
 
 export const renderSparkEffect = (scene: Scene, position: TPosition): void => {

@@ -1,4 +1,5 @@
 import type { Camera } from '@babylonjs/core';
+
 import type { IEntity, IEntityCollection, TMesh } from '../scene';
 
 export type TCommandBranch = 'entity' | 'scene' | 'collection';

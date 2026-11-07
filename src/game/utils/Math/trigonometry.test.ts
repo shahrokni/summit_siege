@@ -1,5 +1,6 @@
 import { Vector3 } from '@babylonjs/core';
-import { describe, expect, test, it } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
+
 import { calculateHeading, calculatePathHeadings, degToRad, type TPath } from './trigonometry';
 
 describe('trigonometry', () => {

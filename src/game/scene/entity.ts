@@ -1,14 +1,15 @@
 import {
-  FreeCamera,
-  Vector3,
   type AssetContainer,
+  FreeCamera,
   type GroundMesh,
   type Mesh,
   type RecastJSPlugin,
   type Scene,
+  Vector3,
 } from '@babylonjs/core';
-import type { IDisposable, TPosition, TRotation } from './global';
+
 import { printStdWarn, STD_ERR } from './errors';
+import type { IDisposable, TPosition, TRotation } from './global';
 
 export type TMesh = Array<GroundMesh> | Array<Mesh>;
 
@@ -48,7 +49,7 @@ export class Entity<T extends TMesh> implements IEntity<T> {
   private rootId: string;
   private body: T;
   private bodyCamera: FreeCamera | undefined;
-  private scene: Scene;
+  protected scene: Scene;
 
   public getId(): TEntityId {
     return this.rootId;

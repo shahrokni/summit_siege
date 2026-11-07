@@ -1,11 +1,12 @@
 import {
+  type GroundMesh,
   MeshBuilder,
+  type Scene,
   StandardMaterial,
   Texture,
   Vector3,
-  type GroundMesh,
-  type Scene,
 } from '@babylonjs/core';
+
 import {
   EntityCollection,
   type IEntity,

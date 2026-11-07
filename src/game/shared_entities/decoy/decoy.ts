@@ -1,22 +1,21 @@
-import { AnimationEvent, Mesh, Scene, Vector3 } from '@babylonjs/core';
+import { AnimationEvent, Mesh, Vector3 } from '@babylonjs/core';
+
+import { type Brain, makeBrain } from '../../brain';
+import type { FactDB } from '../../factDB';
 import { Entity, type IAgentEntity, type TPosition, type TThinkTool } from '../../scene';
-import { makeBrain, type Brain } from '../../brain';
+import { generatePathAnimation } from '../../utils/babylon/animationGenerator';
+import { renderBloodEffect } from '../../utils/babylon/blood_effect';
+import { calculatePathHeadings, type TPath } from '../../utils/math/trigonometry';
 import { facts } from './state_machines/v1/facts';
 import { stateMachine } from './state_machines/v1/state_machine';
-import { renderBloodEffect } from '../../utils/babylon/bloodEffect';
-import type { FactDB } from '../../factDB';
-import { generatePathAnimation } from '../../utils/babylon/animationGenerator';
-import { calculatePathHeadings, type TPath } from '../../utils/math/trigonometry';
 
 export class DecoyEntity extends Entity<Array<Mesh>> implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
     super(id, meshes);
-    this.scene = meshes[0].getScene();
     this.targetPosition = targetPosition;
     this.brain = makeBrain(facts, stateMachine);
   }
 
-  private scene: Scene;
   private brain: Brain;
   private targetPosition: TPosition;
   private isAggressive = Date.now() % 2 === 0;

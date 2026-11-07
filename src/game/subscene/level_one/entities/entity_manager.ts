@@ -1,5 +1,7 @@
-import { Camera, Color3, RecastJSPlugin, StandardMaterial, type Scene } from '@babylonjs/core';
+import { Camera, Color3, RecastJSPlugin, type Scene, StandardMaterial } from '@babylonjs/core';
+import Recast from 'recast-detour';
 
+import type { ICLI, TCLIEntityCollection } from '../../../cli/models';
 import {
   EntityCollection,
   type IEntityManager,
@@ -7,14 +9,12 @@ import {
   type TThinkFN,
   type TThinkTool,
 } from '../../../scene';
+import { BarrelEntityCollection } from '../../../shared_entities/barrel/barrel_entity_collection';
+import { CrateEntityCollection } from '../../../shared_entities/crate/crate_entity_collection';
 import { DecoyEntityCollection } from '../../../shared_entities/decoy/decoy_entity_collection';
 import { HumaveeEntityCollection } from '../../../shared_entities/humavee/humavee_entity_collection';
-import Recast from 'recast-detour';
-import { CrateEntityCollection } from '../../../shared_entities/crate/crate_entity_collection';
-import { BarrelEntityCollection } from '../../../shared_entities/barrel/barrel_entity_collection';
 import { GroundEntityCollection } from './ground/ground_entity_collection';
 import { PyramidEntityCollection } from './pyramid/pyramid_entity_collection';
-import type { ICLI, TCLIEntityCollection } from '../../../cli/models';
 
 const THINK_INTERVAL_MS = 3000;
 export type Entity = 'ground' | 'pyramid' | 'trenches';

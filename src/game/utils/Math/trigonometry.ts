@@ -5,14 +5,14 @@ import type { Vector3 } from '@babylonjs/core';
  * @param t is the radian angle
  * @returns calculated degree
  */
-export const radToDeg = (t: number) => (t * 180) / Math.PI;
+export const radToDeg = (t: number): number => (t * 180) / Math.PI;
 
 /**
  * converts degree to radian
  * @param t is the degree angle
  * @returns calculated radian
  */
-export const degToRad = (t: number) => (t * Math.PI) / 180;
+export const degToRad = (t: number): number => (t * Math.PI) / 180;
 
 type TDirection = 'NE' | 'NW' | 'SE' | 'SW' | 'N' | 'E' | 'W' | 'S';
 

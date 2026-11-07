@@ -1,5 +1,5 @@
-import { type TFacts, FactDB } from './factDB';
-import { type TStates, StateMachine } from './stateMachine';
+import { FactDB, type TFacts } from './factDB';
+import { StateMachine, type TStates } from './stateMachine';
 
 export class Brain {
   constructor(fdb: FactDB, sm: StateMachine) {
@@ -10,11 +10,11 @@ export class Brain {
   private facts_db;
   private state_machine;
 
-  public getFact(fname: string) {
+  public getFact(fname: string): number {
     return this.facts_db.getFact(fname);
   }
 
-  public setFact(fname: string, val: number) {
+  public setFact(fname: string, val: number): void {
     this.facts_db.setFact(fname, val);
   }
 

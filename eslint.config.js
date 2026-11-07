@@ -5,6 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default defineConfig([
   globalIgnores(['dist']),
@@ -18,6 +19,26 @@ export default defineConfig([
     ],
     languageOptions: {
       globals: globals.browser,
+    },
+    plugins: {
+      'simple-import-sort': simpleImportSort,
+    },
+    rules: {
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: {
+            constructors: 'no-public',
+            methods: 'explicit',
+            properties: 'explicit',
+            accessors: 'explicit',
+          },
+        },
+      ],
     },
   },
   eslintConfigPrettier,

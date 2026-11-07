@@ -1,21 +1,21 @@
-import { HemisphericLight, MeshBuilder, Sound, Vector3, type Scene } from '@babylonjs/core';
-
-import { Level, type ILevel } from '../level';
-import { EntityManager } from './entities';
-import { InputManager, type TEvent } from './input_manager';
-import type { ISubscriber } from '../../scene';
-import { StateManager } from './state';
+import { HemisphericLight, MeshBuilder, type Scene, Sound, Vector3 } from '@babylonjs/core';
+import { registerBuiltInLoaders } from '@babylonjs/loaders';
 import { SkyMaterial } from '@babylonjs/materials/sky';
-import { Camera } from './entities/camera';
+
+import { GameCLI } from '../../cli/cli';
+import type { ISubscriber } from '../../scene';
+import type { BarrelEntity } from '../../shared_entities/barrel/barrel';
+import type { BarrelEntityCollection } from '../../shared_entities/barrel/barrel_entity_collection';
 import type { DecoyEntity } from '../../shared_entities/decoy/decoy';
 import type { DecoyEntityCollection } from '../../shared_entities/decoy/decoy_entity_collection';
-import type { BarrelEntityCollection } from '../../shared_entities/barrel/barrel_entity_collection';
-import type { BarrelEntity } from '../../shared_entities/barrel/barrel';
-import type { HumaveeEntityCollection } from '../../shared_entities/humavee/humavee_entity_collection';
 import type { HumaveeEntity } from '../../shared_entities/humavee/humavee';
-import { registerBuiltInLoaders } from '@babylonjs/loaders';
+import type { HumaveeEntityCollection } from '../../shared_entities/humavee/humavee_entity_collection';
+import { type ILevel, Level } from '../level';
+import { EntityManager } from './entities';
+import { Camera } from './entities/camera';
+import { InputManager, type TEvent } from './input_manager';
 import { FULLY_TRANSPARENT_OVERLAY, SNIPER_SCOPE_OVERLAY } from './overlay/sniper_scope';
-import { GameCLI } from '../../cli/cli';
+import { StateManager } from './state';
 
 const GUN_ACTION_BLOCK_MS = 1100;
 const DECOY_MESH_DISPOSE_DELAY_MS = 10;
@@ -41,7 +41,7 @@ export class LevelOne extends Level implements ILevel, ISubscriber<TEvent> {
     registerBuiltInLoaders();
   }
 
-  id: string;
+  public id: string;
   private scene: Scene;
   private light: HemisphericLight | undefined;
   private entityManager: EntityManager | undefined;
@@ -198,7 +198,7 @@ export class LevelOne extends Level implements ILevel, ISubscriber<TEvent> {
 
   public onFinish(): void {}
 
-  public async run() {
+  public async run(): Promise<void> {
     this.dispose();
     this.canvas.removeEventListener('click', this.setCanvas.bind(this));
 

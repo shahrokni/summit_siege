@@ -1,13 +1,14 @@
 import {
   LoadAssetContainerAsync,
   Mesh,
+  type Scene,
   StandardMaterial,
   Texture,
-  type Scene,
 } from '@babylonjs/core';
+
 import { EntityCollection, type IAgentEntity, type IEntityCollection } from '../../scene/entity';
-import { DecoyEntity } from './decoy';
 import type { TPosition, TRotation } from '../../scene/global';
+import { DecoyEntity } from './decoy';
 
 export class DecoyEntityCollection
   extends EntityCollection<IAgentEntity<Array<Mesh>>>

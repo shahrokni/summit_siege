@@ -3,13 +3,14 @@ import {
   LoadAssetContainerAsync,
   Mesh,
   Ray,
+  type Scene,
   StandardMaterial,
   Texture,
   TransformNode,
   UniversalCamera,
   Vector3,
-  type Scene,
 } from '@babylonjs/core';
+
 import type { TPlayerView } from '../state';
 
 export class Camera {
@@ -79,7 +80,7 @@ export class Camera {
     return this.camera.getForwardRay(length);
   }
 
-  public dispose() {
+  public dispose(): void {
     this.camera?.dispose();
   }
 }

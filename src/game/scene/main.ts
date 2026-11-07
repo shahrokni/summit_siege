@@ -1,6 +1,7 @@
 import { Engine, Scene } from '@babylonjs/core';
-import { LevelOne } from '../subscene';
+
 import { GameState, type IState } from '../gameState';
+import { LevelOne } from '../subscene';
 import type { ILevel } from '../subscene/level';
 import type { ISubscriber } from './observer';
 

@@ -1,10 +1,11 @@
 import {
   KeyboardInfo,
-  PointerEventTypes,
   type Observer,
+  PointerEventTypes,
   type PointerInfo,
   type Scene,
 } from '@babylonjs/core';
+
 import type { IInputManager, IPublisher, ISubscriber } from '../../scene';
 
 export type TEvent = 'right_click' | 'left_click' | 'terminal_activated';

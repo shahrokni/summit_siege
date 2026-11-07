@@ -1,6 +1,8 @@
+import type { ReactElement } from 'react';
+
 import { GameCanvas } from './components';
 
-function App() {
+function App(): ReactElement {
   return <GameCanvas />;
 }
 

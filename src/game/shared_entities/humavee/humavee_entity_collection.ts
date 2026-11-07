@@ -1,10 +1,11 @@
 import {
   LoadAssetContainerAsync,
   Mesh,
+  type Scene,
   StandardMaterial,
   Texture,
-  type Scene,
 } from '@babylonjs/core';
+
 import {
   EntityCollection,
   type IEntity,

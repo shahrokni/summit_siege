@@ -1,4 +1,5 @@
 import { Color4, DynamicTexture, ParticleSystem, Scene, Vector3 } from '@babylonjs/core';
+
 import type { TPosition } from '../../scene';
 
 export const renderBloodEffect = (scene: Scene, position: TPosition): void => {

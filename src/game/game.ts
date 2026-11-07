@@ -1,4 +1,5 @@
 import { Engine } from '@babylonjs/core';
+
 import { Main } from './scene';
 
 export async function game(

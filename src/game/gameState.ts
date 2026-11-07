@@ -44,7 +44,7 @@ export class GameState implements IPublisher<IState> {
     this.subscribers.splice(idx, 1);
   }
 
-  public incrementLevel() {
+  public incrementLevel(): void {
     this.level += 1;
     const state = this.getState();
     state.key = 'level';

@@ -1,4 +1,4 @@
-import { TransformNode, Vector3, type Scene } from '@babylonjs/core';
+import { type Scene, TransformNode, Vector3 } from '@babylonjs/core';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 
 export const createAxes = (scene: Scene): void => {

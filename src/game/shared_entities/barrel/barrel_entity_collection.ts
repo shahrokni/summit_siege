@@ -1,12 +1,12 @@
 import {
   LoadAssetContainerAsync,
   Mesh,
+  type Scene,
   StandardMaterial,
   Texture,
-  type Scene,
 } from '@babylonjs/core';
-import { EntityCollection, type IEntity, type IEntityCollection } from '../../scene/entity';
 
+import { EntityCollection, type IEntity, type IEntityCollection } from '../../scene/entity';
 import type { TPosition, TRotation } from '../../scene/global';
 import { BarrelEntity } from './barrel';
 

@@ -1,4 +1,5 @@
-import { useEffect, useRef, type ReactElement } from 'react';
+import { type ReactElement, useEffect, useRef } from 'react';
+
 import { game } from '../game/game';
 
 export const GameCanvas = (): ReactElement => {
@@ -12,13 +13,13 @@ export const GameCanvas = (): ReactElement => {
 
     let dispose: (() => void) | undefined;
 
-    const init = async () => {
+    const init = async (): Promise<void> => {
       dispose = await game(canvasRef.current!, overlayRef.current!);
     };
 
     void init();
 
-    return () => {
+    return (): void => {
       dispose?.();
     };
   }, []);

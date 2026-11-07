@@ -15,12 +15,12 @@ export class StateManager {
 
   private state: IState;
 
-  public setHealth(health: number) {
+  public setHealth(health: number): void {
     if (health > 5 || health < 0) return;
     this.state.health = health;
   }
 
-  public setView(view: TPlayerView) {
+  public setView(view: TPlayerView): void {
     this.state.view = view;
   }
 

@@ -1,4 +1,5 @@
-import { MeshBuilder, StandardMaterial, Texture, type Mesh, type Scene } from '@babylonjs/core';
+import { type Mesh, MeshBuilder, type Scene, StandardMaterial, Texture } from '@babylonjs/core';
+
 import {
   EntityCollection,
   type IEntity,
