@@ -26,7 +26,8 @@ If you have any questions, feel free to contact us at:
 
 Contributions are very welcome! Feel free to open issues, suggest improvements, fix bugs, add new features, or implement new scenarios. If you plan to make a larger change, we recommend opening an issue first so we can discuss the idea before you start working on it.
 
-<img width="1101" height="813" alt="image" src="https://github.com/user-attachments/assets/40e307bb-e5cf-4f7c-93c1-e8da2ab77467" />
+<img width="941" height="440" alt="image" src="https://github.com/user-attachments/assets/a1f0c2c9-3fb7-45d5-abdc-8e4b238bd271" />
+
 
 ### Running the Project Locally
 
