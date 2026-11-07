@@ -1,14 +1,9 @@
-import { Vector3 } from "@babylonjs/core";
-import { describe, expect, test, it } from "vitest";
-import {
-  calculateHeading,
-  calculatePathHeadings,
-  degToRad,
-  type TPath,
-} from "./trigonometry";
+import { Vector3 } from '@babylonjs/core';
+import { describe, expect, test, it } from 'vitest';
+import { calculateHeading, calculatePathHeadings, degToRad, type TPath } from './trigonometry';
 
-describe("trigonometry", () => {
-  describe("headings", () => {
+describe('trigonometry', () => {
+  describe('headings', () => {
     const tests: Array<{ s: Vector3; e: Vector3; expected: number }> = [
       {
         s: new Vector3(0, 0, 0),
@@ -60,7 +55,7 @@ describe("trigonometry", () => {
     });
   });
 
-  describe("path headings", () => {
+  describe('path headings', () => {
     const path: TPath = [
       { p1: new Vector3(1, 0, -1), p2: new Vector3(0, 0, -2) },
       { p1: new Vector3(0, 0, -2), p2: new Vector3(1, 0, -3) },
@@ -71,7 +66,7 @@ describe("trigonometry", () => {
       { p1: new Vector3(-1, 0, 0), p2: new Vector3(1, 0, 0) },
       { p1: new Vector3(1, 0, 0), p2: new Vector3(1, 0, -1) },
     ];
-    it("should return ", () => {
+    it('should return ', () => {
       expect(calculatePathHeadings(path)).toStrictEqual([
         0.79, 2.36, 0, 3.93, 5.5, 4.71, 3.14, 1.57,
       ]);

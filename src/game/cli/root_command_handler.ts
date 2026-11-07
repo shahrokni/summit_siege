@@ -1,5 +1,5 @@
-import { CommandHandler, type ICommandHandler } from './command_handler'
-import { CLI_ERRORS } from './errors'
+import { CommandHandler, type ICommandHandler } from './command_handler';
+import { CLI_ERRORS } from './errors';
 import {
   ALL_ROOT_COMMANDS,
   type ICLI,
@@ -8,7 +8,7 @@ import {
   type TCommandDefinition,
   type TExecParam,
   type THelpObject,
-} from './models'
+} from './models';
 
 export const ROOT_COMMANDS_HELP: THelpObject<TCLIRootCommands> = {
   getAllCollections: {
@@ -23,7 +23,7 @@ export const ROOT_COMMANDS_HELP: THelpObject<TCLIRootCommands> = {
     desc: 'switches the active camera of the scene',
     template: 'scene switchCamera --id [id]',
   },
-}
+};
 
 export const ROOT_COMMANDS_DEFINITION: TCommandDefinition<TCLIRootCommands> = {
   getAllCameras: [],
@@ -37,52 +37,52 @@ export const ROOT_COMMANDS_DEFINITION: TCommandDefinition<TCLIRootCommands> = {
       optional: false,
     },
   ],
-}
+};
 
 export class RootCommandHandler extends CommandHandler implements ICommandHandler {
   constructor(cli: ICLI) {
-    super(cli)
+    super(cli);
   }
 
   public exec(record: IRecord): void {
-    const arr = record.text.split(' ')
-    const method = arr[1].trim() as TCLIRootCommands
+    const arr = record.text.split(' ');
+    const method = arr[1].trim() as TCLIRootCommands;
 
     if (!ALL_ROOT_COMMANDS.some((i) => i === method)) {
-      record.status = 'rejected'
+      record.status = 'rejected';
       record.response = {
         text: `${method} ${CLI_ERRORS.command_method_not_found}`,
         at: Date.now(),
-      }
-      return
+      };
+      return;
     }
 
-    const paramsDef = ROOT_COMMANDS_DEFINITION[method]
-    let params: TExecParam
+    const paramsDef = ROOT_COMMANDS_DEFINITION[method];
+    let params: TExecParam;
 
     try {
-      params = this.buildExecParam(record, paramsDef)
+      params = this.buildExecParam(record, paramsDef);
     } catch {
-      return
+      return;
     }
 
     if (method === 'getAllCollections') {
-      const collections = this.cli[method]()
-      record.status = 'executed'
+      const collections = this.cli[method]();
+      record.status = 'executed';
       record.response = {
         at: Date.now(),
         text: `${Object.keys(collections).join('\n')}`,
-      }
+      };
     } else if (method === 'getAllCameras') {
-      const cameras = this.cli[method]()
-      record.status = 'executed'
+      const cameras = this.cli[method]();
+      record.status = 'executed';
       record.response = {
         at: Date.now(),
         text: `${cameras.map((c) => c.name).join('\n')}`,
-      }
+      };
     } else if (method === 'switchCamera') {
-      this.cli[method](params as unknown as { id: string })
-      record.status = 'executed'
+      this.cli[method](params as unknown as { id: string });
+      record.status = 'executed';
     }
   }
 }

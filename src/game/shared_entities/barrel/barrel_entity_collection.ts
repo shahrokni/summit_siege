@@ -4,15 +4,11 @@ import {
   StandardMaterial,
   Texture,
   type Scene,
-} from "@babylonjs/core";
-import {
-  EntityCollection,
-  type IEntity,
-  type IEntityCollection,
-} from "../../scene/entity";
+} from '@babylonjs/core';
+import { EntityCollection, type IEntity, type IEntityCollection } from '../../scene/entity';
 
-import type { TPosition, TRotation } from "../../scene/global";
-import { BarrelEntity } from "./barrel";
+import type { TPosition, TRotation } from '../../scene/global';
+import { BarrelEntity } from './barrel';
 
 export class BarrelEntityCollection
   extends EntityCollection<IEntity<Array<Mesh>>>
@@ -24,23 +20,16 @@ export class BarrelEntityCollection
 
   public async init(): Promise<void> {
     if (this.container) return;
-    this.container = await LoadAssetContainerAsync(
-      "/models/barrel/barrel.obj",
-      this.scene,
-    );
+    this.container = await LoadAssetContainerAsync('/models/barrel/barrel.obj', this.scene);
   }
 
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     const rootId = `barrel-${this.getNextId()}`;
     const mesh: Array<Mesh> = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("barrel-material", this.scene);
-    const texture = new Texture("/models/barrel/barrel.png", this.scene);
+    const material = new StandardMaterial('barrel-material', this.scene);
+    const texture = new Texture('/models/barrel/barrel.png', this.scene);
 
     material.diffuseTexture = texture;
 

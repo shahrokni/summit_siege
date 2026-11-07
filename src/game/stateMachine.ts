@@ -1,18 +1,18 @@
-import type { FactDB } from "./factDB";
+import type { FactDB } from './factDB';
 
 const EPSILON: number = 0.01;
 
 export const OPERANDS = {
-  IS_NOT_ZERO: "()", // x != 0  ->  if (x)
-  IS_ZERO: "!", // x == 0  ->  if (!x)
-  AND: "&", // l && r
-  OR: "|", // l || r
-  EQ: "==", // l == r
-  GT: ">", // l > r
-  GEQ: ">=", // l >= r
-  LT: "<", // l < r
-  LEQ: "<=", // l <= r
-  NEQ: "!=", // l != r
+  IS_NOT_ZERO: '()', // x != 0  ->  if (x)
+  IS_ZERO: '!', // x == 0  ->  if (!x)
+  AND: '&', // l && r
+  OR: '|', // l || r
+  EQ: '==', // l == r
+  GT: '>', // l > r
+  GEQ: '>=', // l >= r
+  LT: '<', // l < r
+  LEQ: '<=', // l <= r
+  NEQ: '!=', // l != r
 };
 
 export interface TExprs {
@@ -147,8 +147,7 @@ export class StateMachine {
     switch (opr) {
       case OPERANDS.IS_ZERO:
       case OPERANDS.IS_NOT_ZERO:
-        if (facts.length != 1)
-          throw Error(`Unary operator got ${facts.length} operands!`);
+        if (facts.length != 1) throw Error(`Unary operator got ${facts.length} operands!`);
         break;
       case OPERANDS.AND:
       case OPERANDS.OR:
@@ -158,8 +157,7 @@ export class StateMachine {
       case OPERANDS.LT:
       case OPERANDS.LEQ:
       case OPERANDS.NEQ:
-        if (facts.length < 2)
-          throw Error(`Binary operator got ${facts.length} operands!`);
+        if (facts.length < 2) throw Error(`Binary operator got ${facts.length} operands!`);
         break;
       default:
         break; // Operators that do not need any operand size checking!

@@ -1,1 +1,1 @@
-export * from "./entity_manager";
+export * from './entity_manager';

@@ -1,9 +1,9 @@
 import {
   COLLECTION_COMMANDS_HELP,
   EntityCollectionCommandHandler,
-} from "./collection_command_handler";
-import { EntityCommandHandler } from "./entity_command_handler";
-import { CLI_ERRORS } from "./errors";
+} from './collection_command_handler';
+import { EntityCommandHandler } from './entity_command_handler';
+import { CLI_ERRORS } from './errors';
 import {
   ALL_COMMAND_BRANCHES,
   type ICLI,
@@ -11,21 +11,21 @@ import {
   type THelpObject,
   type THistory,
   type TSpecialCommands,
-} from "./models";
-import { ROOT_COMMANDS_HELP, RootCommandHandler } from "./root_command_handler";
+} from './models';
+import { ROOT_COMMANDS_HELP, RootCommandHandler } from './root_command_handler';
 
 const SPECIAL_COMMANDS_HELP: THelpObject<TSpecialCommands> = {
   help: {
-    desc: "gives a set of instructions about the terminal.",
-    template: "help",
+    desc: 'gives a set of instructions about the terminal.',
+    template: 'help',
   },
   clear: {
-    desc: "clears the terminal. You can also use its synonym cls.",
-    template: "clear",
+    desc: 'clears the terminal. You can also use its synonym cls.',
+    template: 'clear',
   },
   quit: {
-    desc: "closes the terminal. You can also use its synonym exit.",
-    template: "quit",
+    desc: 'closes the terminal. You can also use its synonym exit.',
+    template: 'quit',
   },
 };
 
@@ -34,9 +34,7 @@ export class GameCLI {
     this.index = 0;
     this.history = [];
     this.locked = false;
-    this.entityCollectionCommandHandler = new EntityCollectionCommandHandler(
-      cli,
-    );
+    this.entityCollectionCommandHandler = new EntityCollectionCommandHandler(cli);
     this.rootCommandHandler = new RootCommandHandler(cli);
     this.entityCommandHandler = new EntityCommandHandler(cli);
   }
@@ -65,19 +63,19 @@ export class GameCLI {
   }
 
   private buildHelp(): string {
-    let help = "\n_Scene Commands_\n";
+    let help = '\n_Scene Commands_\n';
     Object.entries(ROOT_COMMANDS_HELP).forEach(([key, value]) => {
       help += ` ${key} command ${value.desc}\n`;
       help += ` ${value.template}\n`;
     });
 
-    help = help.concat("\n_Collection Commands_\n");
+    help = help.concat('\n_Collection Commands_\n');
     Object.entries(COLLECTION_COMMANDS_HELP).forEach(([key, value]) => {
       help += ` ${key} command ${value.desc}\n`;
       help += ` ${value.template}\n\n`;
     });
 
-    help = help.concat("\n_Special Commands_\n");
+    help = help.concat('\n_Special Commands_\n');
     Object.entries(SPECIAL_COMMANDS_HELP).forEach(([key, value]) => {
       help += ` ${key} command ${value.desc}\n`;
       help += ` ${value.template}\n\n`;
@@ -89,18 +87,18 @@ export class GameCLI {
     const record = this.history[this.history.length - 1];
     const cmd = record.text;
 
-    if (cmd === "help") {
-      record.status = "executed";
+    if (cmd === 'help') {
+      record.status = 'executed';
       const help = this.buildHelp();
       this.print(help);
       return;
     }
 
-    const arr = cmd.split(" ");
+    const arr = cmd.split(' ');
     const base = arr[0];
 
     if (arr.length === 1 || !base) {
-      record.status = "rejected";
+      record.status = 'rejected';
       record.response = {
         text: `${record.text}-${CLI_ERRORS.command_not_found}`,
         at: Date.now(),
@@ -109,7 +107,7 @@ export class GameCLI {
     }
 
     if (!ALL_COMMAND_BRANCHES.some((b) => b !== base)) {
-      record.status = "rejected";
+      record.status = 'rejected';
       record.response = {
         text: `${record.text}-${CLI_ERRORS.command_branch_no_found}`,
         at: Date.now(),
@@ -117,11 +115,11 @@ export class GameCLI {
       return;
     }
 
-    if (base === "scene") {
+    if (base === 'scene') {
       this.handleRootCommandExec(record);
-    } else if (base === "collection") {
+    } else if (base === 'collection') {
       this.handleEntityCollectionCommandExec(record);
-    } else if (base === "entity") {
+    } else if (base === 'entity') {
       this.handleEntityCommandExec(record);
     }
   }
@@ -129,10 +127,10 @@ export class GameCLI {
   public print(text: string): THistory {
     this.history.push({
       index: this.getNextIndex(),
-      status: "executed",
+      status: 'executed',
       text,
       at: Date.now(),
-      type: "info",
+      type: 'info',
     });
     return this.history;
   }
@@ -143,10 +141,10 @@ export class GameCLI {
     }
     this.history.push({
       index: this.getNextIndex(),
-      status: "pending",
+      status: 'pending',
       text: cmd,
       at: Date.now(),
-      type: "request",
+      type: 'request',
     });
     this.locked = true;
     this.exec();

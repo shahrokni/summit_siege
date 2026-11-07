@@ -1,25 +1,14 @@
-import { AnimationEvent, Mesh, Scene, Vector3 } from "@babylonjs/core";
-import {
-  Entity,
-  type IAgentEntity,
-  type TPosition,
-  type TThinkTool,
-} from "../../scene";
-import { makeBrain, type Brain } from "../../brain";
-import { facts } from "./state_machines/v1/facts";
-import { stateMachine } from "./state_machines/v1/state_machine";
-import { renderBloodEffect } from "../../utils/babylon/bloodEffect";
-import type { FactDB } from "../../factDB";
-import { generatePathAnimation } from "../../utils/babylon/animationGenerator";
-import {
-  calculatePathHeadings,
-  type TPath,
-} from "../../utils/math/trigonometry";
+import { AnimationEvent, Mesh, Scene, Vector3 } from '@babylonjs/core';
+import { Entity, type IAgentEntity, type TPosition, type TThinkTool } from '../../scene';
+import { makeBrain, type Brain } from '../../brain';
+import { facts } from './state_machines/v1/facts';
+import { stateMachine } from './state_machines/v1/state_machine';
+import { renderBloodEffect } from '../../utils/babylon/bloodEffect';
+import type { FactDB } from '../../factDB';
+import { generatePathAnimation } from '../../utils/babylon/animationGenerator';
+import { calculatePathHeadings, type TPath } from '../../utils/math/trigonometry';
 
-export class DecoyEntity
-  extends Entity<Array<Mesh>>
-  implements IAgentEntity<Array<Mesh>>
-{
+export class DecoyEntity extends Entity<Array<Mesh>> implements IAgentEntity<Array<Mesh>> {
   constructor(id: string, meshes: Array<Mesh>, targetPosition: TPosition) {
     super(id, meshes);
     this.scene = meshes[0].getScene();
@@ -54,7 +43,7 @@ export class DecoyEntity
       target_path_found: this.states.target_path_found,
     };
 
-    fdb.setFact("is_aggressive", this.isAggressive ? 1 : 0);
+    fdb.setFact('is_aggressive', this.isAggressive ? 1 : 0);
 
     Object.entries(factCheckers).forEach((f) => {
       const [fact, state] = f;
@@ -62,7 +51,7 @@ export class DecoyEntity
     });
   }
 
-  private findTargetPath(computePath: TThinkTool["computePath"]): void {
+  private findTargetPath(computePath: TThinkTool['computePath']): void {
     const { x, y, z } = this.getPosition(0) as TPosition;
     const { x: tx, y: ty, z: tz } = this.targetPosition;
     const start = new Vector3(x, y, z);
@@ -88,9 +77,7 @@ export class DecoyEntity
       });
     }
 
-    const headings = calculatePathHeadings(targetPath, OFFSET).map(
-      (h) => h * -1,
-    );
+    const headings = calculatePathHeadings(targetPath, OFFSET).map((h) => h * -1);
 
     const { animation, keyFrames } = generatePathAnimation(
       this.getId() as string,
@@ -132,23 +119,22 @@ export class DecoyEntity
   public think(tools: TThinkTool): void {
     if (!this.brain.think(this.updateFactDb.bind(this))) return;
 
-    const currentState =
-      this.brain.getCurState() as keyof typeof stateMachine.states;
+    const currentState = this.brain.getCurState() as keyof typeof stateMachine.states;
 
     switch (currentState) {
-      case "FindingTargetPath":
+      case 'FindingTargetPath':
         this.findTargetPath(tools.computePath);
         break;
-      case "Advancing":
+      case 'Advancing':
         this.advance();
         break;
-      case "Covering":
+      case 'Covering':
         this.cover();
         break;
-      case "FindingCoverPath":
+      case 'FindingCoverPath':
         this.findCoverPath();
         break;
-      case "Firing":
+      case 'Firing':
         this.fire();
         break;
       default:

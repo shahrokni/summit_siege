@@ -6,9 +6,9 @@ import {
   type Mesh,
   type RecastJSPlugin,
   type Scene,
-} from "@babylonjs/core";
-import type { IDisposable, TPosition, TRotation } from "./global";
-import { printStdWarn, STD_ERR } from "./errors";
+} from '@babylonjs/core';
+import type { IDisposable, TPosition, TRotation } from './global';
+import { printStdWarn, STD_ERR } from './errors';
 
 export type TMesh = Array<GroundMesh> | Array<Mesh>;
 
@@ -67,20 +67,12 @@ export class Entity<T extends TMesh> implements IEntity<T> {
     return this.body;
   }
 
-  public attachCamera(params: {
-    index: number;
-    margin: TPosition;
-    target: TPosition;
-  }): void {
+  public attachCamera(params: { index: number; margin: TPosition; target: TPosition }): void {
     const { index, margin, target } = params;
     if (index < 0 || index >= this.body.length || this.bodyCamera) return;
 
     const mesh = this.body[index];
-    this.bodyCamera = new FreeCamera(
-      `${this.rootId}-camera`,
-      Vector3.Zero(),
-      mesh.getScene(),
-    );
+    this.bodyCamera = new FreeCamera(`${this.rootId}-camera`, Vector3.Zero(), mesh.getScene());
 
     this.bodyCamera.parent = mesh;
     const { x, y, z } = margin;
@@ -105,7 +97,7 @@ export class Entity<T extends TMesh> implements IEntity<T> {
   }
 }
 
-export type TThinkTool = { computePath: RecastJSPlugin["computePath"] };
+export type TThinkTool = { computePath: RecastJSPlugin['computePath'] };
 
 export type TThinkFN = (tools: TThinkTool) => void;
 
@@ -128,9 +120,7 @@ export interface IEntityCollection<T> extends IDisposable {
   disposeById: (param: { id: string }) => void;
 }
 
-export class EntityCollection<
-  T extends IEntity<TMesh>,
-> implements IEntityCollection<T> {
+export class EntityCollection<T extends IEntity<TMesh>> implements IEntityCollection<T> {
   constructor(scene: Scene) {
     this.scene = scene;
   }
@@ -146,11 +136,7 @@ export class EntityCollection<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     throw new Error(STD_ERR.must_be_implemented_by_child);
   }
 
@@ -158,12 +144,8 @@ export class EntityCollection<
     throw new Error(STD_ERR.must_be_implemented_by_child);
   }
 
-  public getById(param: {
-    id: string;
-  }): { entity: T; idx: number } | undefined {
-    const entityIndex = this.collection.findIndex(
-      (e) => e.getId() === param.id,
-    );
+  public getById(param: { id: string }): { entity: T; idx: number } | undefined {
+    const entityIndex = this.collection.findIndex((e) => e.getId() === param.id);
     if (entityIndex == -1) return undefined;
     return { entity: this.collection[entityIndex], idx: entityIndex };
   }
@@ -191,10 +173,7 @@ export class EntityCollection<
   public disposeById(param: { id: string }): void {
     const response = this.getById(param);
     if (!response) {
-      printStdWarn(
-        ["src\\game\\scene\\entity.ts", "EntityCollection", "disposeById"],
-        "not_found",
-      );
+      printStdWarn(['src\\game\\scene\\entity.ts', 'EntityCollection', 'disposeById'], 'not_found');
       return;
     }
     const { entity, idx } = response;

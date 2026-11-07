@@ -9,8 +9,8 @@ import {
   UniversalCamera,
   Vector3,
   type Scene,
-} from "@babylonjs/core";
-import type { TPlayerView } from "../state";
+} from '@babylonjs/core';
+import type { TPlayerView } from '../state';
 
 export class Camera {
   constructor(scene: Scene) {
@@ -26,11 +26,7 @@ export class Camera {
   public async init(): Promise<void> {
     if (this.container) return;
 
-    const camera = new UniversalCamera(
-      "camera",
-      new Vector3(0, 25, 65),
-      this.scene,
-    );
+    const camera = new UniversalCamera('camera', new Vector3(0, 25, 65), this.scene);
     this.normalFov = camera.fov;
     this.fovMap = {
       normal: this.normalFov,
@@ -42,19 +38,16 @@ export class Camera {
     camera.attachControl();
     this.camera = camera;
 
-    this.container = await LoadAssetContainerAsync(
-      "/models/dragunov/dragunov.obj",
-      this.scene,
-    );
+    this.container = await LoadAssetContainerAsync('/models/dragunov/dragunov.obj', this.scene);
 
     const instance = this.container?.instantiateModelsToScene();
     if (!instance) return;
 
-    const material = new StandardMaterial("dragunov", this.scene);
-    const texture = new Texture("/models/dragunov/dragunov.png", this.scene);
+    const material = new StandardMaterial('dragunov', this.scene);
+    const texture = new Texture('/models/dragunov/dragunov.png', this.scene);
     material.diffuseTexture = texture;
 
-    const weaponHolder = new TransformNode("weaponHolder", this.scene);
+    const weaponHolder = new TransformNode('weaponHolder', this.scene);
     weaponHolder.parent = camera;
     weaponHolder.rotation.y = Math.PI * 0.38;
     weaponHolder.position.set(-0.1, -0.5, 1.28);
@@ -80,7 +73,7 @@ export class Camera {
 
   public getForwardRay(length: number): Ray {
     if (!this.camera) {
-      throw new Error("camera is undefined");
+      throw new Error('camera is undefined');
     }
 
     return this.camera.getForwardRay(length);

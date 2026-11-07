@@ -1,6 +1,6 @@
-import type { TAttachCameraParam } from "../scene";
-import { CommandHandler, type ICommandHandler } from "./command_handler";
-import { CLI_ERRORS } from "./errors";
+import type { TAttachCameraParam } from '../scene';
+import { CommandHandler, type ICommandHandler } from './command_handler';
+import { CLI_ERRORS } from './errors';
 import {
   ALL_ENTITY_COMMANDS,
   type ICLI,
@@ -9,78 +9,75 @@ import {
   type TEntityCommand,
   type TExecParam,
   type THelpObject,
-} from "./models";
+} from './models';
 
 /* TODO: add param description */
 export const ENTITY_COMMANDS_HELP: THelpObject<TEntityCommand> = {
   attachCamera: {
-    desc: "attaches a camera to the entity.",
+    desc: 'attaches a camera to the entity.',
     template:
-      "entity [collection_name] attachCamera --id [id] --index [index] --margin [x] [y] [z] --target [x] [y] [z]",
+      'entity [collection_name] attachCamera --id [id] --index [index] --margin [x] [y] [z] --target [x] [y] [z]',
   },
   detachCamera: {
-    desc: "detaches the camera from the entity.",
-    template: "entity [collection_name] detachCamera --id [id]",
+    desc: 'detaches the camera from the entity.',
+    template: 'entity [collection_name] detachCamera --id [id]',
   },
 };
 
 const ENTITY_COMMANDS_DEFINITION: TCommandDefinition<TEntityCommand> = {
   attachCamera: [
     {
-      name: "id",
+      name: 'id',
       optional: false,
       leadingValuesCount: 1,
-      leadingValuesObjectKeys: ["id"],
-      leadingValuesType: "string",
+      leadingValuesObjectKeys: ['id'],
+      leadingValuesType: 'string',
     },
     {
-      name: "index",
+      name: 'index',
       optional: false,
       leadingValuesCount: 1,
-      leadingValuesObjectKeys: ["index"],
-      leadingValuesType: "number",
+      leadingValuesObjectKeys: ['index'],
+      leadingValuesType: 'number',
     },
     {
-      name: "margin",
+      name: 'margin',
       optional: false,
       leadingValuesCount: 3,
-      leadingValuesObjectKeys: ["x", "y", "z"],
-      leadingValuesType: "number",
+      leadingValuesObjectKeys: ['x', 'y', 'z'],
+      leadingValuesType: 'number',
     },
     {
-      name: "target",
+      name: 'target',
       optional: false,
       leadingValuesCount: 3,
-      leadingValuesObjectKeys: ["x", "y", "z"],
-      leadingValuesType: "number",
+      leadingValuesObjectKeys: ['x', 'y', 'z'],
+      leadingValuesType: 'number',
     },
   ],
   detachCamera: [
     {
-      name: "id",
+      name: 'id',
       optional: false,
       leadingValuesCount: 1,
-      leadingValuesObjectKeys: ["id"],
-      leadingValuesType: "string",
+      leadingValuesObjectKeys: ['id'],
+      leadingValuesType: 'string',
     },
   ],
 };
 
-export class EntityCommandHandler
-  extends CommandHandler
-  implements ICommandHandler
-{
+export class EntityCommandHandler extends CommandHandler implements ICommandHandler {
   constructor(cli: ICLI) {
     super(cli);
   }
   public exec(record: IRecord): void {
-    const arr = record.text.split(" ");
+    const arr = record.text.split(' ');
     const collectionKey = arr[1].trim();
     const collection = this.cli.getAllCollections()[collectionKey];
     const method = arr[2].trim() as TEntityCommand;
 
     if (!collectionKey || !collection) {
-      record.status = "rejected";
+      record.status = 'rejected';
       record.response = {
         text: `${collectionKey} ${CLI_ERRORS.collection_not_found}`,
         at: Date.now(),
@@ -89,7 +86,7 @@ export class EntityCommandHandler
     }
 
     if (!ALL_ENTITY_COMMANDS.some((i) => i === method)) {
-      record.status = "rejected";
+      record.status = 'rejected';
       record.response = {
         text: `${method} ${CLI_ERRORS.command_method_not_found}`,
         at: Date.now(),
@@ -106,11 +103,11 @@ export class EntityCommandHandler
       return;
     }
 
-    const entityId = params["id"] as string;
+    const entityId = params['id'] as string;
     const entityWrapper = collection.getById({ id: entityId });
 
     if (!entityWrapper) {
-      record.status = "rejected";
+      record.status = 'rejected';
       record.response = {
         text: `${entityId} ${CLI_ERRORS.entity_not_found}`,
         at: Date.now(),
@@ -119,13 +116,13 @@ export class EntityCommandHandler
     }
 
     /*at this point, there is no usage of this param*/
-    delete params["id"];
+    delete params['id'];
 
-    if (method === "attachCamera") {
-      console.log("params", params);
+    if (method === 'attachCamera') {
+      console.log('params', params);
       entityWrapper.entity[method](params as unknown as TAttachCameraParam);
-      record.status = "executed";
-    } else if (method === "detachCamera") {
+      record.status = 'executed';
+    } else if (method === 'detachCamera') {
       entityWrapper.entity[method]();
     }
   }

@@ -1,11 +1,8 @@
-import type { Mesh, Scene, Vector3 } from "@babylonjs/core";
-import { Entity, type IEntity } from "../../scene";
-import { renderSparkEffect } from "../../utils/babylon/sparkEffect";
+import type { Mesh, Scene, Vector3 } from '@babylonjs/core';
+import { Entity, type IEntity } from '../../scene';
+import { renderSparkEffect } from '../../utils/babylon/sparkEffect';
 
-export class BarrelEntity
-  extends Entity<Array<Mesh>>
-  implements IEntity<Array<Mesh>>
-{
+export class BarrelEntity extends Entity<Array<Mesh>> implements IEntity<Array<Mesh>> {
   constructor(id: string, mesh: Array<Mesh>) {
     super(id, mesh);
     this.scene = mesh[0].getScene();

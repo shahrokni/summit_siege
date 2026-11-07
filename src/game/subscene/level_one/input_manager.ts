@@ -4,10 +4,10 @@ import {
   type Observer,
   type PointerInfo,
   type Scene,
-} from "@babylonjs/core";
-import type { IInputManager, IPublisher, ISubscriber } from "../../scene";
+} from '@babylonjs/core';
+import type { IInputManager, IPublisher, ISubscriber } from '../../scene';
 
-export type TEvent = "right_click" | "left_click" | "terminal_activated";
+export type TEvent = 'right_click' | 'left_click' | 'terminal_activated';
 
 export class InputManager implements IInputManager, IPublisher<TEvent> {
   constructor(scene: Scene) {
@@ -33,14 +33,12 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
       }
     });
 
-    this.keyboardObserver = this.scene.onKeyboardObservable.add(
-      (keyboardInfo) => {
-        const event = keyboardInfo.event;
-        if (event.code === "ControlLeft") {
-          this.handleBackquotePressed();
-        }
-      },
-    );
+    this.keyboardObserver = this.scene.onKeyboardObservable.add((keyboardInfo) => {
+      const event = keyboardInfo.event;
+      if (event.code === 'ControlLeft') {
+        this.handleBackquotePressed();
+      }
+    });
   }
 
   private subscribers: Array<ISubscriber<TEvent>> = [];
@@ -49,15 +47,15 @@ export class InputManager implements IInputManager, IPublisher<TEvent> {
   private keyboardObserver: Observer<KeyboardInfo>;
 
   private handleBackquotePressed(): void {
-    this.subscribers.forEach((s) => s.notify("terminal_activated"));
+    this.subscribers.forEach((s) => s.notify('terminal_activated'));
   }
 
   private handleClick(): void {
-    this.subscribers?.forEach((s) => s.notify("left_click"));
+    this.subscribers?.forEach((s) => s.notify('left_click'));
   }
 
   private handleRightClick(): void {
-    this.subscribers?.forEach((s) => s.notify("right_click"));
+    this.subscribers?.forEach((s) => s.notify('right_click'));
   }
 
   public subscribe(subscriber: ISubscriber<TEvent>): void {

@@ -5,16 +5,16 @@ import {
   Vector3,
   type GroundMesh,
   type Scene,
-} from "@babylonjs/core";
+} from '@babylonjs/core';
 import {
   EntityCollection,
   type IEntity,
   type IEntityCollection,
   type TPosition,
   type TRotation,
-} from "../../../../scene";
-import { printStdWarn } from "../../../../scene/errors";
-import { GroundEntity } from "./ground";
+} from '../../../../scene';
+import { printStdWarn } from '../../../../scene/errors';
+import { GroundEntity } from './ground';
 
 export class GroundEntityCollection
   extends EntityCollection<IEntity<Array<GroundMesh>>>
@@ -29,19 +29,15 @@ export class GroundEntityCollection
   private isInit: boolean;
   private length: number;
 
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     if (this.getCollectionLength() === 1) {
       printStdWarn(
         [
-          "src\\game\\subscene\\level_one\\entities\\ground\\ground_entity_collection.ts",
-          "GroundEntityCollection",
-          "add",
+          'src\\game\\subscene\\level_one\\entities\\ground\\ground_entity_collection.ts',
+          'GroundEntityCollection',
+          'add',
         ],
-        "entity_limit_reached",
+        'entity_limit_reached',
       );
       return this.getByIndex({ index: 0 }).getId();
     }
@@ -68,34 +64,18 @@ export class GroundEntityCollection
 
     ground.scaling.setAll(param.scale);
     groundExtension.scaling.setAll(param.scale);
-    ground.position = new Vector3(
-      param.position.x,
-      param.position.y,
-      param.position.z,
-    );
+    ground.position = new Vector3(param.position.x, param.position.y, param.position.z);
 
-    groundExtension.position = new Vector3(
-      param.position.x,
-      param.position.y,
-      param.position.z,
-    );
+    groundExtension.position = new Vector3(param.position.x, param.position.y, param.position.z);
 
     if (param.rotation) {
-      ground.rotation = new Vector3(
-        param.rotation.x,
-        param.rotation.y,
-        param.rotation.z,
-      );
-      groundExtension.rotation = new Vector3(
-        param.rotation.x,
-        param.rotation.y,
-        param.rotation.z,
-      );
+      ground.rotation = new Vector3(param.rotation.x, param.rotation.y, param.rotation.z);
+      groundExtension.rotation = new Vector3(param.rotation.x, param.rotation.y, param.rotation.z);
     }
 
-    const material = new StandardMaterial("groundMaterial", this.scene);
+    const material = new StandardMaterial('groundMaterial', this.scene);
     const texture = new Texture(
-      "public/textures/ground062S_1K/Ground062S_1K-JPG_Color.jpg",
+      'public/textures/ground062S_1K/Ground062S_1K-JPG_Color.jpg',
       this.scene,
     );
 
@@ -104,7 +84,7 @@ export class GroundEntityCollection
     material.diffuseTexture = texture;
     groundExtension.material = material;
 
-    const transparent = new StandardMaterial("transparent", this.scene);
+    const transparent = new StandardMaterial('transparent', this.scene);
     transparent.alpha = 0;
     ground.material = transparent;
 

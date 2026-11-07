@@ -4,15 +4,11 @@ import {
   StandardMaterial,
   Texture,
   type Scene,
-} from "@babylonjs/core";
-import {
-  EntityCollection,
-  type IEntity,
-  type IEntityCollection,
-} from "../../scene/entity";
+} from '@babylonjs/core';
+import { EntityCollection, type IEntity, type IEntityCollection } from '../../scene/entity';
 
-import type { TPosition, TRotation } from "../../scene/global";
-import { CrateEntity } from "./crate";
+import type { TPosition, TRotation } from '../../scene/global';
+import { CrateEntity } from './crate';
 
 export class CrateEntityCollection
   extends EntityCollection<IEntity<Array<Mesh>>>
@@ -24,23 +20,16 @@ export class CrateEntityCollection
 
   public async init(): Promise<void> {
     if (this.container) return;
-    this.container = await LoadAssetContainerAsync(
-      "/models/crate/crate.obj",
-      this.scene,
-    );
+    this.container = await LoadAssetContainerAsync('/models/crate/crate.obj', this.scene);
   }
 
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     const rootId = `crate-${this.getNextId()}`;
     const mesh: Array<Mesh> = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("crate-material", this.scene);
-    const texture = new Texture("/models/crate/crate.bmp", this.scene);
+    const material = new StandardMaterial('crate-material', this.scene);
+    const texture = new Texture('/models/crate/crate.bmp', this.scene);
 
     material.diffuseTexture = texture;
 

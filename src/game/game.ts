@@ -1,5 +1,5 @@
-import { Engine } from "@babylonjs/core";
-import { Main } from "./scene";
+import { Engine } from '@babylonjs/core';
+import { Main } from './scene';
 
 export async function game(
   canvas: HTMLCanvasElement,
@@ -17,10 +17,10 @@ export async function game(
     engine.resize();
   };
 
-  window.addEventListener("resize", handleResize);
+  window.addEventListener('resize', handleResize);
 
   return (): void => {
-    window.removeEventListener("resize", handleResize);
+    window.removeEventListener('resize', handleResize);
     scene.dispose();
     engine.dispose();
   };

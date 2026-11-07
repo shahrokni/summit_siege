@@ -1,5 +1,5 @@
-import { type TFacts, FactDB } from "./factDB";
-import { type TStates, StateMachine } from "./stateMachine";
+import { type TFacts, FactDB } from './factDB';
+import { type TStates, StateMachine } from './stateMachine';
 
 export class Brain {
   constructor(fdb: FactDB, sm: StateMachine) {

@@ -1,3 +1,3 @@
-import type { IDisposable } from "./global";
+import type { IDisposable } from './global';
 
 export type IInputManager = IDisposable;

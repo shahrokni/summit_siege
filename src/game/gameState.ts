@@ -1,16 +1,16 @@
-import type { IPublisher, ISubscriber } from "./scene/observer";
+import type { IPublisher, ISubscriber } from './scene/observer';
 
-export type TDifficulty = "easy" | "medium" | "hard";
+export type TDifficulty = 'easy' | 'medium' | 'hard';
 
 export interface IState {
-  key: Omit<keyof IState, "key">;
+  key: Omit<keyof IState, 'key'>;
   difficulty: TDifficulty;
   gamer: string;
   level: number;
 }
 
 export class GameState implements IPublisher<IState> {
-  constructor(difficulty: TDifficulty, gamer: string = "Player") {
+  constructor(difficulty: TDifficulty, gamer: string = 'Player') {
     this.level = 1;
     this.difficulty = difficulty;
     this.gamer = gamer;
@@ -47,7 +47,7 @@ export class GameState implements IPublisher<IState> {
   public incrementLevel() {
     this.level += 1;
     const state = this.getState();
-    state.key = "level";
+    state.key = 'level';
     this.subscribers.forEach((s) => s.notify(state as IState));
   }
 }

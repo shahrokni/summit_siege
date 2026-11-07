@@ -1,19 +1,8 @@
-import {
-  Color4,
-  DynamicTexture,
-  ParticleSystem,
-  Scene,
-  Vector3,
-} from "@babylonjs/core";
-import type { TPosition } from "../../scene";
+import { Color4, DynamicTexture, ParticleSystem, Scene, Vector3 } from '@babylonjs/core';
+import type { TPosition } from '../../scene';
 
 export const renderDustEffect = (scene: Scene, position: TPosition): void => {
-  const texture = new DynamicTexture(
-    "dust-particle",
-    { width: 64, height: 64 },
-    scene,
-    false,
-  );
+  const texture = new DynamicTexture('dust-particle', { width: 64, height: 64 }, scene, false);
 
   texture.hasAlpha = true;
 
@@ -21,14 +10,14 @@ export const renderDustEffect = (scene: Scene, position: TPosition): void => {
   ctx.clearRect(0, 0, 64, 64);
 
   const gradient = ctx.createRadialGradient(32, 32, 2, 32, 32, 30);
-  gradient.addColorStop(0, "rgba(255,255,255,0.8)");
-  gradient.addColorStop(0.4, "rgba(255,255,255,0.5)");
-  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  gradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+  gradient.addColorStop(0.4, 'rgba(255,255,255,0.5)');
+  gradient.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 64, 64);
   texture.update();
 
-  const particles = new ParticleSystem("dust", 100, scene);
+  const particles = new ParticleSystem('dust', 100, scene);
 
   particles.particleTexture = texture;
 

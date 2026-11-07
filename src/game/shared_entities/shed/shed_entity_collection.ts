@@ -4,15 +4,15 @@ import {
   StandardMaterial,
   Texture,
   type Scene,
-} from "@babylonjs/core";
+} from '@babylonjs/core';
 import {
   EntityCollection,
   type IEntity,
   type IEntityCollection,
   type TPosition,
   type TRotation,
-} from "../../scene";
-import { ShedEntity } from "./shed";
+} from '../../scene';
+import { ShedEntity } from './shed';
 
 export class ShedEntityCollection
   extends EntityCollection<IEntity<Array<Mesh>>>
@@ -24,23 +24,16 @@ export class ShedEntityCollection
 
   public async init(): Promise<void> {
     if (this.container) return;
-    this.container = await LoadAssetContainerAsync(
-      "public/models/shed/shed.obj",
-      this.scene,
-    );
+    this.container = await LoadAssetContainerAsync('public/models/shed/shed.obj', this.scene);
   }
 
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     const rootId = `shed-${this.getNextId()}`;
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("shed-material", this.scene);
-    const texture = new Texture("public/models/shed/shed.png", this.scene);
+    const material = new StandardMaterial('shed-material', this.scene);
+    const texture = new Texture('public/models/shed/shed.png', this.scene);
     material.diffuseTexture = texture;
 
     let cnt = 0;

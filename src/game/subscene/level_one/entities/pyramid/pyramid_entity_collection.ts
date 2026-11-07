@@ -1,19 +1,13 @@
-import {
-  MeshBuilder,
-  StandardMaterial,
-  Texture,
-  type Mesh,
-  type Scene,
-} from "@babylonjs/core";
+import { MeshBuilder, StandardMaterial, Texture, type Mesh, type Scene } from '@babylonjs/core';
 import {
   EntityCollection,
   type IEntity,
   type IEntityCollection,
   type TPosition,
   type TRotation,
-} from "../../../../scene";
-import { printStdWarn } from "../../../../scene/errors";
-import { PyramidEntity } from "./pyramid";
+} from '../../../../scene';
+import { printStdWarn } from '../../../../scene/errors';
+import { PyramidEntity } from './pyramid';
 
 type Options = {
   height: 1;
@@ -37,19 +31,15 @@ export class PyramidEntityCollection
   private length: number;
   private isInit: boolean;
 
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     if (this.getCollectionLength() === 1) {
       printStdWarn(
         [
-          "src\\game\\subscene\\level_one\\entities\\pyramid\\pyramid_entity_collection.ts",
-          "PyramidEntityCollection",
-          "add",
+          'src\\game\\subscene\\level_one\\entities\\pyramid\\pyramid_entity_collection.ts',
+          'PyramidEntityCollection',
+          'add',
         ],
-        "entity_limit_reached",
+        'entity_limit_reached',
       );
       return this.getByIndex({ index: 0 }).getId();
     }
@@ -58,9 +48,9 @@ export class PyramidEntityCollection
     let currentBase = base;
     const mesh: Mesh[] = [];
 
-    const material = new StandardMaterial("pyramid-material", this.scene);
+    const material = new StandardMaterial('pyramid-material', this.scene);
     const texture = new Texture(
-      "public/textures/ground007_1K/Ground007_1K-JPG_Color.jpg",
+      'public/textures/ground007_1K/Ground007_1K-JPG_Color.jpg',
       this.scene,
     );
 

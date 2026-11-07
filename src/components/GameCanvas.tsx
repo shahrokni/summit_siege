@@ -1,10 +1,9 @@
-import { useEffect, useRef, type ReactElement } from "react";
-import { game } from "../game/game";
+import { useEffect, useRef, type ReactElement } from 'react';
+import { game } from '../game/game';
 
 export const GameCanvas = (): ReactElement => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-   
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -25,13 +24,13 @@ export const GameCanvas = (): ReactElement => {
   }, []);
 
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <canvas
         id="canvas"
         style={{
-          width: "100%",
-          height: "100%",
-          display: "block",
+          width: '100%',
+          height: '100%',
+          display: 'block',
         }}
         ref={canvasRef}
       />
@@ -39,10 +38,10 @@ export const GameCanvas = (): ReactElement => {
         id="overlay"
         ref={overlayRef}
         style={{
-          position: "absolute",
+          position: 'absolute',
           inset: 0,
           zIndex: 10,
-          pointerEvents: "none",
+          pointerEvents: 'none',
         }}
       ></div>
     </div>

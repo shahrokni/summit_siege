@@ -1,4 +1,4 @@
-export type TPlayerView = "normal" | "scope1" | "scope2";
+export type TPlayerView = 'normal' | 'scope1' | 'scope2';
 
 export interface IState {
   view: TPlayerView;
@@ -8,7 +8,7 @@ export interface IState {
 export class StateManager {
   constructor() {
     this.state = {
-      view: "normal",
+      view: 'normal',
       health: 5,
     };
   }

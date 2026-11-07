@@ -4,15 +4,15 @@ import {
   StandardMaterial,
   Texture,
   type Scene,
-} from "@babylonjs/core";
+} from '@babylonjs/core';
 import {
   EntityCollection,
   type IEntity,
   type IEntityCollection,
   type TPosition,
   type TRotation,
-} from "../../scene";
-import { HumaveeEntity } from "./humavee";
+} from '../../scene';
+import { HumaveeEntity } from './humavee';
 
 export class HumaveeEntityCollection
   extends EntityCollection<IEntity<Array<Mesh>>>
@@ -24,26 +24,16 @@ export class HumaveeEntityCollection
 
   public async init(): Promise<void> {
     if (this.container) return;
-    this.container = await LoadAssetContainerAsync(
-      "public/models/humavee/humvee.obj",
-      this.scene,
-    );
+    this.container = await LoadAssetContainerAsync('public/models/humavee/humvee.obj', this.scene);
   }
 
-  public add(param: {
-    position: TPosition;
-    scale: number;
-    rotation?: TRotation;
-  }): string {
+  public add(param: { position: TPosition; scale: number; rotation?: TRotation }): string {
     const rootId = `humavee-${this.getNextId()}`;
     const meshes: Mesh[] = [];
     const instance = this.container?.instantiateModelsToScene();
 
-    const material = new StandardMaterial("humavee-material", this.scene);
-    const texture = new Texture(
-      "public/models/humavee/humavee.jpg",
-      this.scene,
-    );
+    const material = new StandardMaterial('humavee-material', this.scene);
+    const texture = new Texture('public/models/humavee/humavee.jpg', this.scene);
     material.diffuseTexture = texture;
 
     let cnt = 0;

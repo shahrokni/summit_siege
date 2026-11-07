@@ -1,33 +1,22 @@
-import {
-  Color4,
-  DynamicTexture,
-  ParticleSystem,
-  Vector3,
-  type Scene,
-} from "@babylonjs/core";
-import type { TPosition } from "../../scene";
+import { Color4, DynamicTexture, ParticleSystem, Vector3, type Scene } from '@babylonjs/core';
+import type { TPosition } from '../../scene';
 
 export const renderSparkEffect = (scene: Scene, position: TPosition): void => {
-  const texture = new DynamicTexture(
-    "spark-particle",
-    { width: 64, height: 64 },
-    scene,
-    false,
-  );
+  const texture = new DynamicTexture('spark-particle', { width: 64, height: 64 }, scene, false);
 
   texture.hasAlpha = true;
 
   const ctx = texture.getContext();
 
   ctx.clearRect(0, 0, 64, 64);
-  ctx.fillStyle = "white";
+  ctx.fillStyle = 'white';
   ctx.beginPath();
   ctx.arc(32, 32, 28, 0, Math.PI * 2);
   ctx.fill();
 
   texture.update();
 
-  const particles = new ParticleSystem("spark", 100, scene);
+  const particles = new ParticleSystem('spark', 100, scene);
 
   particles.particleTexture = texture;
 
