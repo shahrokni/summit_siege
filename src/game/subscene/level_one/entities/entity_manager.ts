@@ -1,10 +1,4 @@
-import {
-  Camera,
-  Color3,
-  RecastJSPlugin,
-  StandardMaterial,
-  type Scene,
-} from "@babylonjs/core";
+import { Camera, Color3, RecastJSPlugin, StandardMaterial, type Scene } from '@babylonjs/core'
 
 import {
   EntityCollection,
@@ -12,18 +6,18 @@ import {
   type TEntityCollection,
   type TThinkFN,
   type TThinkTool,
-} from "../../../scene";
-import { DecoyEntityCollection } from "../../../shared_entities/decoy/decoy_enityt_collection";
-import { HumaveeEntityCollection } from "../../../shared_entities/humavee/humavee_entity_collection";
-import Recast from "recast-detour";
-import { CrateEntityCollection } from "../../../shared_entities/crate/crate_entity_collection";
-import { BarrelEntityCollection } from "../../../shared_entities/barrel/barrel_entity_collection";
-import { GroundEntityCollection } from "./ground/ground_entity_collection";
-import { PyramidEntityCollection } from "./pyramid/pyramid_entity_collection";
-import type { ICLI, TCLIEntityCollection } from "../../../cli/models";
+} from '../../../scene'
+import { DecoyEntityCollection } from '../../../shared_entities/decoy/decoy_entity_collection'
+import { HumaveeEntityCollection } from '../../../shared_entities/humavee/humavee_entity_collection'
+import Recast from 'recast-detour'
+import { CrateEntityCollection } from '../../../shared_entities/crate/crate_entity_collection'
+import { BarrelEntityCollection } from '../../../shared_entities/barrel/barrel_entity_collection'
+import { GroundEntityCollection } from './ground/ground_entity_collection'
+import { PyramidEntityCollection } from './pyramid/pyramid_entity_collection'
+import type { ICLI, TCLIEntityCollection } from '../../../cli/models'
 
-const THINK_INTERVAL_MS = 3000;
-export type Entity = "ground" | "pyramid" | "trenches";
+const THINK_INTERVAL_MS = 3000
+export type Entity = 'ground' | 'pyramid' | 'trenches'
 
 export class EntityManager implements IEntityManager, ICLI {
   constructor(scene: Scene) {
@@ -33,38 +27,36 @@ export class EntityManager implements IEntityManager, ICLI {
       decoys: undefined,
       humavees: undefined,
       barrels: undefined,
-    };
-    this.scene = scene;
+    }
+    this.scene = scene
   }
 
-  private entityCollection: TEntityCollection;
-  private scene: Scene;
-  private navigationPlugin: RecastJSPlugin | undefined;
-  private intervalId: number = -1;
-  private thinkToolSet: TThinkTool | undefined;
+  private entityCollection: TEntityCollection
+  private scene: Scene
+  private navigationPlugin: RecastJSPlugin | undefined
+  private intervalId: number = -1
+  private thinkToolSet: TThinkTool | undefined
 
   private createEnv(): void {
-    const length = 40;
-    const groundCollection = new GroundEntityCollection(this.scene, length);
-    this.entityCollection.ground = groundCollection;
-    groundCollection.init();
+    const length = 40
+    const groundCollection = new GroundEntityCollection(this.scene, length)
+    this.entityCollection.ground = groundCollection
+    groundCollection.init()
     groundCollection.add({
       position: { x: 0, y: 0, z: 0 },
       scale: 1,
-    });
+    })
 
-    const pyramidCollection = new PyramidEntityCollection(this.scene, length);
-    this.entityCollection.pyramid = pyramidCollection;
-    pyramidCollection.init();
-    pyramidCollection.add({ position: { x: 0, y: 0, z: 0 }, scale: 1 });
+    const pyramidCollection = new PyramidEntityCollection(this.scene, length)
+    this.entityCollection.pyramid = pyramidCollection
+    pyramidCollection.init()
+    pyramidCollection.add({ position: { x: 0, y: 0, z: 0 }, scale: 1 })
   }
 
   private async createNavMesh(debugMode: boolean = false): Promise<void> {
-    const recast = await Recast();
-    this.navigationPlugin = new RecastJSPlugin(recast);
-    const grounds = this.entityCollection
-      .ground!.getByIndex({ index: 0 })
-      .getMesh();
+    const recast = await Recast()
+    this.navigationPlugin = new RecastJSPlugin(recast)
+    const grounds = this.entityCollection.ground!.getByIndex({ index: 0 }).getMesh()
     this.navigationPlugin.createNavMesh(
       [
         grounds[0],
@@ -86,34 +78,32 @@ export class EntityManager implements IEntityManager, ICLI {
         detailSampleDist: 6,
         detailSampleMaxError: 1,
       },
-    );
+    )
 
     if (debugMode) {
-      const navMeshDebug = this.navigationPlugin.createDebugNavMesh(this.scene);
-      const matDebug = new StandardMaterial("debug-material", this.scene);
-      matDebug.diffuseColor = new Color3(0.1, 0.2, 1);
-      matDebug.alpha = 0.5;
-      navMeshDebug.material = matDebug;
+      const navMeshDebug = this.navigationPlugin.createDebugNavMesh(this.scene)
+      const matDebug = new StandardMaterial('debug-material', this.scene)
+      matDebug.diffuseColor = new Color3(0.1, 0.2, 1)
+      matDebug.alpha = 0.5
+      navMeshDebug.material = matDebug
     }
     this.thinkToolSet = {
-      computePath: this.navigationPlugin.computePath.bind(
-        this.navigationPlugin,
-      ),
-    };
+      computePath: this.navigationPlugin.computePath.bind(this.navigationPlugin),
+    }
   }
 
   private provokeThink(): void {
     for (const key in this.entityCollection) {
-      const entityKey = key as keyof TEntityCollection;
-      const entityCollection = this.entityCollection[entityKey];
+      const entityKey = key as keyof TEntityCollection
+      const entityCollection = this.entityCollection[entityKey]
       if (entityCollection instanceof EntityCollection) {
         entityCollection.getAll().map((entity) => {
-          if ("think" in entity) {
+          if ('think' in entity) {
             if (this.thinkToolSet) {
-              (entity.think as TThinkFN)?.(this.thinkToolSet);
+              ;(entity.think as TThinkFN)?.(this.thinkToolSet)
             }
           }
-        });
+        })
       }
     }
   }
@@ -121,73 +111,70 @@ export class EntityManager implements IEntityManager, ICLI {
   public getCollection(
     name: keyof TEntityCollection,
   ): TEntityCollection[keyof TEntityCollection] | undefined {
-    return this.entityCollection[name];
+    return this.entityCollection[name]
   }
 
   public async init(): Promise<void> {
-    this.createEnv();
+    this.createEnv()
 
-    const crateCollection = new CrateEntityCollection(this.scene);
-    await crateCollection.init();
+    const crateCollection = new CrateEntityCollection(this.scene)
+    await crateCollection.init()
     crateCollection.add({
       position: { x: 32, y: 0, z: 19 },
       scale: 1,
       rotation: { y: Math.PI * 2, x: 0, z: 0 },
-    });
+    })
 
-    const barrelCollection = new BarrelEntityCollection(this.scene);
-    this.entityCollection.barrels = barrelCollection;
-    await barrelCollection.init();
+    const barrelCollection = new BarrelEntityCollection(this.scene)
+    this.entityCollection.barrels = barrelCollection
+    await barrelCollection.init()
     barrelCollection.add({
       position: { x: 33, y: 0, z: 20 },
       scale: 1,
-    });
+    })
 
-    const decoyCollection = new DecoyEntityCollection(this.scene);
-    this.entityCollection.decoys = decoyCollection;
-    await decoyCollection.init();
+    const decoyCollection = new DecoyEntityCollection(this.scene)
+    this.entityCollection.decoys = decoyCollection
+    await decoyCollection.init()
     decoyCollection.add({
       position: { x: 34, y: 1, z: 21 },
       scale: 0.3,
-    });
+    })
 
-    const humaveeCollection = new HumaveeEntityCollection(this.scene);
-    this.entityCollection.humavees = humaveeCollection;
-    await humaveeCollection.init();
+    const humaveeCollection = new HumaveeEntityCollection(this.scene)
+    this.entityCollection.humavees = humaveeCollection
+    await humaveeCollection.init()
     humaveeCollection.add({
       position: { x: 39, y: 0, z: 20 },
       scale: 1.2,
-    });
+    })
 
-    await this.createNavMesh(false);
+    await this.createNavMesh(false)
 
-    this.intervalId = setInterval(
-      this.provokeThink.bind(this),
-      THINK_INTERVAL_MS,
-    );
+    this.intervalId = setInterval(this.provokeThink.bind(this), THINK_INTERVAL_MS)
   }
 
   public getAllCollections(): TCLIEntityCollection {
-    return this.entityCollection;
+    return this.entityCollection
   }
 
   public getAllCameras(): Camera[] {
-    return this.scene.cameras;
+    return this.scene.cameras
   }
 
   public switchCamera(params: { id: string }): void {
-    const camera = this.scene.cameras.find((c) => c.name === params.id);
-    if (!camera) return;
-    this.scene.activeCamera = camera;
-    console.log("Local Position:", camera.position.asArray());
-    console.log("Global Position:", camera.globalPosition.asArray());
-    console.log("Parent:", camera.parent?.name);
+    const camera = this.scene.cameras.find((c) => c.name === params.id)
+    if (!camera) return
+    this.scene.activeCamera = camera
+    console.log('Local Position:', camera.position.asArray())
+    console.log('Global Position:', camera.globalPosition.asArray())
+    console.log('Parent:', camera.parent?.name)
   }
 
   public dispose(): void {
-    clearInterval(this.intervalId);
+    clearInterval(this.intervalId)
     Object.keys(this.entityCollection).forEach((k) => {
-      this.entityCollection[k as keyof TEntityCollection]?.dispose();
-    });
+      this.entityCollection[k as keyof TEntityCollection]?.dispose()
+    })
   }
 }

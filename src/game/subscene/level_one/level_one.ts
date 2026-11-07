@@ -1,34 +1,25 @@
-import {
-  HemisphericLight,
-  MeshBuilder,
-  Sound,
-  Vector3,
-  type Scene,
-} from "@babylonjs/core";
+import { HemisphericLight, MeshBuilder, Sound, Vector3, type Scene } from '@babylonjs/core'
 
-import { Level, type ILevel } from "../level";
-import { EntityManager } from "./entities";
-import { InputManager, type TEvent } from "./input_manager";
-import type { ISubscriber } from "../../scene";
-import { StateManager } from "./state";
-import { SkyMaterial } from "@babylonjs/materials/sky";
-import { Camera } from "./entities/camera";
-import type { DecoyEntity } from "../../shared_entities/decoy/decoy";
-import type { DecoyEntityCollection } from "../../shared_entities/decoy/decoy_enityt_collection";
-import type { BarrelEntityCollection } from "../../shared_entities/barrel/barrel_entity_collection";
-import type { BarrelEntity } from "../../shared_entities/barrel/barrel";
-import type { HumaveeEntityCollection } from "../../shared_entities/humavee/humavee_entity_collection";
-import type { HumaveeEntity } from "../../shared_entities/humavee/humavee";
-import { registerBuiltInLoaders } from "@babylonjs/loaders";
-import {
-  FULLY_TRANSPARENT_OVERLAY,
-  SNIPER_SCOPE_OVERLAY,
-} from "./overlay/sniper_scope";
-import { GameCLI } from "../../cli/cli";
+import { Level, type ILevel } from '../level'
+import { EntityManager } from './entities'
+import { InputManager, type TEvent } from './input_manager'
+import type { ISubscriber } from '../../scene'
+import { StateManager } from './state'
+import { SkyMaterial } from '@babylonjs/materials/sky'
+import { Camera } from './entities/camera'
+import type { DecoyEntity } from '../../shared_entities/decoy/decoy'
+import type { DecoyEntityCollection } from '../../shared_entities/decoy/decoy_entity_collection'
+import type { BarrelEntityCollection } from '../../shared_entities/barrel/barrel_entity_collection'
+import type { BarrelEntity } from '../../shared_entities/barrel/barrel'
+import type { HumaveeEntityCollection } from '../../shared_entities/humavee/humavee_entity_collection'
+import type { HumaveeEntity } from '../../shared_entities/humavee/humavee'
+import { registerBuiltInLoaders } from '@babylonjs/loaders'
+import { FULLY_TRANSPARENT_OVERLAY, SNIPER_SCOPE_OVERLAY } from './overlay/sniper_scope'
+import { GameCLI } from '../../cli/cli'
 
-const GUN_ACTION_BLOCK_MS = 1100;
-const DECOY_MESH_DISPOSE_DELAY_MS = 10;
-const FORWARD_RAY_LENGTH = 1000;
+const GUN_ACTION_BLOCK_MS = 1100
+const DECOY_MESH_DISPOSE_DELAY_MS = 10
+const FORWARD_RAY_LENGTH = 1000
 
 export class LevelOne extends Level implements ILevel, ISubscriber<TEvent> {
   constructor(
@@ -37,201 +28,187 @@ export class LevelOne extends Level implements ILevel, ISubscriber<TEvent> {
     overlay: HTMLDivElement,
     onFinish: () => void,
   ) {
-    super();
-    this.id = "levelOne";
-    this.canvas = canvas;
-    this.overlay = overlay;
-    this.scene = scene;
-    this.stateManager = new StateManager();
-    this.onFinish = onFinish;
-    this.gunSound = new Sound(
-      "gun-shot",
-      "/sound/sniper_gun_fire.mp3",
-      this.scene,
-      undefined,
-      {
-        volume: 0.7,
-      },
-    );
-    registerBuiltInLoaders();
+    super()
+    this.id = 'levelOne'
+    this.canvas = canvas
+    this.overlay = overlay
+    this.scene = scene
+    this.stateManager = new StateManager()
+    this.onFinish = onFinish
+    this.gunSound = new Sound('gun-shot', '/sound/sniper_gun_fire.mp3', this.scene, undefined, {
+      volume: 0.7,
+    })
+    registerBuiltInLoaders()
   }
 
-  id: string;
-  private scene: Scene;
-  private light: HemisphericLight | undefined;
-  private entityManager: EntityManager | undefined;
-  private gameCLI: GameCLI | undefined;
-  private inputManager: InputManager | undefined;
-  private stateManager: StateManager | undefined;
-  private camera: Camera | undefined;
-  private canvas: HTMLCanvasElement;
-  private overlay: HTMLDivElement;
-  private gunLock: boolean = false;
-  private gunSound: Sound;
+  id: string
+  private scene: Scene
+  private light: HemisphericLight | undefined
+  private entityManager: EntityManager | undefined
+  private gameCLI: GameCLI | undefined
+  private inputManager: InputManager | undefined
+  private stateManager: StateManager | undefined
+  private camera: Camera | undefined
+  private canvas: HTMLCanvasElement
+  private overlay: HTMLDivElement
+  private gunLock: boolean = false
+  private gunSound: Sound
 
   private async setCanvas(): Promise<void> {
-    await this.canvas.requestPointerLock();
+    await this.canvas.requestPointerLock()
   }
 
   private setupLights(scene: Scene): HemisphericLight {
-    const light = new HemisphericLight(
-      "mainLight",
-      new Vector3(0, 1, 0),
-      scene,
-    );
-    light.intensity = 0.8;
-    return light;
+    const light = new HemisphericLight('mainLight', new Vector3(0, 1, 0), scene)
+    light.intensity = 0.8
+    return light
   }
 
   private setupSky(scene: Scene): void {
-    if (!scene.activeCamera) return;
+    if (!scene.activeCamera) return
 
-    const skyBox = MeshBuilder.CreateBox("skyBox", { size: 200 }, this.scene);
-    const skyMaterial = new SkyMaterial("sky-material", scene);
-    skyMaterial.backFaceCulling = false;
-    skyMaterial.cameraOffset.y = scene.activeCamera.globalPosition.y;
-    skyMaterial.inclination = 0;
-    skyBox.material = skyMaterial;
-    skyBox.infiniteDistance = false;
+    const skyBox = MeshBuilder.CreateBox('skyBox', { size: 200 }, this.scene)
+    const skyMaterial = new SkyMaterial('sky-material', scene)
+    skyMaterial.backFaceCulling = false
+    skyMaterial.cameraOffset.y = scene.activeCamera.globalPosition.y
+    skyMaterial.inclination = 0
+    skyBox.material = skyMaterial
+    skyBox.infiniteDistance = false
   }
 
   private handleScope(): void {
-    const currentView = this.stateManager?.get("view");
-    if (!currentView || !this.camera || !this.stateManager) return;
+    const currentView = this.stateManager?.get('view')
+    if (!currentView || !this.camera || !this.stateManager) return
 
     switch (currentView) {
-      case "normal":
-        this.stateManager.setView("scope1");
-        break;
-      case "scope1":
-        this.stateManager.setView("scope2");
-        break;
-      case "scope2":
-        this.stateManager.setView("normal");
-        break;
+      case 'normal':
+        this.stateManager.setView('scope1')
+        break
+      case 'scope1':
+        this.stateManager.setView('scope2')
+        break
+      case 'scope2':
+        this.stateManager.setView('normal')
+        break
       default:
-        break;
+        break
     }
-    if (
-      ["scope1", "scope2"].some((v) => v === this.stateManager?.get("view"))
-    ) {
-      this.overlay.replaceChildren(SNIPER_SCOPE_OVERLAY);
+    if (['scope1', 'scope2'].some((v) => v === this.stateManager?.get('view'))) {
+      this.overlay.replaceChildren(SNIPER_SCOPE_OVERLAY)
     } else {
-      this.overlay.replaceChildren(FULLY_TRANSPARENT_OVERLAY);
+      this.overlay.replaceChildren(FULLY_TRANSPARENT_OVERLAY)
     }
 
-    this.camera.changeFov(this.stateManager.get("view"));
+    this.camera.changeFov(this.stateManager.get('view'))
   }
 
   private handleFire(): void {
-    if (this.gunLock) return;
+    if (this.gunLock) return
 
-    this.gunLock = true;
-    this.gunSound.play();
+    this.gunLock = true
+    this.gunSound.play()
     try {
-      const cameraRay = this.camera?.getForwardRay(FORWARD_RAY_LENGTH);
-      if (!cameraRay) return;
-      const pickingRayInfo = this.scene.pickWithRay(cameraRay);
-      const name = pickingRayInfo?.pickedMesh?.name;
+      const cameraRay = this.camera?.getForwardRay(FORWARD_RAY_LENGTH)
+      if (!cameraRay) return
+      const pickingRayInfo = this.scene.pickWithRay(cameraRay)
+      const name = pickingRayInfo?.pickedMesh?.name
       if (!name) {
-        return;
+        return
       }
 
-      if (name.startsWith("decoy")) {
-        const decoyCollection = this.entityManager?.getCollection(
-          "decoys",
-        ) as DecoyEntityCollection;
+      if (name.startsWith('decoy')) {
+        const decoyCollection = this.entityManager?.getCollection('decoys') as DecoyEntityCollection
         if (!decoyCollection) {
-          return;
+          return
         }
 
-        const [e, idx] = name.split("-");
-        const entityId = `${e}-${idx}`;
-        const { entity } = decoyCollection.getById({ id: entityId }) || {};
-        const decoyEntity = entity as DecoyEntity;
+        const [e, idx] = name.split('-')
+        const entityId = `${e}-${idx}`
+        const { entity } = decoyCollection.getById({ id: entityId }) || {}
+        const decoyEntity = entity as DecoyEntity
         if (!decoyEntity) {
-          return;
+          return
         }
-        decoyEntity.hit();
+        decoyEntity.hit()
         setTimeout(() => {
-          decoyCollection.disposeById({ id: entityId });
-        }, DECOY_MESH_DISPOSE_DELAY_MS);
-      } else if (name.startsWith("barrel")) {
+          decoyCollection.disposeById({ id: entityId })
+        }, DECOY_MESH_DISPOSE_DELAY_MS)
+      } else if (name.startsWith('barrel')) {
         const barrelCollection = this.entityManager?.getCollection(
-          "barrels",
-        ) as BarrelEntityCollection;
-        const [e, idx] = name.split("-");
-        const entityId = `${e}-${idx}`;
-        const { entity } = barrelCollection.getById({ id: entityId }) || {};
-        const barrelEntity = entity as BarrelEntity;
+          'barrels',
+        ) as BarrelEntityCollection
+        const [e, idx] = name.split('-')
+        const entityId = `${e}-${idx}`
+        const { entity } = barrelCollection.getById({ id: entityId }) || {}
+        const barrelEntity = entity as BarrelEntity
         if (!barrelEntity) {
-          return;
+          return
         }
         if (pickingRayInfo.pickedPoint) {
-          barrelEntity.hit(pickingRayInfo.pickedPoint);
+          barrelEntity.hit(pickingRayInfo.pickedPoint)
         }
-      } else if (name.startsWith("humavee")) {
+      } else if (name.startsWith('humavee')) {
         const humaveeCollection = this.entityManager?.getCollection(
-          "humavees",
-        ) as HumaveeEntityCollection;
-        const [e, idx] = name.split("-");
-        const entityId = `${e}-${idx}`;
-        const { entity } = humaveeCollection.getById({ id: entityId }) || {};
-        const humaveeEntity = entity as HumaveeEntity;
+          'humavees',
+        ) as HumaveeEntityCollection
+        const [e, idx] = name.split('-')
+        const entityId = `${e}-${idx}`
+        const { entity } = humaveeCollection.getById({ id: entityId }) || {}
+        const humaveeEntity = entity as HumaveeEntity
         if (!humaveeEntity) {
-          return;
+          return
         }
         if (pickingRayInfo.pickedPoint) {
-          humaveeEntity.hit(pickingRayInfo.pickedPoint);
+          humaveeEntity.hit(pickingRayInfo.pickedPoint)
         }
       }
     } finally {
       setTimeout(() => {
-        this.gunLock = false;
-      }, GUN_ACTION_BLOCK_MS);
+        this.gunLock = false
+      }, GUN_ACTION_BLOCK_MS)
     }
   }
 
   public notify(context: TEvent): void {
     switch (context) {
-      case "right_click":
-        this.handleScope();
-        break;
-      case "left_click":
-        this.handleFire();
-        break;
-      case "terminal_activated":
-        this.stateManager?.setView("normal");
-        this.overlay.replaceChildren(FULLY_TRANSPARENT_OVERLAY);
-        this.handleTerminalActivated(this.overlay, this.gameCLI);
-        break;
+      case 'right_click':
+        this.handleScope()
+        break
+      case 'left_click':
+        this.handleFire()
+        break
+      case 'terminal_activated':
+        this.stateManager?.setView('normal')
+        this.overlay.replaceChildren(FULLY_TRANSPARENT_OVERLAY)
+        this.handleTerminalActivated(this.overlay, this.gameCLI)
+        break
       default:
-        break;
+        break
     }
   }
 
   public dispose(): void {
-    this.camera?.dispose();
-    this.light?.dispose();
-    this.entityManager?.dispose();
-    this.inputManager?.dispose();
+    this.camera?.dispose()
+    this.light?.dispose()
+    this.entityManager?.dispose()
+    this.inputManager?.dispose()
   }
 
   public onFinish(): void {}
 
   public async run() {
-    this.dispose();
-    this.canvas.removeEventListener("click", this.setCanvas.bind(this));
+    this.dispose()
+    this.canvas.removeEventListener('click', this.setCanvas.bind(this))
 
-    this.camera = new Camera(this.scene);
-    await this.camera.init();
-    this.light = this.setupLights(this.scene);
-    this.canvas.addEventListener("click", this.setCanvas.bind(this));
-    this.entityManager = new EntityManager(this.scene);
-    this.gameCLI = new GameCLI(this.entityManager);
-    await this.entityManager.init();
-    this.inputManager = new InputManager(this.scene);
-    this.inputManager.subscribe(this);
-    this.setupSky(this.scene);
+    this.camera = new Camera(this.scene)
+    await this.camera.init()
+    this.light = this.setupLights(this.scene)
+    this.canvas.addEventListener('click', this.setCanvas.bind(this))
+    this.entityManager = new EntityManager(this.scene)
+    this.gameCLI = new GameCLI(this.entityManager)
+    await this.entityManager.init()
+    this.inputManager = new InputManager(this.scene)
+    this.inputManager.subscribe(this)
+    this.setupSky(this.scene)
   }
 }
