@@ -5,19 +5,39 @@ import {
   type ICLI,
   type IRecord,
   type TCLIRootCommands,
+  type TCommandDefinition,
+  type TExecParam,
   type THelpObject,
 } from "./models";
 
 export const ROOT_COMMANDS_HELP: THelpObject<TCLIRootCommands> = {
   getAllCollections: {
     desc: "returns all collections of the current scene.",
-    template: "root getAllCollections",
+    template: "scene getAllCollections",
+  },
+  getAllCameras: {
+    desc: "returns all cameras attached to the scene.",
+    template: "scene getAllCameras",
+  },
+  switchCamera: {
+    desc: "switches the active camera of the scene",
+    template: "scene switchCamera --id [id]",
   },
 };
 
-// const ROOT_COMMANDS_DEFINITION: TCommandDefinition<TCLIRootCommands> = {
-//   getAllCollections: [],
-// };
+export const ROOT_COMMANDS_DEFINITION: TCommandDefinition<TCLIRootCommands> = {
+  getAllCameras: [],
+  getAllCollections: [],
+  switchCamera: [
+    {
+      name: "id",
+      leadingValuesCount: 1,
+      leadingValuesObjectKeys: ["id"],
+      leadingValuesType: "string",
+      optional: false,
+    },
+  ],
+};
 
 export class RootCommandHandler
   extends CommandHandler
@@ -40,15 +60,14 @@ export class RootCommandHandler
       return;
     }
 
-    /* no usage at the moment */
-    // const paramsDef = ROOT_COMMANDS_DEFINITION[method];
-    // let params: TExecParam;
+    const paramsDef = ROOT_COMMANDS_DEFINITION[method];
+    let params: TExecParam;
 
-    // try {
-    //   params = this.buildExecParam(record, paramsDef);
-    // } catch {
-    //   return;
-    // }
+    try {
+      params = this.buildExecParam(record, paramsDef);
+    } catch {
+      return;
+    }
 
     if (method === "getAllCollections") {
       const collections = this.cli[method]();
@@ -57,6 +76,16 @@ export class RootCommandHandler
         at: Date.now(),
         text: `${Object.keys(collections).join("\n")}`,
       };
+    } else if (method === "getAllCameras") {
+      const cameras = this.cli[method]();
+      record.status = "executed";
+      record.response = {
+        at: Date.now(),
+        text: `${cameras.map((c) => c.name).join("\n")}`,
+      };
+    } else if (method === "switchCamera") {
+      this.cli[method](params as unknown as { id: string });
+      record.status = "executed";
     }
   }
 }

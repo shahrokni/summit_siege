@@ -51,7 +51,7 @@ export class PyramidEntityCollection
         ],
         "entity_limit_reached",
       );
-      return this.getByIndex(0).getId();
+      return this.getByIndex({ index: 0 }).getId();
     }
     const rootId = `pyramid-${this.getNextId()}`;
     const base = this.length;

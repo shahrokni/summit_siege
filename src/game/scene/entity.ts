@@ -1,9 +1,11 @@
-import type {
-  AssetContainer,
-  GroundMesh,
-  Mesh,
-  RecastJSPlugin,
-  Scene,
+import {
+  FreeCamera,
+  Vector3,
+  type AssetContainer,
+  type GroundMesh,
+  type Mesh,
+  type RecastJSPlugin,
+  type Scene,
 } from "@babylonjs/core";
 import type { IDisposable, TPosition, TRotation } from "./global";
 import { printStdWarn, STD_ERR } from "./errors";
@@ -22,27 +24,38 @@ export interface IEntityManager extends IDisposable {
   init: () => Promise<void>;
 }
 
+export type TAttachCameraParam = {
+  index: number;
+  margin: TPosition;
+  target: TPosition;
+};
+
 export interface IEntity<T extends TMesh> extends IDisposable {
   getId: () => TEntityId;
   getPosition: (index: number) => TEntityPosition;
   getMesh: () => T;
+  attachCamera: (params: TAttachCameraParam) => void;
+  detachCamera: () => void;
 }
 
 export class Entity<T extends TMesh> implements IEntity<T> {
   constructor(id: string, mesh: T) {
     this.rootId = id;
     this.body = mesh;
+    this.scene = mesh[0].getScene();
   }
 
   private rootId: string;
   private body: T;
+  private bodyCamera: FreeCamera | undefined;
+  private scene: Scene;
 
   public getId(): TEntityId {
     return this.rootId;
   }
 
-  getPosition(index: number): TEntityPosition {
-    if (index > this.body.length) {
+  public getPosition(index: number): TEntityPosition {
+    if (index >= this.body.length) {
       throw new Error(STD_ERR.index_out_of_range);
     }
 
@@ -54,8 +67,41 @@ export class Entity<T extends TMesh> implements IEntity<T> {
     return this.body;
   }
 
+  public attachCamera(params: {
+    index: number;
+    margin: TPosition;
+    target: TPosition;
+  }): void {
+    const { index, margin, target } = params;
+    if (index < 0 || index >= this.body.length || this.bodyCamera) return;
+
+    const mesh = this.body[index];
+    this.bodyCamera = new FreeCamera(
+      `${this.rootId}-camera`,
+      Vector3.Zero(),
+      mesh.getScene(),
+    );
+
+    this.bodyCamera.parent = mesh;
+    const { x, y, z } = margin;
+    const { x: tx, y: ty, z: tz } = target;
+
+    console.log({ x, y, z });
+    console.log({ tx, ty, tz });
+
+    this.bodyCamera.position.set(x, y, z);
+    this.bodyCamera.setTarget(new Vector3(tx, ty, tz));
+  }
+
+  public detachCamera(): void {
+    if (this.scene.activeCamera?.name === this.bodyCamera?.name) return;
+    this.bodyCamera?.dispose();
+    this.bodyCamera = undefined;
+  }
+
   public dispose(): void {
     this.body.forEach((m) => m.dispose());
+    this.bodyCamera?.dispose();
   }
 }
 

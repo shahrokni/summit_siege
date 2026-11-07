@@ -1,81 +1,70 @@
-import type { IAddParam } from "../scene";
+import type { TAttachCameraParam } from "../scene";
 import { CommandHandler, type ICommandHandler } from "./command_handler";
 import { CLI_ERRORS } from "./errors";
 import {
-  ALL_ENTITY_COLLECTION_COMMANDS,
+  ALL_ENTITY_COMMANDS,
   type ICLI,
   type IRecord,
-  type TCLIEntityCollectionCommands,
   type TCommandDefinition,
+  type TEntityCommand,
   type TExecParam,
   type THelpObject,
 } from "./models";
 
-export const ENTITY_COMMANDS_HELP: THelpObject<TCLIEntityCollectionCommands> = {
-  add: {
-    desc: "adds a new entity to the collection.",
+/* TODO: add param description */
+export const ENTITY_COMMANDS_HELP: THelpObject<TEntityCommand> = {
+  attachCamera: {
+    desc: "attaches a camera to the entity.",
     template:
-      "entities [collection_name] add --position [x] [y] [z] --scale [scale]",
+      "entity [collection_name] attachCamera --id [id] --index [index] --margin [x] [y] [z] --target [x] [y] [z]",
   },
-  disposeById: {
-    desc: "disposes an entity by its id.",
-    template: "entities [collection_name] disposeById --id [id]",
-  },
-  getAll: {
-    desc: "returns all collection entities.",
-    template: "entities [collection_name] getAll",
-  },
-  getById: {
-    desc: "returns an entity from the collection.",
-    template: "entities [collection_name] getById --id [id]",
+  detachCamera: {
+    desc: "detaches the camera from the entity.",
+    template: "entity [collection_name] detachCamera --id [id]",
   },
 };
 
-const ENTITY_COMMANDS_DEFINITION: TCommandDefinition<TCLIEntityCollectionCommands> =
-  {
-    add: [
-      {
-        name: "position",
-        leadingValuesCount: 3,
-        leadingValuesType: "number",
-        leadingValuesObjectKeys: ["x", "y", "z"],
-        optional: false,
-      },
-      {
-        name: "scale",
-        leadingValuesCount: 1,
-        leadingValuesType: "number",
-        leadingValuesObjectKeys: ["scale"],
-        optional: false,
-      },
-      {
-        name: "rotation",
-        leadingValuesCount: 3,
-        leadingValuesType: "number",
-        leadingValuesObjectKeys: ["x", "y", "z"],
-        optional: true,
-      },
-    ],
-    disposeById: [
-      {
-        name: "id",
-        leadingValuesCount: 1,
-        leadingValuesType: "string",
-        leadingValuesObjectKeys: ["id"],
-        optional: false,
-      },
-    ],
-    getAll: [],
-    getById: [
-      {
-        name: "id",
-        leadingValuesCount: 1,
-        leadingValuesType: "string",
-        leadingValuesObjectKeys: ["id"],
-        optional: false,
-      },
-    ],
-  };
+const ENTITY_COMMANDS_DEFINITION: TCommandDefinition<TEntityCommand> = {
+  attachCamera: [
+    {
+      name: "id",
+      optional: false,
+      leadingValuesCount: 1,
+      leadingValuesObjectKeys: ["id"],
+      leadingValuesType: "string",
+    },
+    {
+      name: "index",
+      optional: false,
+      leadingValuesCount: 1,
+      leadingValuesObjectKeys: ["index"],
+      leadingValuesType: "number",
+    },
+    {
+      name: "margin",
+      optional: false,
+      leadingValuesCount: 3,
+      leadingValuesObjectKeys: ["x", "y", "z"],
+      leadingValuesType: "number",
+    },
+    {
+      name: "target",
+      optional: false,
+      leadingValuesCount: 3,
+      leadingValuesObjectKeys: ["x", "y", "z"],
+      leadingValuesType: "number",
+    },
+  ],
+  detachCamera: [
+    {
+      name: "id",
+      optional: false,
+      leadingValuesCount: 1,
+      leadingValuesObjectKeys: ["id"],
+      leadingValuesType: "string",
+    },
+  ],
+};
 
 export class EntityCommandHandler
   extends CommandHandler
@@ -84,23 +73,22 @@ export class EntityCommandHandler
   constructor(cli: ICLI) {
     super(cli);
   }
-
   public exec(record: IRecord): void {
     const arr = record.text.split(" ");
-    const entityKey = arr[1].trim();
-    const entity = this.cli.getAllCollections()[entityKey];
-    const method = arr[2].trim() as TCLIEntityCollectionCommands;
+    const collectionKey = arr[1].trim();
+    const collection = this.cli.getAllCollections()[collectionKey];
+    const method = arr[2].trim() as TEntityCommand;
 
-    if (!entityKey || !entity) {
+    if (!collectionKey || !collection) {
       record.status = "rejected";
       record.response = {
-        text: `${entityKey} ${CLI_ERRORS.collection_not_found}`,
+        text: `${collectionKey} ${CLI_ERRORS.collection_not_found}`,
         at: Date.now(),
       };
       return;
     }
 
-    if (!ALL_ENTITY_COLLECTION_COMMANDS.some((i) => i === method)) {
+    if (!ALL_ENTITY_COMMANDS.some((i) => i === method)) {
       record.status = "rejected";
       record.response = {
         text: `${method} ${CLI_ERRORS.command_method_not_found}`,
@@ -118,26 +106,27 @@ export class EntityCommandHandler
       return;
     }
 
-    if (method === "add") {
-      entity[method](params as unknown as IAddParam);
-      record.status = "executed";
-    } else if (method === "disposeById") {
-      entity[method](params as unknown as { id: string });
-      record.status = "executed";
-    } else if (method === "getAll") {
-      const collection = entity[method]();
-      record.status = "executed";
+    const entityId = params["id"] as string;
+    const entityWrapper = collection.getById({ id: entityId });
+
+    if (!entityWrapper) {
+      record.status = "rejected";
       record.response = {
+        text: `${entityId} ${CLI_ERRORS.entity_not_found}`,
         at: Date.now(),
-        text: `${collection.map((i) => i.getId()).join("\n")}`,
       };
-    } else if (method === "getById") {
-      const obj = entity[method](params as unknown as { id: string });
+      return;
+    }
+
+    /*at this point, there is no usage of this param*/
+    delete params["id"];
+
+    if (method === "attachCamera") {
+      console.log("params", params);
+      entityWrapper.entity[method](params as unknown as TAttachCameraParam);
       record.status = "executed";
-      record.response = {
-        at: Date.now(),
-        text: `${obj?.entity.getId()} ${JSON.stringify(obj?.entity.getPosition(0))}`,
-      };
+    } else if (method === "detachCamera") {
+      entityWrapper.entity[method]();
     }
   }
 }

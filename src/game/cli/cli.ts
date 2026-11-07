@@ -1,14 +1,16 @@
 import {
-  ENTITY_COMMANDS_HELP,
-  EntityCommandHandler,
-} from "./entity_command_handler";
+  COLLECTION_COMMANDS_HELP,
+  EntityCollectionCommandHandler,
+} from "./collection_command_handler";
+import { EntityCommandHandler } from "./entity_command_handler";
 import { CLI_ERRORS } from "./errors";
-import type {
-  ICLI,
-  IRecord,
-  THelpObject,
-  THistory,
-  TSpecialCommands,
+import {
+  ALL_COMMAND_BRANCHES,
+  type ICLI,
+  type IRecord,
+  type THelpObject,
+  type THistory,
+  type TSpecialCommands,
 } from "./models";
 import { ROOT_COMMANDS_HELP, RootCommandHandler } from "./root_command_handler";
 
@@ -32,12 +34,16 @@ export class GameCLI {
     this.index = 0;
     this.history = [];
     this.locked = false;
-    this.entityCommandHandler = new EntityCommandHandler(cli);
+    this.entityCollectionCommandHandler = new EntityCollectionCommandHandler(
+      cli,
+    );
     this.rootCommandHandler = new RootCommandHandler(cli);
+    this.entityCommandHandler = new EntityCommandHandler(cli);
   }
 
-  private entityCommandHandler: EntityCommandHandler;
   private rootCommandHandler: RootCommandHandler;
+  private entityCollectionCommandHandler: EntityCollectionCommandHandler;
+  private entityCommandHandler: EntityCommandHandler;
   private history: THistory;
   private index: number;
   private locked: boolean;
@@ -48,23 +54,25 @@ export class GameCLI {
 
   private handleRootCommandExec(record: IRecord): void {
     this.rootCommandHandler.exec(record);
-    return;
+  }
+
+  private handleEntityCollectionCommandExec(record: IRecord): void {
+    this.entityCollectionCommandHandler.exec(record);
   }
 
   private handleEntityCommandExec(record: IRecord): void {
     this.entityCommandHandler.exec(record);
-    return;
   }
 
   private buildHelp(): string {
-    let help = "\n_Root Commands_\n";
+    let help = "\n_Scene Commands_\n";
     Object.entries(ROOT_COMMANDS_HELP).forEach(([key, value]) => {
       help += ` ${key} command ${value.desc}\n`;
       help += ` ${value.template}\n`;
     });
 
-    help = help.concat("\n_Entity Commands_\n");
-    Object.entries(ENTITY_COMMANDS_HELP).forEach(([key, value]) => {
+    help = help.concat("\n_Collection Commands_\n");
+    Object.entries(COLLECTION_COMMANDS_HELP).forEach(([key, value]) => {
       help += ` ${key} command ${value.desc}\n`;
       help += ` ${value.template}\n\n`;
     });
@@ -100,12 +108,21 @@ export class GameCLI {
       return;
     }
 
-    if (base === "root") {
+    if (!ALL_COMMAND_BRANCHES.some((b) => b !== base)) {
+      record.status = "rejected";
+      record.response = {
+        text: `${record.text}-${CLI_ERRORS.command_branch_no_found}`,
+        at: Date.now(),
+      };
+      return;
+    }
+
+    if (base === "scene") {
       this.handleRootCommandExec(record);
-      return;
-    } else if (base === "entities") {
+    } else if (base === "collection") {
+      this.handleEntityCollectionCommandExec(record);
+    } else if (base === "entity") {
       this.handleEntityCommandExec(record);
-      return;
     }
   }
 

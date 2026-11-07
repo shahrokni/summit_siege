@@ -1,5 +1,6 @@
 export const CLI_ERRORS = {
   cli_locked: "CLI is locked",
+  command_branch_no_found: "command branch not found",
   command_not_found: "command not found",
   collection_not_found: "collection not found",
   entity_not_found: "entity not found",

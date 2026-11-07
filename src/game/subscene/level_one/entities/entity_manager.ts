@@ -1,4 +1,5 @@
 import {
+  Camera,
   Color3,
   RecastJSPlugin,
   StandardMaterial,
@@ -166,14 +167,27 @@ export class EntityManager implements IEntityManager, ICLI {
     );
   }
 
+  public getAllCollections(): TCLIEntityCollection {
+    return this.entityCollection;
+  }
+
+  public getAllCameras(): Camera[] {
+    return this.scene.cameras;
+  }
+
+  public switchCamera(params: { id: string }): void {
+    const camera = this.scene.cameras.find((c) => c.name === params.id);
+    if (!camera) return;
+    this.scene.activeCamera = camera;
+    console.log("Local Position:", camera.position.asArray());
+    console.log("Global Position:", camera.globalPosition.asArray());
+    console.log("Parent:", camera.parent?.name);
+  }
+
   public dispose(): void {
     clearInterval(this.intervalId);
     Object.keys(this.entityCollection).forEach((k) => {
       this.entityCollection[k as keyof TEntityCollection]?.dispose();
     });
-  }
-
-  public getAllCollections(): TCLIEntityCollection {
-    return this.entityCollection;
   }
 }

@@ -1,4 +1,4 @@
-export type TPlayerView = "normal" | "scope1" | "scope2" | "terminal";
+export type TPlayerView = "normal" | "scope1" | "scope2";
 
 export interface IState {
   view: TPlayerView;

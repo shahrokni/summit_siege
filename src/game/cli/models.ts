@@ -1,6 +1,26 @@
+import type { Camera } from "@babylonjs/core";
 import type { IEntity, IEntityCollection, TMesh } from "../scene";
 
+export type TCommandBranch = "entity" | "scene" | "collection";
+
+export const ALL_COMMAND_BRANCHES: TCommandBranch[] = [
+  "entity",
+  "scene",
+  "collection",
+];
+
 export type TSpecialCommands = "help" | "clear" | "quit";
+
+export type TCLIRootCommands =
+  | "getAllCollections"
+  | "getAllCameras"
+  | "switchCamera";
+
+export const ALL_ROOT_COMMANDS = [
+  "getAllCollections",
+  "getAllCameras",
+  "switchCamera",
+];
 
 export type TCLIEntityCollectionCommands =
   | "add"
@@ -15,9 +35,12 @@ export const ALL_ENTITY_COLLECTION_COMMANDS: TCLIEntityCollectionCommands[] = [
   "getById",
 ];
 
-export type TCLIRootCommands = "getAllCollections";
+export type TEntityCommand = "attachCamera" | "detachCamera";
 
-export const ALL_ROOT_COMMANDS = ["getAllCollections"];
+export const ALL_ENTITY_COMMANDS: TEntityCommand[] = [
+  "attachCamera",
+  "detachCamera",
+];
 
 export type TCLIEntityCollection = Partial<{
   [id: string]: Pick<
@@ -28,6 +51,8 @@ export type TCLIEntityCollection = Partial<{
 
 export interface ICLI {
   getAllCollections: () => TCLIEntityCollection;
+  getAllCameras: () => Camera[];
+  switchCamera: (params: { id: string }) => void;
 }
 
 export type IRecordResponse = Omit<IRecord, "type" | "status" | "index">;
@@ -43,7 +68,7 @@ export interface IRecord {
 
 export type THistory = IRecord[];
 
-export type THelp = { desc: string; template: string };
+export type THelp = { desc: string; template: string; paramDesc?: string[] };
 
 export type MethodParam = {
   name: string;

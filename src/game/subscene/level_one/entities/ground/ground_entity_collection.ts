@@ -43,7 +43,7 @@ export class GroundEntityCollection
         ],
         "entity_limit_reached",
       );
-      return this.getByIndex(0).getId();
+      return this.getByIndex({ index: 0 }).getId();
     }
     const rootId = `ground-${this.getNextId()}`;
 
