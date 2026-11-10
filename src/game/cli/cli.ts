@@ -106,7 +106,7 @@ export class GameCLI {
       return;
     }
 
-    if (!ALL_COMMAND_BRANCHES.some((b) => b !== base)) {
+    if (!ALL_COMMAND_BRANCHES.some((b) => b === base)) {
       record.status = 'rejected';
       record.response = {
         text: `${record.text}-${CLI_ERRORS.command_branch_no_found}`,
