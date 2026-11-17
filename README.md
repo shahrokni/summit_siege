@@ -28,7 +28,6 @@ Contributions are very welcome! Feel free to open issues, suggest improvements, 
 
 <img width="941" height="440" alt="image" src="https://github.com/user-attachments/assets/a1f0c2c9-3fb7-45d5-abdc-8e4b238bd271" />
 
-
 ### Running the Project Locally
 
 To run the project please follow these steps:
