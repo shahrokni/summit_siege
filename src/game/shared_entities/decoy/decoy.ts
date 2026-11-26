@@ -3,7 +3,7 @@ import { AnimationEvent, Mesh, Vector3 } from '@babylonjs/core';
 import { type Brain, makeBrain } from '../../brain';
 import type { FactDB } from '../../factDB';
 import { Entity, type IAgentEntity, type TPosition, type TThinkTool } from '../../scene';
-import { generatePathAnimation } from '../../utils/babylon/animationGenerator';
+import { generatePathAnimation } from '../../utils/babylon/animation_generator';
 import { renderBloodEffect } from '../../utils/babylon/blood_effect';
 import { calculatePathHeadings, type TPath } from '../../utils/math/trigonometry';
 import { facts } from './state_machines/v1/facts';

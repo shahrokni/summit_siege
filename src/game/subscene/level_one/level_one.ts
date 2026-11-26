@@ -107,6 +107,7 @@ export class LevelOne extends Level implements ILevel, ISubscriber<TEvent> {
 
     this.gunLock = true;
     this.gunSound.play();
+    this.camera?.recoil(this.stateManager?.get('view') ?? 'normal');
     try {
       const cameraRay = this.camera?.getForwardRay(FORWARD_RAY_LENGTH);
       if (!cameraRay) return;
