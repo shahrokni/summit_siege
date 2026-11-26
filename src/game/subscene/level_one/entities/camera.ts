@@ -11,18 +11,28 @@ import {
   Vector3,
 } from '@babylonjs/core';
 
+import { generateGunRecoilAnimation } from '../../../utils/babylon/animation_generator';
 import type { TPlayerView } from '../state';
+
+const AMPLITUDE_MAP: Record<TPlayerView, number> = {
+  normal: -0.2,
+  scope1: -0.008,
+  scope2: -0.005,
+};
 
 export class Camera {
   constructor(scene: Scene) {
     this.scene = scene;
+    this.id = 'weapon';
   }
 
+  private id: string;
   private normalFov: number | undefined;
   private camera: UniversalCamera | undefined;
   private fovMap: Record<TPlayerView, number> | undefined;
   private scene: Scene;
   private container: AssetContainer | undefined;
+  private recoilPivot: TransformNode | undefined;
 
   public async init(): Promise<void> {
     if (this.container) return;
@@ -48,12 +58,18 @@ export class Camera {
     const texture = new Texture('/models/dragunov/dragunov.png', this.scene);
     material.diffuseTexture = texture;
 
+    const recoilPivot = new TransformNode('recoilPivot', this.scene);
+    recoilPivot.parent = camera;
+    recoilPivot.position.set(-0.1, -0.5, 1.28);
+    this.recoilPivot = recoilPivot;
+
     const weaponHolder = new TransformNode('weaponHolder', this.scene);
-    weaponHolder.parent = camera;
+    weaponHolder.parent = recoilPivot;
     weaponHolder.rotation.y = Math.PI * 0.38;
     weaponHolder.position.set(-0.1, -0.5, 1.28);
-    camera.minZ = 0.2;
     weaponHolder.scaling.setAll(0.29);
+
+    camera.minZ = 0.2;
 
     for (const root of instance.rootNodes) {
       root.parent = weaponHolder;
@@ -82,5 +98,43 @@ export class Camera {
 
   public dispose(): void {
     this.camera?.dispose();
+  }
+
+  public recoil(view: TPlayerView): void {
+    const scoped = view !== 'normal';
+
+    const target = scoped ? this.camera : this.recoilPivot;
+
+    if (!target) return;
+
+    const amplitude = AMPLITUDE_MAP[view];
+
+    const rotation = generateGunRecoilAnimation(
+      this.id,
+      0.3,
+      amplitude,
+      'rotation.x',
+      target.rotation.x,
+      60,
+      0.08,
+    );
+
+    const translation = generateGunRecoilAnimation(
+      this.id,
+      0.3,
+      -0.2,
+      'position.z',
+      target.position.z,
+      60,
+      0.08,
+    );
+
+    this.scene.beginDirectAnimation(
+      target,
+      [rotation.animation, translation.animation],
+      0,
+      rotation.keyFrames[rotation.keyFrames.length - 1],
+      false,
+    );
   }
 }

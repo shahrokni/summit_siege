@@ -93,3 +93,23 @@ export const calculateHeading = (p1: Vector3, p2: Vector3, offset: number = 0): 
 export const calculatePathHeadings = (path: TPath, offset: number = 0): number[] => {
   return path.map(({ p1, p2 }) => calculateHeading(p1, p2, offset));
 };
+
+/**
+ * Generalized sign function with time wraping
+ * f(t) = A * sin(ω * t^p + φ)
+ * @param t Normalized time [0,1]
+ * @param amplitude Maximum displacement
+ * @param omega Angular frequency factor
+ * @param phase Phase shift in radians
+ * @param exponent Time wraping factor (> 0)
+ * @returns
+ */
+export const sin = (
+  t: number,
+  amplitude: number = 1,
+  omega: number = 2 * Math.PI,
+  phase: number = 0,
+  exponent: number = 1,
+): number => {
+  return amplitude * Math.sin(omega * Math.pow(t, exponent) + phase);
+};
